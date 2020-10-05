@@ -1,27 +1,35 @@
 ﻿using UnityEngine;
 using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit;
-using Microsoft.MixedReality.Toolkit.Utilities;
-using System;
 
 public class HoloRecorder : MonoBehaviour
 {
 
     public static HoloRecorder instance;
 
-    private IMixedRealityInputSystem inputSystem = null;
+    private IMixedRealityInputSystem inputSystem;
     private InputRecordingService animationRecorder;
     private AudioClip currentAudioClip;
     private const string MICROPHONE_NAME = "Built-in Microphone";
 
-    public void Initialize()
+    private void Start()
     {
-        instance = FindObjectOfType(typeof(HoloRecorder)) as HoloRecorder;
+        InitializeHoloRecorder();
+        SetupSingleton();
+    }
+
+    private void InitializeHoloRecorder()
+    {
         if (!MixedRealityServiceRegistry.TryGetService<IMixedRealityInputSystem>(out inputSystem))
         {
-            Debug.Log("Failed to acquire the input system. It may not have been registered");
+            Debug.Log("Failed to acquire the input system inside HoloRecorder. It may not have been registered");
         }
         animationRecorder = new InputRecordingService(inputSystem);
+    }
+
+    private void SetupSingleton()
+    {
+        instance = FindObjectOfType(typeof(HoloRecorder)) as HoloRecorder;
     }
 
     public void StartRecording()
