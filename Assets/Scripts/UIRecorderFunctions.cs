@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UIRecorderFunctions : MonoBehaviour
 {
-    public GameObject recorderPrefab;
+    public GameObject recordingRepresentation;
 
 
     public void StartRecording()
@@ -17,7 +17,7 @@ public class UIRecorderFunctions : MonoBehaviour
         HoloRecording newRecording = HoloRecorder.instance.StopRecording();
 
         // todo instantiate new prefab and assign the holorecording to it.
-        GameObject recorderObject = Instantiate(recorderPrefab);
+        GameObject recorderObject = Instantiate(recordingRepresentation);
         HoloPlayer playerComponent = recorderObject.GetComponent<HoloPlayer>();
         playerComponent.PutHoloRecordingIntoPlayer(newRecording);
     }
