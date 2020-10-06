@@ -2,7 +2,7 @@
 using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit;
 
-public class HoloPlayer : MonoBehaviour
+public class HoloPlayerBehaviour : MonoBehaviour
 {
 
     private AudioSource audioSource;

@@ -42,7 +42,7 @@ public class UIRecorderFunctions : MonoBehaviour
     {
         HoloRecording newRecording = HoloRecorder.StopRecording();
 
-        HoloPlayer playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayer>();
+        HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
         playerComponent.PutHoloRecordingIntoPlayer(newRecording);
     }
 
