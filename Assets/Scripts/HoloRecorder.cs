@@ -2,23 +2,15 @@
 using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit;
 
-public class HoloRecorder : MonoBehaviour
+public static class HoloRecorder
 {
+    private static IMixedRealityInputSystem inputSystem;
+    private static InputRecordingService animationRecorder;
+    private static AudioClip currentAudioClip;
+    private const string MICROPHONE_NAME = null;
 
-    public static HoloRecorder instance;
 
-    private IMixedRealityInputSystem inputSystem;
-    private InputRecordingService animationRecorder;
-    private AudioClip currentAudioClip;
-    private const string MICROPHONE_NAME = "Built-in Microphone";
-
-    private void Start()
-    {
-        InitializeHoloRecorder();
-        SetupSingleton();
-    }
-
-    private void InitializeHoloRecorder()
+    public static void Initialize()
     {
         if (!MixedRealityServiceRegistry.TryGetService<IMixedRealityInputSystem>(out inputSystem))
         {
@@ -27,18 +19,13 @@ public class HoloRecorder : MonoBehaviour
         animationRecorder = new InputRecordingService(inputSystem);
     }
 
-    private void SetupSingleton()
-    {
-        instance = FindObjectOfType(typeof(HoloRecorder)) as HoloRecorder;
-    }
-
-    public void StartRecording()
+    public static void StartRecording()
     {
         currentAudioClip = Microphone.Start(MICROPHONE_NAME, true, 10, 44100);
         animationRecorder.StartRecording();
     }
 
-    public HoloRecording StopRecording()
+    public static HoloRecording StopRecording()
     {
         Microphone.End(MICROPHONE_NAME);
         animationRecorder.StopRecording();
@@ -47,7 +34,7 @@ public class HoloRecorder : MonoBehaviour
         return new HoloRecording(currentAudioClip, animationClipFilePath);
     }
 
-    public void CancelRecording()
+    public static void CancelRecording()
     {
         animationRecorder.DiscardRecordedInput();
         Microphone.End(MICROPHONE_NAME);

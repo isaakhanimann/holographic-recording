@@ -10,9 +10,14 @@ public class UIRecorderFunctions : MonoBehaviour
 
     private GameObject recordingRepresentationInstance;
 
+    private void Start()
+    {
+        HoloRecorder.Initialize();
+    }
+
     public void StartRecordingAndInstantiateRepresentation()
     {
-        HoloRecorder.instance.StartRecording();
+        HoloRecorder.StartRecording();
         InstantiateRecordingRepresentationAtPalm();
     }
 
@@ -35,7 +40,7 @@ public class UIRecorderFunctions : MonoBehaviour
 
     public void StopRecordingAndPutRecordingIntoRepresentation()
     {
-        HoloRecording newRecording = HoloRecorder.instance.StopRecording();
+        HoloRecording newRecording = HoloRecorder.StopRecording();
 
         HoloPlayer playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayer>();
         playerComponent.PutHoloRecordingIntoPlayer(newRecording);
@@ -43,7 +48,7 @@ public class UIRecorderFunctions : MonoBehaviour
 
     public void CancelRecordingAndRemoveRepresentation()
     {
-        HoloRecorder.instance.CancelRecording();
+        HoloRecorder.CancelRecording();
         Destroy(recordingRepresentationInstance);
 
     }
