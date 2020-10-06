@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e82d2d4486854f91baccdfdb83745af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  recordingRepresentation: {fileID: 8174056632833295294, guid: 62bbca570c6df4351a952e187eb8b72e,
+  recordingRepresentationPrefab: {fileID: 8174056632833295294, guid: 62bbca570c6df4351a952e187eb8b72e,
     type: 3}
 --- !u!4 &113214094
 Transform:
@@ -4278,7 +4278,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 113214093}
-        m_MethodName: CancelRecording
+        m_MethodName: CancelRecordingAndRemoveRepresentation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4477,7 +4477,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 113214093}
-        m_MethodName: StopRecording
+        m_MethodName: StopRecordingAndPutRecordingIntoRepresentation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4676,7 +4676,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 113214093}
-        m_MethodName: StartRecording
+        m_MethodName: StartRecordingAndInstantiateRepresentation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

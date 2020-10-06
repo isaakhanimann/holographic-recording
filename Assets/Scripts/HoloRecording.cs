@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HoloRecording
+public struct HoloRecording
 {
     public AudioClip audioClip;
     public string pathToAnimationFile;
@@ -11,4 +11,7 @@ public class HoloRecording
         this.audioClip = audioClip;
         this.pathToAnimationFile = pathToAnimationFile;
     }
+
+    public override string ToString() => $"(audio clip:{audioClip}, path to animation file: {pathToAnimationFile})";
+
 }
