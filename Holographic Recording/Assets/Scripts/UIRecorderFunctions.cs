@@ -25,16 +25,16 @@ public class UIRecorderFunctions : MonoBehaviour
     {
         Debug.Log("InstantiateRecordingRepresentationAtPalm");
         Vector3 positionToInstantiate;
-        Quaternion rotationToInstantiate;
+        Quaternion rotationToInstantiate = Quaternion.identity;
         if (HandJointUtils.TryGetJointPose(TrackedHandJoint.Palm, Handedness.Left, out MixedRealityPose pose))
         {
             positionToInstantiate = pose.Position;
-            rotationToInstantiate = pose.Rotation;
+            //rotationToInstantiate = pose.Rotation;
         }
         else
         {
             positionToInstantiate = Camera.main.transform.position + 0.5f * Vector3.forward;
-            rotationToInstantiate = Camera.main.transform.rotation;
+            //rotationToInstantiate = Camera.main.transform.rotation;
         }
         recordingRepresentationInstance = Instantiate(original: recordingRepresentationPrefab, position: positionToInstantiate, rotation: rotationToInstantiate);
     }
