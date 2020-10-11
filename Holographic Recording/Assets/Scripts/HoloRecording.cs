@@ -4,14 +4,14 @@ using UnityEngine;
 
 public struct HoloRecording
 {
-    public AudioClip audioClip;
+    //public AudioClip audioClip;
     public string pathToAnimationFile;
     public HoloRecording(AudioClip audioClip, string pathToAnimationFile)
     {
-        this.audioClip = audioClip;
+        //this.audioClip = audioClip;
         this.pathToAnimationFile = pathToAnimationFile;
     }
 
-    public override string ToString() => $"(audio clip:{audioClip}, path to animation file: {pathToAnimationFile})";
+    public override string ToString() => $"( path to animation file: {pathToAnimationFile})";
 
 }

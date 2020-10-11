@@ -23,6 +23,7 @@ public class UIRecorderFunctions : MonoBehaviour
 
     private void InstantiateRecordingRepresentationAtPalm()
     {
+        Debug.Log("InstantiateRecordingRepresentationAtPalm");
         Vector3 positionToInstantiate;
         Quaternion rotationToInstantiate;
         if (HandJointUtils.TryGetJointPose(TrackedHandJoint.Palm, Handedness.Left, out MixedRealityPose pose))

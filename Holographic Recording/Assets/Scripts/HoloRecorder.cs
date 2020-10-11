@@ -17,19 +17,21 @@ public static class HoloRecorder
             Debug.Log("Failed to acquire the input system inside HoloRecorder. It may not have been registered");
         }
         animationRecorder = new InputRecordingService(inputSystem);
+        animationRecorder.Enable();
     }
 
     public static void StartRecording()
     {
-        currentAudioClip = Microphone.Start(MICROPHONE_NAME, true, 10, 44100);
+        //currentAudioClip = Microphone.Start(MICROPHONE_NAME, true, 10, 44100);
         animationRecorder.StartRecording();
+        Debug.Log("StartRecording");
     }
 
     public static HoloRecording StopRecording()
     {
-        Microphone.End(MICROPHONE_NAME);
+        //Microphone.End(MICROPHONE_NAME);
         animationRecorder.StopRecording();
-        string animationClipFilePath = animationRecorder.SaveInputAnimation("recorded-animation");
+        string animationClipFilePath = animationRecorder.SaveInputAnimation();
         Debug.Log($"The file path of the animation is: {animationClipFilePath}");
         return new HoloRecording(currentAudioClip, animationClipFilePath);
     }
@@ -37,7 +39,7 @@ public static class HoloRecorder
     public static void CancelRecording()
     {
         animationRecorder.DiscardRecordedInput();
-        Microphone.End(MICROPHONE_NAME);
-        currentAudioClip = null;
+        //Microphone.End(MICROPHONE_NAME);
+        //currentAudioClip = null;
     }
 }

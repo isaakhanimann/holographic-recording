@@ -25,31 +25,32 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     public void PutHoloRecordingIntoPlayer(HoloRecording recording)
     {
-        audioSource.clip = recording.audioClip;
+        //audioSource.clip = recording.audioClip;
         animationPlayer.LoadInputAnimation(recording.pathToAnimationFile);
     }
 
     public void Play()
     {
-        audioSource.Play();
+        //audioSource.Play();
         animationPlayer.Play();
+        Debug.Log("Play" + animationPlayer);
     }
 
     public void Pause()
     {
-        audioSource.Pause();
+        //audioSource.Pause();
         animationPlayer.Pause();
     }
 
     public void Seek(float timeToJumpToInSeconds)
     {
-        audioSource.time = timeToJumpToInSeconds;
+        //audioSource.time = timeToJumpToInSeconds;
         animationPlayer.LocalTime = timeToJumpToInSeconds;
     }
 
     public void Stop()
     {
-        audioSource.Stop();
+        //audioSource.Stop();
         animationPlayer.Stop();
     }
 }
