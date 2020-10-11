@@ -12,6 +12,9 @@ public class HoloPlayerBehaviour : MonoBehaviour
     private InputPlaybackService animationPlayer;
 
     public GameObject Debugger;
+    public GameObject RightHand;
+    public GameObject LeftHand;
+
     void Start()
     {
         Debugger = GameObject.FindGameObjectWithTag("Respawn");
@@ -42,17 +45,20 @@ public class HoloPlayerBehaviour : MonoBehaviour
             Debugger.GetComponent<TextMeshPro>().text = "Loading Input Animation doens't work!!";
             Debug.Log("Loading Input Animation doens't work!!");
         }
-
-
-
-
-
     }
 
     public void Play()
     {
         //audioSource.Play();
         animationPlayer.Play();
+        Debugger.GetComponent<TextMeshPro>().text = animationPlayer.IsPlaying + "";
+
+        GameObject RH = Instantiate(RightHand, new Vector3(0.25f, 0.5f, 05f), Quaternion.identity);
+        GameObject LH = Instantiate(LeftHand, new Vector3(-0.25f, 0.5f, 05f), Quaternion.identity);
+
+        DestroyHand(RH, LH);
+
+        Debugger.GetComponent<TextMeshPro>().text = "Play";
         Debug.Log("Play" + animationPlayer);
     }
 
@@ -72,5 +78,11 @@ public class HoloPlayerBehaviour : MonoBehaviour
     {
         //audioSource.Stop();
         animationPlayer.Stop();
+    }
+
+    public void DestroyHand(GameObject RH, GameObject LH)
+    {
+        Destroy(RH);
+        Destroy(LH);
     }
 }

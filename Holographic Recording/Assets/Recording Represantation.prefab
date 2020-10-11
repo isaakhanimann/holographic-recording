@@ -1816,6 +1816,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 388e8a52b7f5e2c4db312d37d09b7a41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Debugger: {fileID: 0}
+  RightHand: {fileID: 3512491064599439886, guid: 85e5fc33abf33f043b85568bfba2ccf4,
+    type: 3}
+  LeftHand: {fileID: 61451597023024772, guid: b079cc5399dd6014ea50e19cfe444f82, type: 3}
 --- !u!82 &-3858803001370912394
 AudioSource:
   m_ObjectHideFlags: 0
