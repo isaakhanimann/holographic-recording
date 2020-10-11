@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit;
+using UnityEngine.UI;
+using TMPro;
 
 public class HoloPlayerBehaviour : MonoBehaviour
 {
@@ -8,8 +10,11 @@ public class HoloPlayerBehaviour : MonoBehaviour
     private AudioSource audioSource;
     private IMixedRealityInputSystem inputSystem;
     private InputPlaybackService animationPlayer;
+
+    public GameObject Debugger;
     void Start()
     {
+        Debugger = GameObject.FindGameObjectWithTag("Respawn");
         InitializeHoloPlayer();
     }
 
@@ -26,7 +31,22 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public void PutHoloRecordingIntoPlayer(HoloRecording recording)
     {
         //audioSource.clip = recording.audioClip;
-        animationPlayer.LoadInputAnimation(recording.pathToAnimationFile);
+        if (animationPlayer.LoadInputAnimation(recording.pathToAnimationFile))
+        {
+            Debugger.GetComponent<TextMeshPro>().text = "Loading Input Animation works!!";
+            Debug.Log("Loading Input Animation works!!");
+        }
+
+        else
+        {
+            Debugger.GetComponent<TextMeshPro>().text = "Loading Input Animation doens't work!!";
+            Debug.Log("Loading Input Animation doens't work!!");
+        }
+
+
+
+
+
     }
 
     public void Play()
