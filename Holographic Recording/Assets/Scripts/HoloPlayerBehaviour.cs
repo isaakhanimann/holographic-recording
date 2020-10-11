@@ -17,7 +17,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     void Start()
     {
-        Debugger = GameObject.FindGameObjectWithTag("Respawn");
+        //Debugger = GameObject.FindGameObjectWithTag("Respawn");
         InitializeHoloPlayer();
     }
 
@@ -36,13 +36,13 @@ public class HoloPlayerBehaviour : MonoBehaviour
         //audioSource.clip = recording.audioClip;
         if (animationPlayer.LoadInputAnimation(recording.pathToAnimationFile))
         {
-            Debugger.GetComponent<TextMeshPro>().text = "Loading Input Animation works!!";
+            //Debugger.GetComponent<TextMeshPro>().text = "Loading Input Animation works!!";
             Debug.Log("Loading Input Animation works!!");
         }
 
         else
         {
-            Debugger.GetComponent<TextMeshPro>().text = "Loading Input Animation doens't work!!";
+            //Debugger.GetComponent<TextMeshPro>().text = "Loading Input Animation doens't work!!";
             Debug.Log("Loading Input Animation doens't work!!");
         }
     }
@@ -51,14 +51,14 @@ public class HoloPlayerBehaviour : MonoBehaviour
     {
         //audioSource.Play();
         animationPlayer.Play();
-        Debugger.GetComponent<TextMeshPro>().text = animationPlayer.IsPlaying + "";
+        //Debugger.GetComponent<TextMeshPro>().text = animationPlayer.IsPlaying + "";
 
-        GameObject RH = Instantiate(RightHand, new Vector3(0.25f, 0.5f, 05f), Quaternion.identity);
-        GameObject LH = Instantiate(LeftHand, new Vector3(-0.25f, 0.5f, 05f), Quaternion.identity);
+        GameObject RH = Instantiate(RightHand, new Vector3(0.125f, -0.25f, 0.5f), Quaternion.identity);
+        GameObject LH = Instantiate(LeftHand, new Vector3(-0.125f, -0.25f, 0.5f), Quaternion.identity);
 
-        DestroyHand(RH, LH);
+        DestroyHand(RH, LH, 5);
 
-        Debugger.GetComponent<TextMeshPro>().text = "Play";
+        //Debugger.GetComponent<TextMeshPro>().text = "Play";
         Debug.Log("Play" + animationPlayer);
     }
 
@@ -80,9 +80,9 @@ public class HoloPlayerBehaviour : MonoBehaviour
         animationPlayer.Stop();
     }
 
-    public void DestroyHand(GameObject RH, GameObject LH)
+    public void DestroyHand(GameObject RH, GameObject LH, float time)
     {
-        Destroy(RH);
-        Destroy(LH);
+        Destroy(RH, time);
+        Destroy(LH, time);
     }
 }
