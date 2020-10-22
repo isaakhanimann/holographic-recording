@@ -11,13 +11,11 @@ public class HoloPlayerBehaviour : MonoBehaviour
     private IMixedRealityInputSystem inputSystem;
     private InputPlaybackService animationPlayer;
 
-    public GameObject Debugger;
     public GameObject RightHand;
     public GameObject LeftHand;
 
     void Start()
     {
-        //Debugger = GameObject.FindGameObjectWithTag("Respawn");
         InitializeHoloPlayer();
     }
 
@@ -53,8 +51,8 @@ public class HoloPlayerBehaviour : MonoBehaviour
         animationPlayer.Play();
         //Debugger.GetComponent<TextMeshPro>().text = animationPlayer.IsPlaying + "";
 
-        GameObject RH = Instantiate(RightHand, new Vector3(0.125f, -0.25f, 0.5f), Quaternion.identity);
-        GameObject LH = Instantiate(LeftHand, new Vector3(-0.125f, -0.25f, 0.5f), Quaternion.identity);
+        GameObject RH = Instantiate(RightHand, transform.position + new Vector3(0.125f, -0.25f, 0.5f), Quaternion.identity);
+        GameObject LH = Instantiate(LeftHand, transform.position + new Vector3(-0.125f, -0.25f, 0.5f), Quaternion.identity);
 
         DestroyHand(RH, LH, 5);
 
