@@ -14,9 +14,15 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public GameObject RightHand;
     public GameObject LeftHand;
 
+    public GameObject UIManager;
+
+    UIRecorderFunctions uirecorderFunctions;
+
     void Start()
     {
         InitializeHoloPlayer();
+
+        uirecorderFunctions = UIManager.GetComponent<UIRecorderFunctions>();
     }
 
     private void InitializeHoloPlayer()
@@ -34,13 +40,13 @@ public class HoloPlayerBehaviour : MonoBehaviour
         //audioSource.clip = recording.audioClip;
         if (animationPlayer.LoadInputAnimation(recording.pathToAnimationFile))
         {
-            //Debugger.GetComponent<TextMeshPro>().text = "Loading Input Animation works!!";
+            uirecorderFunctions.DebugPanel.GetComponent<TextMeshPro>().text = "PutHoloRecordingIntoPlayer works!!";
             Debug.Log("Loading Input Animation works!!");
         }
 
         else
         {
-            //Debugger.GetComponent<TextMeshPro>().text = "Loading Input Animation doens't work!!";
+            uirecorderFunctions.DebugPanel.GetComponent<TextMeshPro>().text = "PutHoloRecordingIntoPlayer doens't work!!";
             Debug.Log("Loading Input Animation doens't work!!");
         }
     }
@@ -49,14 +55,14 @@ public class HoloPlayerBehaviour : MonoBehaviour
     {
         //audioSource.Play();
         animationPlayer.Play();
-        //Debugger.GetComponent<TextMeshPro>().text = animationPlayer.IsPlaying + "";
+        uirecorderFunctions.DebugPanel.GetComponent<TextMeshPro>().text = animationPlayer.IsPlaying + "";
 
         GameObject RH = Instantiate(RightHand, transform.position + new Vector3(0.125f, -0.25f, 0.5f), Quaternion.identity);
         GameObject LH = Instantiate(LeftHand, transform.position + new Vector3(-0.125f, -0.25f, 0.5f), Quaternion.identity);
 
         DestroyHand(RH, LH, 5);
 
-        //Debugger.GetComponent<TextMeshPro>().text = "Play";
+        uirecorderFunctions.DebugPanel.GetComponent<TextMeshPro>().text = "Play";
         Debug.Log("Play" + animationPlayer);
     }
 

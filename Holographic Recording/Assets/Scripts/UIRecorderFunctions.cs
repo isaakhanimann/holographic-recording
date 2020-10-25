@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit.Utilities;
+using TMPro;
 
 public class UIRecorderFunctions : MonoBehaviour
 {
@@ -10,19 +11,27 @@ public class UIRecorderFunctions : MonoBehaviour
 
     private GameObject recordingRepresentationInstance;
 
+    public GameObject DebugPanel;
+
+    private HoloRecorder holoRecorder;
+
     private void Start()
     {
-        HoloRecorder.Initialize();
+        holoRecorder = new HoloRecorder();
+        holoRecorder.Initialize();
     }
 
     public void StartRecordingAndInstantiateRepresentation()
     {
-        HoloRecorder.StartRecording();
+        DebugPanel.GetComponent<TextMeshPro>().text = "StartRecordingAndInstantiateRepresentation";
+        DebugPanel.GetComponent<TextMeshPro>().text = holoRecorder.animationRecorder.StartTime + "";
+        holoRecorder.StartRecording();
         InstantiateRecordingRepresentationAtPalm();
     }
 
     private void InstantiateRecordingRepresentationAtPalm()
     {
+        //DebugPanel.GetComponent<TextMeshPro>().text = "InstantiateRecordingRepresentationAtPalm";
         Debug.Log("InstantiateRecordingRepresentationAtPalm");
         Vector3 positionToInstantiate;
         Quaternion rotationToInstantiate = Quaternion.identity;
@@ -41,7 +50,11 @@ public class UIRecorderFunctions : MonoBehaviour
 
     public void StopRecordingAndPutRecordingIntoRepresentation()
     {
-        HoloRecording newRecording = HoloRecorder.StopRecording();
+        DebugPanel.GetComponent<TextMeshPro>().text = "StopRecordingAndPutRecordingIntoRepresentation";
+        HoloRecording newRecording = holoRecorder.StopRecording();
+
+        DebugPanel.GetComponent<TextMeshPro>().text = holoRecorder.animationClipFilePath;
+        DebugPanel.GetComponent<TextMeshPro>().text = holoRecorder.animationRecorder.StartTime + "";
 
         HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
         playerComponent.PutHoloRecordingIntoPlayer(newRecording);
@@ -49,8 +62,14 @@ public class UIRecorderFunctions : MonoBehaviour
 
     public void CancelRecordingAndRemoveRepresentation()
     {
-        HoloRecorder.CancelRecording();
+        DebugPanel.GetComponent<TextMeshPro>().text = "CancelRecordingAndRemoveRepresentation";
+        holoRecorder.CancelRecording();
         Destroy(recordingRepresentationInstance);
 
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.S)) Debug.Log(holoRecorder.animationRecorder.SaveInputAnimation());
     }
 }

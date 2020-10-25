@@ -1,16 +1,18 @@
 ﻿using UnityEngine;
 using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit;
+using TMPro;
 
-public static class HoloRecorder
+public class HoloRecorder
 {
-    private static IMixedRealityInputSystem inputSystem;
-    private static InputRecordingService animationRecorder;
-    private static AudioClip currentAudioClip;
+    private IMixedRealityInputSystem inputSystem;
+    public InputRecordingService animationRecorder;
+    private AudioClip currentAudioClip;
     private const string MICROPHONE_NAME = null;
 
+    public string animationClipFilePath;
 
-    public static void Initialize()
+    public void Initialize()
     {
         if (!MixedRealityServiceRegistry.TryGetService<IMixedRealityInputSystem>(out inputSystem))
         {
@@ -18,25 +20,27 @@ public static class HoloRecorder
         }
         animationRecorder = new InputRecordingService(inputSystem);
         animationRecorder.Enable();
+        animationRecorder.UseBufferTimeLimit = false;
     }
 
-    public static void StartRecording()
+    public void StartRecording()
     {
         //currentAudioClip = Microphone.Start(MICROPHONE_NAME, true, 10, 44100);
         animationRecorder.StartRecording();
         Debug.Log("StartRecording");
     }
 
-    public static HoloRecording StopRecording()
+    public HoloRecording StopRecording()
     {
         //Microphone.End(MICROPHONE_NAME);
         animationRecorder.StopRecording();
-        string animationClipFilePath = animationRecorder.SaveInputAnimation();
+        animationClipFilePath = animationRecorder.SaveInputAnimation();
+
         Debug.Log($"The file path of the animation is: {animationClipFilePath}");
         return new HoloRecording(currentAudioClip, animationClipFilePath);
     }
 
-    public static void CancelRecording()
+    public void CancelRecording()
     {
         animationRecorder.DiscardRecordedInput();
         //Microphone.End(MICROPHONE_NAME);
