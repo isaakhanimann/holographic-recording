@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 880089569454815798}
   m_Layer: 0
-  m_Name: MenuContent (1)
+  m_Name: MenuContent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1124,10 +1124,10 @@ MonoBehaviour:
   iconSprite: {fileID: 21300000, guid: 20f25674b9512834f88938d45ed495d7, type: 3}
   iconQuadRenderer: {fileID: 2194867647852853723}
   iconQuadTextureNameID: _MainTex
-  iconQuadTexture: {fileID: 2800000, guid: 7de780622ddab5e49b73d5d7a806faf9, type: 3}
+  iconQuadTexture: {fileID: 2800000, guid: 737967b9e81cc4401a1d396c4f8776f5, type: 3}
   defaultButtonQuadMaterial: {fileID: 2100000, guid: fa419ab56051229449e3b813df8f295f,
     type: 2}
-  iconSet: {fileID: 11400000, guid: 8b386ef895f7c924f8c4b03d1d3ed683, type: 2}
+  iconSet: {fileID: 11400000, guid: 986e5590eb8de4b91af5fcec106797f6, type: 2}
   defaultIconSet: {fileID: 11400000, guid: 8b386ef895f7c924f8c4b03d1d3ed683, type: 2}
 --- !u!1 &1204464106632151420
 GameObject:
@@ -1734,10 +1734,10 @@ MonoBehaviour:
   iconSprite: {fileID: 21300000, guid: 20f25674b9512834f88938d45ed495d7, type: 3}
   iconQuadRenderer: {fileID: 6428686846695285969}
   iconQuadTextureNameID: _MainTex
-  iconQuadTexture: {fileID: 2800000, guid: b5066c514f7f02f4292cf842f3c8b75f, type: 3}
+  iconQuadTexture: {fileID: 2800000, guid: 9dff93ce714bb4d1b8cd5c35f2cc061f, type: 3}
   defaultButtonQuadMaterial: {fileID: 2100000, guid: fa419ab56051229449e3b813df8f295f,
     type: 2}
-  iconSet: {fileID: 11400000, guid: 8b386ef895f7c924f8c4b03d1d3ed683, type: 2}
+  iconSet: {fileID: 11400000, guid: 986e5590eb8de4b91af5fcec106797f6, type: 2}
   defaultIconSet: {fileID: 11400000, guid: 8b386ef895f7c924f8c4b03d1d3ed683, type: 2}
 --- !u!1 &1854992603984020053
 GameObject:
@@ -1783,7 +1783,7 @@ GameObject:
   - component: {fileID: 8624382656777705211}
   - component: {fileID: -3858803001370912394}
   m_Layer: 0
-  m_Name: Recording Represantation
+  m_Name: Recording Representation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1820,6 +1820,7 @@ MonoBehaviour:
     type: 3}
   LeftHand: {fileID: 5450600211084092669, guid: 7123f9fa562b40b48ba305c2294afa20,
     type: 3}
+  UIManager: {fileID: 0}
 --- !u!82 &-3858803001370912394
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2883,7 +2884,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ec72a3a105768f746b556a8dfdae61a8, type: 2}
+  - {fileID: 2100000, guid: 9a2d0c3c293f3014b9bcd69f93125493, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5247,8 +5248,8 @@ MonoBehaviour:
   iconSprite: {fileID: 21300000, guid: 20f25674b9512834f88938d45ed495d7, type: 3}
   iconQuadRenderer: {fileID: 1775414570820533572}
   iconQuadTextureNameID: _MainTex
-  iconQuadTexture: {fileID: 2800000, guid: 0771cd1b5e4131e45afe250cd1713737, type: 3}
+  iconQuadTexture: {fileID: 2800000, guid: 42388131830424404ab0fefcfb21ce65, type: 3}
   defaultButtonQuadMaterial: {fileID: 2100000, guid: fa419ab56051229449e3b813df8f295f,
     type: 2}
-  iconSet: {fileID: 11400000, guid: 8b386ef895f7c924f8c4b03d1d3ed683, type: 2}
+  iconSet: {fileID: 11400000, guid: 986e5590eb8de4b91af5fcec106797f6, type: 2}
   defaultIconSet: {fileID: 11400000, guid: 8b386ef895f7c924f8c4b03d1d3ed683, type: 2}
