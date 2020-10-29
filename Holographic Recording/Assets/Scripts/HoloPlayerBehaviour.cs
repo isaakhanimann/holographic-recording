@@ -35,7 +35,6 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     public void PutHoloRecordingIntoPlayer(HoloRecording recording)
     {
-        Debug.Log("PutHoloRecordingIntoPlayer");
         InstantiateHandsAndSetInactive();
         if (!PlaybackService.LoadInputAnimation(recording.pathToInputAnimation))
         {
@@ -54,7 +53,6 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     private void InstantiateHandsAndSetInactive()
     {
-        Debug.Log("InstantiateRecordedObjectAndSetInactive");
         Quaternion rotationToInstantiate = Quaternion.identity;
         Vector3 positionToInstantiate = Camera.main.transform.position + 0.3f * Vector3.forward;
         instantiatedHands = Instantiate(original: hands, position: positionToInstantiate, rotation: rotationToInstantiate);
@@ -65,7 +63,6 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     public void Play()
     {
-        Debug.Log("Play");
         instantiatedHands.SetActive(true);
         instantiatedHandsAnimator.SetTrigger("Play");
         StartCoroutine(SetInstanceInactive());
@@ -78,20 +75,10 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     }
 
-    public void Pause()
-    {
-        Debug.Log("Pause is not implemented yet");
-    }
-
-    public void Stop()
-    {
-        Debug.Log("Stop is not implemented yet");
-    }
 
 
     public AnimationClip CreateAnimationClip(InputAnimation inputAnimation)
     {
-        Debug.Log("Creating Animation Clip");
         AnimationClip outputClip = new AnimationClip();
         GenerateData(inputAnimation, Handedness.Left, ref outputClip);
         GenerateData(inputAnimation, Handedness.Right, ref outputClip);

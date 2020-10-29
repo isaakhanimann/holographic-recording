@@ -34,7 +34,6 @@ public class RecorderFunctions : MonoBehaviour
 
     private void InstantiateRecordingRepresentationAtPalm()
     {
-        Debug.Log("InstantiateRecordingRepresentationAtPalm");
         Vector3 positionToInstantiate;
         Quaternion rotationToInstantiate = Quaternion.identity;
         if (HandJointUtils.TryGetJointPose(TrackedHandJoint.Palm, Handedness.Left, out MixedRealityPose pose))
@@ -52,7 +51,6 @@ public class RecorderFunctions : MonoBehaviour
     {
         RecordingService.StopRecording();
         string inputAnimationFilePath = RecordingService.SaveInputAnimation();
-        Debug.Log($"The file path of the animation is: {inputAnimationFilePath}");
         HoloRecording newRecording = new HoloRecording(inputAnimationFilePath);
 
         HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
