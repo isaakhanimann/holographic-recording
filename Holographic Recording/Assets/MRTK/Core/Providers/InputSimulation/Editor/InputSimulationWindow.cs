@@ -36,8 +36,8 @@ namespace Microsoft.MixedReality.Toolkit.Input
             }
         }
 
-        public IMixedRealityInputRecordingService recordingService = null;
-        public IMixedRealityInputRecordingService RecordingService
+        private IMixedRealityInputRecordingService recordingService = null;
+        private IMixedRealityInputRecordingService RecordingService
         {
             get
             {
@@ -400,7 +400,7 @@ namespace Microsoft.MixedReality.Toolkit.Input
             return newRotation;
         }
 
-        public void SaveAnimation(bool loadAfterExport)
+        private void SaveAnimation(bool loadAfterExport)
         {
             string outputPath;
             if (loadedFilePath.Length > 0)

@@ -198,16 +198,12 @@ namespace Microsoft.MixedReality.Toolkit.Input
         /// <inheritdoc />
         public override void LateUpdate()
         {
-            Debug.Log("LateUpdate");
             if (IsEnabled)
             {
-                Debug.Log("IsEnabled");
                 if (IsRecording)
-                    Debug.Log("IsRecording");
                 {
                     if (UseBufferTimeLimit)
                     {
-                        Debug.Log("UseBufferTimeLimit");
                         PruneBuffer();
                     }
 
@@ -233,8 +229,6 @@ namespace Microsoft.MixedReality.Toolkit.Input
         {
             float time = Time.time;
             var profile = InputRecordingProfile;
-
-            Debug.Log("RecordKeyframe");
 
             RecordInputHandData(Handedness.Left);
             RecordInputHandData(Handedness.Right);
@@ -326,7 +320,6 @@ namespace Microsoft.MixedReality.Toolkit.Input
         private void PruneBuffer()
         {
             recordingBuffer.CutoffBeforeTime(StartTime);
-            Debug.Log("PruneBuffer");
         }
     }
 }
