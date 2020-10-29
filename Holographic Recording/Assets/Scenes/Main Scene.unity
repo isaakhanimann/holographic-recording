@@ -737,12 +737,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 221632795}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48797f7e579a0c44bb914c2a67af8151, type: 3}
+  m_Script: {fileID: 11500000, guid: d1df07deca5d2694da0b8066e4cb61ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   recordingRepresentationPrefab: {fileID: 2103202255502156003, guid: 3131fa71c06690246923ac7cbca10662,
     type: 3}
-  DebugPanel: {fileID: 8677382882715000994}
 --- !u!4 &221632797
 Transform:
   m_ObjectHideFlags: 0
@@ -6604,10 +6603,4 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 901354079316611768, guid: f514427e4d7588143a828462e0fc1321,
     type: 3}
   m_PrefabInstance: {fileID: 5842008468286464547}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &8677382882715000994 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4713962145957377099, guid: 31bd44970159e194d84bc812d62d9114,
-    type: 3}
-  m_PrefabInstance: {fileID: 4109282155797222633}
   m_PrefabAsset: {fileID: 0}

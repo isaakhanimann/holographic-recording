@@ -1,92 +1,91 @@
 ﻿using UnityEngine;
 using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit;
-using UnityEngine.UI;
-using TMPro;
+using System.Collections;
+
+
 
 public class HoloPlayerBehaviour : MonoBehaviour
-{
+{ 
 
-    private AudioSource audioSource;
+    public GameObject hands;
+
+    private GameObject instantiatedHands;
+    private Animator instantiatedHandsAnimator;
+    private float lengthOfAnimationInSeconds;
     private IMixedRealityInputSystem inputSystem;
     private InputPlaybackService animationPlayer;
 
-    public GameObject RightHand;
-    public GameObject LeftHand;
-
-    public GameObject UIManager;
-
-    UIRecorderFunctions uirecorderFunctions;
-
     void Start()
     {
-        InitializeHoloPlayer();
+        //InitializeHoloPlayer();
 
-        uirecorderFunctions = UIManager.GetComponent<UIRecorderFunctions>();
     }
 
     private void InitializeHoloPlayer()
     {
-        audioSource = GetComponent<AudioSource>();
-        if (!MixedRealityServiceRegistry.TryGetService<IMixedRealityInputSystem>(out inputSystem))
+        /*if (!MixedRealityServiceRegistry.TryGetService<IMixedRealityInputSystem>(out inputSystem))
         {
             Debug.Log("Failed to acquire the input system inside Holoplayer. It may not have been registered");
         }
-        animationPlayer = new InputPlaybackService(inputSystem);
+        animationPlayer = new InputPlaybackService(inputSystem);*/
     }
 
     public void PutHoloRecordingIntoPlayer(HoloRecording recording)
     {
-        //audioSource.clip = recording.audioClip;
-        if (animationPlayer.LoadInputAnimation(recording.pathToAnimationFile))
+        /*Debug.Log("PutHoloRecordingIntoPlayer");
+        InstantiateHandsAndSetInactive();
+        if (!animationPlayer.LoadInputAnimation(recording.pathToInputAnimation))
         {
-            uirecorderFunctions.DebugPanel.GetComponent<TextMeshPro>().text = "PutHoloRecordingIntoPlayer works!!";
-            Debug.Log("Loading Input Animation works!!");
+            throw new System.Exception("Input Animation could not be loaded");
         }
 
-        else
-        {
-            uirecorderFunctions.DebugPanel.GetComponent<TextMeshPro>().text = "PutHoloRecordingIntoPlayer doens't work!!";
-            Debug.Log("Loading Input Animation doens't work!!");
-        }
+        InputAnimation inputAnimation = animationPlayer.Animation;
+        AnimationClip animationClip = null;
+
+        // There needs to be an AnimatorOverrideController for every animation clip to be played on the object with the Animator
+        AnimatorOverrideController animatorOverrideController = new AnimatorOverrideController(instantiatedHandsAnimator.runtimeAnimatorController);
+        animatorOverrideController["Recorded"] = animationClip;
+        instantiatedHandsAnimator.runtimeAnimatorController = animatorOverrideController;
+        lengthOfAnimationInSeconds = animationClip.length;*/
+
+
     }
+
+    private void InstantiateHandsAndSetInactive()
+    {
+       /* Debug.Log("InstantiateRecordedObjectAndSetInactive");
+        Quaternion rotationToInstantiate = Quaternion.identity;
+        Vector3 positionToInstantiate = Camera.main.transform.position + 0.3f * Vector3.forward;
+        instantiatedHands = Instantiate(original: hands, position: positionToInstantiate, rotation: rotationToInstantiate);
+        instantiatedHandsAnimator = instantiatedHands.GetComponent<Animator>();
+        instantiatedHands.SetActive(false);*/
+    }
+
 
     public void Play()
     {
-        //audioSource.Play();
-        animationPlayer.Play();
-        uirecorderFunctions.DebugPanel.GetComponent<TextMeshPro>().text = animationPlayer.IsPlaying + "";
-
-        GameObject RH = Instantiate(RightHand, transform.position + new Vector3(0.125f, -0.25f, 0.5f), Quaternion.identity);
-        GameObject LH = Instantiate(LeftHand, transform.position + new Vector3(-0.125f, -0.25f, 0.5f), Quaternion.identity);
-
-        DestroyHand(RH, LH, 5);
-
-        uirecorderFunctions.DebugPanel.GetComponent<TextMeshPro>().text = "Play";
-        Debug.Log("Play" + animationPlayer);
+       /* Debug.Log("Play");
+        instantiatedHands.SetActive(true);
+        instantiatedHandsAnimator.SetTrigger("Play");
+        StartCoroutine(SetInstanceInactive());*/
     }
+
+   /* IEnumerator SetInstanceInactive()
+    {
+        yield return new WaitForSeconds(lengthOfAnimationInSeconds);
+        instantiatedHands.SetActive(false);
+
+    }*/
 
     public void Pause()
     {
-        //audioSource.Pause();
-        animationPlayer.Pause();
-    }
-
-    public void Seek(float timeToJumpToInSeconds)
-    {
-        //audioSource.time = timeToJumpToInSeconds;
-        animationPlayer.LocalTime = timeToJumpToInSeconds;
+        Debug.Log("Pause is not implemented yet");
     }
 
     public void Stop()
     {
-        //audioSource.Stop();
-        animationPlayer.Stop();
+        Debug.Log("Stop is not implemented yet");
     }
 
-    public void DestroyHand(GameObject RH, GameObject LH, float time)
-    {
-        Destroy(RH, time);
-        Destroy(LH, time);
-    }
 }

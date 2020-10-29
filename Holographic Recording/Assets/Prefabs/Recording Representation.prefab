@@ -1816,11 +1816,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 388e8a52b7f5e2c4db312d37d09b7a41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RightHand: {fileID: 5107423303928942160, guid: c1c2840a0a6df8242a6d9f365b3ed838,
-    type: 3}
-  LeftHand: {fileID: 5450600211084092669, guid: 7123f9fa562b40b48ba305c2294afa20,
-    type: 3}
-  UIManager: {fileID: 0}
+  hands: {fileID: 553757024838990270, guid: b59af25ceb7b5c248b705e26d3e1844e, type: 3}
 --- !u!82 &-3858803001370912394
 AudioSource:
   m_ObjectHideFlags: 0
