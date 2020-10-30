@@ -8,7 +8,7 @@ public class InFront : Solver
         if (SolverHandler != null && SolverHandler.TransformTarget != null)
         {
             var target = SolverHandler.TransformTarget;
-            GoalPosition = target.position + target.forward * 0.8f;
+            GoalPosition = target.position + target.forward * 0.6f;
             GoalRotation = target.rotation;
         }
     }
