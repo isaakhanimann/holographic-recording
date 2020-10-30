@@ -5,15 +5,14 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using Microsoft.MixedReality.Toolkit.Utilities;
-
-
-
+using TMPro;
 
 
 public class HoloPlayerBehaviour : MonoBehaviour
 { 
 
     public GameObject hands;
+    public GameObject debugLogsObject;
 
     private GameObject instantiatedHands;
     private Animator instantiatedHandsAnimator;
@@ -35,10 +34,11 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     public void PutHoloRecordingIntoPlayer(HoloRecording recording)
     {
+        debugLogsObject.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
         InstantiateHandsAndSetInactive();
         if (!PlaybackService.LoadInputAnimation(recording.pathToInputAnimation))
         {
-            throw new System.Exception("Input Animation could not be loaded");
+            debugLogsObject.GetComponent<TextMeshPro>().text += "Input Animation could not be loaded" + System.Environment.NewLine;
         }
 
         InputAnimation inputAnimation = PlaybackService.Animation;
@@ -63,6 +63,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     public void Play()
     {
+        debugLogsObject.GetComponent<TextMeshPro>().text += "Play" + System.Environment.NewLine;
         instantiatedHands.SetActive(true);
         instantiatedHandsAnimator.SetTrigger("Play");
         StartCoroutine(SetInstanceInactive());
@@ -77,7 +78,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
 
 
-    public AnimationClip CreateAnimationClip(InputAnimation inputAnimation)
+    private AnimationClip CreateAnimationClip(InputAnimation inputAnimation)
     {
         AnimationClip outputClip = new AnimationClip();
         GenerateData(inputAnimation, Handedness.Left, ref outputClip);
