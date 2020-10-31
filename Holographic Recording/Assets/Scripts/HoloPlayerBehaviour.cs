@@ -1,11 +1,9 @@
 ﻿using UnityEngine;
-using Microsoft.MixedReality.Toolkit.Input;
-using Microsoft.MixedReality.Toolkit;
 using System.Collections;
 using System;
 using System.Collections.Generic;
-using Microsoft.MixedReality.Toolkit.Utilities;
 using TMPro;
+using System.IO;
 
 
 public class HoloPlayerBehaviour : MonoBehaviour
@@ -18,43 +16,26 @@ public class HoloPlayerBehaviour : MonoBehaviour
     private Animator instantiatedHandsAnimator;
     private float lengthOfAnimationInSeconds;
 
-    private IMixedRealityInputPlaybackService inputPlaybackService = null;
-    public IMixedRealityInputPlaybackService PlaybackService
-    {
-        get
-        {
-            if (inputPlaybackService == null)
-            {
-                inputPlaybackService = CoreServices.GetInputSystemDataProvider<IMixedRealityInputPlaybackService>();
-            }
-
-            return inputPlaybackService;
-        }
-    }
-
+    
     public void PutHoloRecordingIntoPlayer(HoloRecording recording)
     {
         debugLogsObject.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
         InstantiateHandsAndSetInactive();
-        if (!PlaybackService.LoadInputAnimation(recording.pathToInputAnimation))
-        {
-            debugLogsObject.GetComponent<TextMeshPro>().text += "Input Animation could not be loaded" + System.Environment.NewLine;
-        }
-
-        InputAnimation inputAnimation = PlaybackService.Animation;
-        AnimationClip animationClip = CreateAnimationClip(inputAnimation);
 
         // There needs to be an AnimatorOverrideController for every animation clip to be played on the object with the Animator
         AnimatorOverrideController animatorOverrideController = new AnimatorOverrideController(instantiatedHandsAnimator.runtimeAnimatorController);
+        AnimationClip animationClip = GetAnimationClipFromPath(recording.pathToAnimationClip);
+        debugLogsObject.GetComponent<TextMeshPro>().text += "AnimationClip was loaded" + System.Environment.NewLine;
+
         animatorOverrideController["Recorded"] = animationClip;
         instantiatedHandsAnimator.runtimeAnimatorController = animatorOverrideController;
-        lengthOfAnimationInSeconds = animationClip.length;
     }
 
     private void InstantiateHandsAndSetInactive()
     {
+        debugLogsObject.GetComponent<TextMeshPro>().text += "InstantiateHandsAndSetInactive" + System.Environment.NewLine;
         Quaternion rotationToInstantiate = Quaternion.identity;
-        Vector3 positionToInstantiate = Camera.main.transform.position + 0.3f * Vector3.forward;
+        Vector3 positionToInstantiate = Camera.main.transform.position + 0.3f * Camera.main.transform.forward;
         instantiatedHands = Instantiate(original: hands, position: positionToInstantiate, rotation: rotationToInstantiate);
         instantiatedHandsAnimator = instantiatedHands.GetComponent<Animator>();
         instantiatedHands.SetActive(false);
@@ -71,81 +52,51 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     IEnumerator SetInstanceInactive()
     {
+        debugLogsObject.GetComponent<TextMeshPro>().text += "SetInstanceInactive coroutine was called" + System.Environment.NewLine;
         yield return new WaitForSeconds(lengthOfAnimationInSeconds);
         instantiatedHands.SetActive(false);
-
     }
 
 
-
-    private AnimationClip CreateAnimationClip(InputAnimation inputAnimation)
+    private AnimationClip GetAnimationClipFromPath(string path)
     {
-        AnimationClip outputClip = new AnimationClip();
-        GenerateData(inputAnimation, Handedness.Left, ref outputClip);
-        GenerateData(inputAnimation, Handedness.Right, ref outputClip);
-        return outputClip;
+        string keyframesAsJson = File.ReadAllText(path);
+        AllKeyFrames allKeyFrames = JsonUtility.FromJson<AllKeyFrames>(keyframesAsJson);
+        return GetAnimationClipFromRecordedKeyframes(allKeyFrames);
     }
 
-    private void GenerateData(InputAnimation inputAnimation, Handedness hand, ref AnimationClip animationClip)
-    {
-        Dictionary<string, TrackedHandJoint> joints = GenerateJointDict(hand);
 
-        foreach (KeyValuePair<string, TrackedHandJoint> entry in joints)
+    private AnimationClip GetAnimationClipFromRecordedKeyframes(AllKeyFrames allKeyFrames)
+    {
+        List<Keyframe> keyframesX = GetKeyframes(allKeyFrames.palmPoses.keyframesPositionX);
+        List<Keyframe> keyframesY = GetKeyframes(allKeyFrames.palmPoses.keyframesPositionY);
+        List<Keyframe> keyframesZ = GetKeyframes(allKeyFrames.palmPoses.keyframesPositionZ);
+        debugLogsObject.GetComponent<TextMeshPro>().text += "keyframesX Count = " + keyframesX.Count + System.Environment.NewLine;
+
+        lengthOfAnimationInSeconds = keyframesX[keyframesX.Count-1].time;
+        debugLogsObject.GetComponent<TextMeshPro>().text += "lengthOfAnimationInSeconds = " + lengthOfAnimationInSeconds + System.Environment.NewLine;
+
+        AnimationCurve translateX = new AnimationCurve(keyframesX.ToArray());
+        AnimationCurve translateY = new AnimationCurve(keyframesY.ToArray());
+        AnimationCurve translateZ = new AnimationCurve(keyframesZ.ToArray());
+        AnimationClip newClip = new AnimationClip();
+        string pathToPalm = "";
+        newClip.SetCurve(pathToPalm, typeof(Transform), "localPosition.x", translateX);
+        newClip.SetCurve(pathToPalm, typeof(Transform), "localPosition.y", translateY);
+        newClip.SetCurve(pathToPalm, typeof(Transform), "localPosition.z", translateZ);
+        return newClip;
+    }
+
+    private List<Keyframe> GetKeyframes(List<SerializableKeyframe> serializableKeyframes)
+    {
+        List<Keyframe> keyframes = new List<Keyframe>();
+        for (int index = 0; index < serializableKeyframes.Count; index++)
         {
-            string jointPath = entry.Key;
-            TrackedHandJoint joint = GeneratePath(jointPath, hand);
-
-            InputAnimation.PoseCurves poseCurves = new InputAnimation.PoseCurves();
-            inputAnimation.TryGetHandJointCurves(hand, joint, out poseCurves);
-
-            animationClip.SetCurve(jointPath, typeof(Transform), "position.x", poseCurves.PositionX);
-            animationClip.SetCurve(jointPath, typeof(Transform), "position.y", poseCurves.PositionY);
-            animationClip.SetCurve(jointPath, typeof(Transform), "position.z", poseCurves.PositionZ);
-            animationClip.SetCurve(jointPath, typeof(Transform), "rotation.x", poseCurves.RotationX);
-            animationClip.SetCurve(jointPath, typeof(Transform), "rotation.y", poseCurves.RotationY);
-            animationClip.SetCurve(jointPath, typeof(Transform), "rotation.z", poseCurves.RotationZ);
-            animationClip.SetCurve(jointPath, typeof(Transform), "rotation.w", poseCurves.RotationW);
+            SerializableKeyframe serializableKeyframe = serializableKeyframes[index];
+            keyframes.Add(new Keyframe(serializableKeyframe.time, serializableKeyframe.value));
         }
-    }
 
-    private TrackedHandJoint GeneratePath(string path, Handedness hand)
-    {
-        Dictionary<string, TrackedHandJoint> joints = GenerateJointDict(hand);
-        return joints[path];
-    }
-
-    private Dictionary<string, TrackedHandJoint> GenerateJointDict(Handedness hand)
-    {
-        string h = "L";
-        if (hand == Handedness.Right)
-        {
-            h = "R";
-        }
-        Dictionary<string, TrackedHandJoint> joints = new Dictionary<string, TrackedHandJoint>()
-        {
-            { String.Format("HandRig_{0}/Main{0}_JNT", h), TrackedHandJoint.Palm },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT", h), TrackedHandJoint.Wrist },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Middle{0}_JNT", h), TrackedHandJoint.MiddleMetacarpal },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Middle{0}_JNT/Middle{0}_JNT1", h), TrackedHandJoint.MiddleKnuckle  },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Middle{0}_JNT/Middle{0}_JNT1/Middel{0}_JNT2", h), TrackedHandJoint.MiddleMiddleJoint },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Middle{0}_JNT/Middle{0}_JNT1/Middel{0}_JNT2/Middle{0}_JNT3", h), TrackedHandJoint.MiddleTip },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Pinky{0}_JNT", h), TrackedHandJoint.PinkyMetacarpal },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Pinky{0}_JNT/Pinky{0}_JNT1", h), TrackedHandJoint.PinkyKnuckle  },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Pinky{0}_JNT/Pinky{0}_JNT1/Pinky{0}_JNT2", h), TrackedHandJoint.PinkyMiddleJoint },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Pinky{0}_JNT/Pinky{0}_JNT1/Pinky{0}_JNT2/Pinky{0}_JNT3", h), TrackedHandJoint.PinkyTip },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Point{0}_JNT", h), TrackedHandJoint.IndexMetacarpal },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Point{0}_JNT/Point{0}_JNT1", h), TrackedHandJoint.IndexKnuckle },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Point{0}_JNT/Point{0}_JNT1/Point{0}_JNT2", h), TrackedHandJoint.IndexMiddleJoint },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Point{0}_JNT/Point{0}_JNT1/Point{0}_JNT2/Point{0}_JNT3", h), TrackedHandJoint.IndexTip },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Ring{0}_JNT", h), TrackedHandJoint.RingMetacarpal },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Ring{0}_JNT/Ring{0}_JNT1", h), TrackedHandJoint.RingKnuckle  },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Ring{0}_JNT/Ring{0}_JNT1/Ring{0}_JNT2", h), TrackedHandJoint.RingMiddleJoint },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Ring{0}_JNT/Ring{0}_JNT1/Ring{0}_JNT2/Ring{0}_JNT3", h), TrackedHandJoint.RingTip },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Thumb{0}_JNT1", h), TrackedHandJoint.ThumbMetacarpalJoint },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Thumb{0}_JNT1/Thumb{0}_JNT2", h), TrackedHandJoint.ThumbProximalJoint },
-            { String.Format("HandRig_{0}/Main{0}_JNT/Wrist{0}_JNT/Thumb{0}_JNT1/Thumb{0}_JNT2/Thumb{0}_JNT3", h), TrackedHandJoint.ThumbTip }
-        };
-        return joints;
+        return keyframes;
     }
 
 
