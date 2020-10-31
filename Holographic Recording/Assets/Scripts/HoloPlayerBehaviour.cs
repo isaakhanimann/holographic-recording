@@ -13,7 +13,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public GameObject debugLogsObject;
 
     private GameObject instantiatedHands;
-    private Animator instantiatedHandsAnimator;
+    private Animation instantiatedHandsAnimation;
     private float lengthOfAnimationInSeconds;
 
     
@@ -22,13 +22,9 @@ public class HoloPlayerBehaviour : MonoBehaviour
         debugLogsObject.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
         InstantiateHandsAndSetInactive();
 
-        // There needs to be an AnimatorOverrideController for every animation clip to be played on the object with the Animator
-        AnimatorOverrideController animatorOverrideController = new AnimatorOverrideController(instantiatedHandsAnimator.runtimeAnimatorController);
         AnimationClip animationClip = GetAnimationClipFromPath(recording.pathToAnimationClip);
         debugLogsObject.GetComponent<TextMeshPro>().text += "AnimationClip was loaded" + System.Environment.NewLine;
-
-        animatorOverrideController["Recorded"] = animationClip;
-        instantiatedHandsAnimator.runtimeAnimatorController = animatorOverrideController;
+        instantiatedHandsAnimation.AddClip(animationClip, "test");
     }
 
     private void InstantiateHandsAndSetInactive()
@@ -37,7 +33,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         Quaternion rotationToInstantiate = Quaternion.identity;
         Vector3 positionToInstantiate = Camera.main.transform.position + 0.3f * Camera.main.transform.forward;
         instantiatedHands = Instantiate(original: hands, position: positionToInstantiate, rotation: rotationToInstantiate);
-        instantiatedHandsAnimator = instantiatedHands.GetComponent<Animator>();
+        instantiatedHandsAnimation = instantiatedHands.GetComponent<Animation>();
         instantiatedHands.SetActive(false);
     }
 
@@ -46,7 +42,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     {
         debugLogsObject.GetComponent<TextMeshPro>().text += "Play" + System.Environment.NewLine;
         instantiatedHands.SetActive(true);
-        instantiatedHandsAnimator.SetTrigger("Play");
+        instantiatedHandsAnimation.Play("test");
         StartCoroutine(SetInstanceInactive());
     }
 
@@ -80,6 +76,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         AnimationCurve translateY = new AnimationCurve(keyframesY.ToArray());
         AnimationCurve translateZ = new AnimationCurve(keyframesZ.ToArray());
         AnimationClip newClip = new AnimationClip();
+        newClip.legacy = true;
         string pathToPalm = "";
         newClip.SetCurve(pathToPalm, typeof(Transform), "localPosition.x", translateX);
         newClip.SetCurve(pathToPalm, typeof(Transform), "localPosition.y", translateY);
