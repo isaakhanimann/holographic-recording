@@ -67,20 +67,28 @@ public class HoloPlayerBehaviour : MonoBehaviour
         List<Keyframe> keyframesX = GetKeyframes(allKeyFrames.palmPoses.keyframesPositionX);
         List<Keyframe> keyframesY = GetKeyframes(allKeyFrames.palmPoses.keyframesPositionY);
         List<Keyframe> keyframesZ = GetKeyframes(allKeyFrames.palmPoses.keyframesPositionZ);
-        debugLogsObject.GetComponent<TextMeshPro>().text += "keyframesX Count = " + keyframesX.Count + System.Environment.NewLine;
+        List<Keyframe> keyframesRotationX = GetKeyframes(allKeyFrames.palmPoses.keyframesRotationX);
+        List<Keyframe> keyframesRotationY = GetKeyframes(allKeyFrames.palmPoses.keyframesRotationY);
+        List<Keyframe> keyframesRotationZ = GetKeyframes(allKeyFrames.palmPoses.keyframesRotationZ);
 
         lengthOfAnimationInSeconds = keyframesX[keyframesX.Count-1].time;
-        debugLogsObject.GetComponent<TextMeshPro>().text += "lengthOfAnimationInSeconds = " + lengthOfAnimationInSeconds + System.Environment.NewLine;
 
         AnimationCurve translateX = new AnimationCurve(keyframesX.ToArray());
         AnimationCurve translateY = new AnimationCurve(keyframesY.ToArray());
         AnimationCurve translateZ = new AnimationCurve(keyframesZ.ToArray());
+        AnimationCurve rotateX = new AnimationCurve(keyframesRotationX.ToArray());
+        AnimationCurve rotateY = new AnimationCurve(keyframesRotationY.ToArray());
+        AnimationCurve rotateZ = new AnimationCurve(keyframesRotationZ.ToArray());
+
         AnimationClip newClip = new AnimationClip();
         newClip.legacy = true;
         string pathToPalm = "";
         newClip.SetCurve(pathToPalm, typeof(Transform), "localPosition.x", translateX);
         newClip.SetCurve(pathToPalm, typeof(Transform), "localPosition.y", translateY);
         newClip.SetCurve(pathToPalm, typeof(Transform), "localPosition.z", translateZ);
+        newClip.SetCurve(pathToPalm, typeof(Transform), "localRotation.x", rotateX);
+        newClip.SetCurve(pathToPalm, typeof(Transform), "localRotation.y", rotateY);
+        newClip.SetCurve(pathToPalm, typeof(Transform), "localRotation.z", rotateZ);
         return newClip;
     }
 

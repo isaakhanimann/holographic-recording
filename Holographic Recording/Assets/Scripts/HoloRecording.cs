@@ -33,12 +33,19 @@ public class PoseKeyframeLists
     public List<SerializableKeyframe> keyframesPositionX;
     public List<SerializableKeyframe> keyframesPositionY;
     public List<SerializableKeyframe> keyframesPositionZ;
+    public List<SerializableKeyframe> keyframesRotationX;
+    public List<SerializableKeyframe> keyframesRotationY;
+    public List<SerializableKeyframe> keyframesRotationZ;
 
-    public PoseKeyframeLists(List<SerializableKeyframe> keyframesPositionX, List<SerializableKeyframe> keyframesPositionY, List<SerializableKeyframe> keyframesPositionZ)
+
+    public PoseKeyframeLists(List<SerializableKeyframe> keyframesPositionX, List<SerializableKeyframe> keyframesPositionY, List<SerializableKeyframe> keyframesPositionZ, List<SerializableKeyframe> keyframesRotationX, List<SerializableKeyframe> keyframesRotationY, List<SerializableKeyframe> keyframesRotationZ)
     {
         this.keyframesPositionX = keyframesPositionX;
         this.keyframesPositionY = keyframesPositionY;
         this.keyframesPositionZ = keyframesPositionZ;
+        this.keyframesRotationX = keyframesRotationX;
+        this.keyframesRotationY = keyframesRotationY;
+        this.keyframesRotationZ = keyframesRotationZ;
     }
 }
 
