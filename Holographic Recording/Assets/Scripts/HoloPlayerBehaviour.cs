@@ -31,7 +31,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     {
         debugLogsObject.GetComponent<TextMeshPro>().text += "InstantiateHandsAndSetInactive" + System.Environment.NewLine;
         Quaternion rotationToInstantiate = Quaternion.identity;
-        Vector3 positionToInstantiate = Camera.main.transform.position + 0.3f * Camera.main.transform.forward;
+        Vector3 positionToInstantiate = Vector3.zero;
         instantiatedHands = Instantiate(original: hands, position: positionToInstantiate, rotation: rotationToInstantiate);
         instantiatedHandsAnimation = instantiatedHands.GetComponent<Animation>();
         instantiatedHands.SetActive(false);
@@ -64,31 +64,53 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     private AnimationClip GetAnimationClipFromRecordedKeyframes(AllKeyFrames allKeyFrames)
     {
-        List<Keyframe> keyframesX = GetKeyframes(allKeyFrames.palmPoses.keyframesPositionX);
-        List<Keyframe> keyframesY = GetKeyframes(allKeyFrames.palmPoses.keyframesPositionY);
-        List<Keyframe> keyframesZ = GetKeyframes(allKeyFrames.palmPoses.keyframesPositionZ);
-        List<Keyframe> keyframesRotationX = GetKeyframes(allKeyFrames.palmPoses.keyframesRotationX);
-        List<Keyframe> keyframesRotationY = GetKeyframes(allKeyFrames.palmPoses.keyframesRotationY);
-        List<Keyframe> keyframesRotationZ = GetKeyframes(allKeyFrames.palmPoses.keyframesRotationZ);
+        List<Keyframe> leftKeyframesX = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesPositionX);
+        List<Keyframe> leftKeyframesY = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesPositionY);
+        List<Keyframe> leftKeyframesZ = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesPositionZ);
+        List<Keyframe> leftKeyframesRotationX = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationX);
+        List<Keyframe> leftKeyframesRotationY = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationY);
+        List<Keyframe> leftKeyframesRotationZ = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationZ);
 
-        lengthOfAnimationInSeconds = keyframesX[keyframesX.Count-1].time;
+        AnimationCurve leftTranslateX = new AnimationCurve(leftKeyframesX.ToArray());
+        AnimationCurve leftTranslateY = new AnimationCurve(leftKeyframesY.ToArray());
+        AnimationCurve leftTranslateZ = new AnimationCurve(leftKeyframesZ.ToArray());
+        AnimationCurve leftRotateX = new AnimationCurve(leftKeyframesRotationX.ToArray());
+        AnimationCurve leftRotateY = new AnimationCurve(leftKeyframesRotationY.ToArray());
+        AnimationCurve leftRotateZ = new AnimationCurve(leftKeyframesRotationZ.ToArray());
 
-        AnimationCurve translateX = new AnimationCurve(keyframesX.ToArray());
-        AnimationCurve translateY = new AnimationCurve(keyframesY.ToArray());
-        AnimationCurve translateZ = new AnimationCurve(keyframesZ.ToArray());
-        AnimationCurve rotateX = new AnimationCurve(keyframesRotationX.ToArray());
-        AnimationCurve rotateY = new AnimationCurve(keyframesRotationY.ToArray());
-        AnimationCurve rotateZ = new AnimationCurve(keyframesRotationZ.ToArray());
+        List<Keyframe> rightKeyframesX = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesPositionX);
+        List<Keyframe> rightKeyframesY = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesPositionY);
+        List<Keyframe> rightKeyframesZ = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesPositionZ);
+        List<Keyframe> rightKeyframesRotationX = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationX);
+        List<Keyframe> rightKeyframesRotationY = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationY);
+        List<Keyframe> rightKeyframesRotationZ = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationZ);
+
+        AnimationCurve rightTranslateX = new AnimationCurve(rightKeyframesX.ToArray());
+        AnimationCurve rightTranslateY = new AnimationCurve(rightKeyframesY.ToArray());
+        AnimationCurve rightTranslateZ = new AnimationCurve(rightKeyframesZ.ToArray());
+        AnimationCurve rightRotateX = new AnimationCurve(rightKeyframesRotationX.ToArray());
+        AnimationCurve rightRotateY = new AnimationCurve(rightKeyframesRotationY.ToArray());
+        AnimationCurve rightRotateZ = new AnimationCurve(rightKeyframesRotationZ.ToArray());
+
+        lengthOfAnimationInSeconds = leftKeyframesX[leftKeyframesX.Count - 1].time;
 
         AnimationClip newClip = new AnimationClip();
         newClip.legacy = true;
-        string pathToPalm = "";
-        newClip.SetCurve(pathToPalm, typeof(Transform), "localPosition.x", translateX);
-        newClip.SetCurve(pathToPalm, typeof(Transform), "localPosition.y", translateY);
-        newClip.SetCurve(pathToPalm, typeof(Transform), "localPosition.z", translateZ);
-        newClip.SetCurve(pathToPalm, typeof(Transform), "localRotation.x", rotateX);
-        newClip.SetCurve(pathToPalm, typeof(Transform), "localRotation.y", rotateY);
-        newClip.SetCurve(pathToPalm, typeof(Transform), "localRotation.z", rotateZ);
+        string pathToLeftPalm = "HandRig_L";
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localPosition.x", leftTranslateX);
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localPosition.y", leftTranslateY);
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localPosition.z", leftTranslateZ);
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.x", leftRotateX);
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.y", leftRotateY);
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.z", leftRotateZ);
+
+        string pathToRightPalm = "HandRig_R";
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localPosition.x", rightTranslateX);
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localPosition.y", rightTranslateY);
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localPosition.z", rightTranslateZ);
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.x", rightRotateX);
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.y", rightRotateY);
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.z", rightRotateZ);
         return newClip;
     }
 

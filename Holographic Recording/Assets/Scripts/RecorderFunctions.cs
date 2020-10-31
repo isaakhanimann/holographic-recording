@@ -88,8 +88,9 @@ public class RecorderFunctions : MonoBehaviour
     private string SaveKeyframes(string filename)
     {
         string path = Application.persistentDataPath + $"/{filename}.txt";
-        PoseKeyframeLists palmPoses = new PoseKeyframeLists(palmKeyframesX, palmKeyframesY, palmKeyframesZ, palmKeyframesRotationX, palmKeyframesRotationY, palmKeyframesRotationZ);
-        AllKeyFrames allKeyFrames = new AllKeyFrames(palmPoses);
+        PoseKeyframeLists leftPalmPoses = new PoseKeyframeLists(leftPalmKeyframesX, leftPalmKeyframesY, leftPalmKeyframesZ, leftPalmKeyframesRotationX, leftPalmKeyframesRotationY, leftPalmKeyframesRotationZ);
+        PoseKeyframeLists rightPalmPoses = new PoseKeyframeLists(rightPalmKeyframesX, rightPalmKeyframesY, rightPalmKeyframesZ, rightPalmKeyframesRotationX, rightPalmKeyframesRotationY, rightPalmKeyframesRotationZ);
+        AllKeyFrames allKeyFrames = new AllKeyFrames(leftPalmPoses, rightPalmPoses);
         string keyframesAsJson = JsonUtility.ToJson(allKeyFrames, true);
         File.WriteAllText(path, keyframesAsJson);
         return path;
@@ -112,38 +113,61 @@ public class RecorderFunctions : MonoBehaviour
     }
 
     private float timeOfLastUpdate = 0.0f;
-    private List<SerializableKeyframe> palmKeyframesX = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> palmKeyframesY = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> palmKeyframesZ = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> palmKeyframesRotationX = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> palmKeyframesRotationY = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> palmKeyframesRotationZ = new List<SerializableKeyframe>();
+    private List<SerializableKeyframe> leftPalmKeyframesX = new List<SerializableKeyframe>();
+    private List<SerializableKeyframe> leftPalmKeyframesY = new List<SerializableKeyframe>();
+    private List<SerializableKeyframe> leftPalmKeyframesZ = new List<SerializableKeyframe>();
+    private List<SerializableKeyframe> leftPalmKeyframesRotationX = new List<SerializableKeyframe>();
+    private List<SerializableKeyframe> leftPalmKeyframesRotationY = new List<SerializableKeyframe>();
+    private List<SerializableKeyframe> leftPalmKeyframesRotationZ = new List<SerializableKeyframe>();
+
+    private List<SerializableKeyframe> rightPalmKeyframesX = new List<SerializableKeyframe>();
+    private List<SerializableKeyframe> rightPalmKeyframesY = new List<SerializableKeyframe>();
+    private List<SerializableKeyframe> rightPalmKeyframesZ = new List<SerializableKeyframe>();
+    private List<SerializableKeyframe> rightPalmKeyframesRotationX = new List<SerializableKeyframe>();
+    private List<SerializableKeyframe> rightPalmKeyframesRotationY = new List<SerializableKeyframe>();
+    private List<SerializableKeyframe> rightPalmKeyframesRotationZ = new List<SerializableKeyframe>();
 
 
 
     private void CaptureKeyFrames()
     {
         float timeOfKeyFrame = timeOfLastUpdate + Time.deltaTime;
+
         Transform leftPalmTransform = handJointService.RequestJointTransform(TrackedHandJoint.Palm, Handedness.Left);
-        SerializableKeyframe palmKeyX = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localPosition.x);
-        SerializableKeyframe palmKeyY = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localPosition.y);
-        SerializableKeyframe palmKeyZ = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localPosition.z);
-        SerializableKeyframe palmKeyRotationX = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localRotation.x);
-        SerializableKeyframe palmKeyRotationY = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localRotation.y);
-        SerializableKeyframe palmKeyRotationZ = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localRotation.z);
-        palmKeyframesX.Add(palmKeyX);
-        palmKeyframesY.Add(palmKeyY);
-        palmKeyframesZ.Add(palmKeyZ);
-        palmKeyframesRotationX.Add(palmKeyRotationX);
-        palmKeyframesRotationY.Add(palmKeyRotationY);
-        palmKeyframesRotationZ.Add(palmKeyRotationZ);
+        SerializableKeyframe leftPalmKeyX = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localPosition.x);
+        SerializableKeyframe leftPalmKeyY = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localPosition.y);
+        SerializableKeyframe leftPalmKeyZ = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localPosition.z);
+        SerializableKeyframe leftPalmKeyRotationX = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localRotation.x);
+        SerializableKeyframe leftPalmKeyRotationY = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localRotation.y);
+        SerializableKeyframe leftPalmKeyRotationZ = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localRotation.z);
+        leftPalmKeyframesX.Add(leftPalmKeyX);
+        leftPalmKeyframesY.Add(leftPalmKeyY);
+        leftPalmKeyframesZ.Add(leftPalmKeyZ);
+        leftPalmKeyframesRotationX.Add(leftPalmKeyRotationX);
+        leftPalmKeyframesRotationY.Add(leftPalmKeyRotationY);
+        leftPalmKeyframesRotationZ.Add(leftPalmKeyRotationZ);
+
+        Transform rightPalmTransform = handJointService.RequestJointTransform(TrackedHandJoint.Palm, Handedness.Right);
+        SerializableKeyframe rightPalmKeyX = new SerializableKeyframe(timeOfKeyFrame, rightPalmTransform.localPosition.x);
+        SerializableKeyframe rightPalmKeyY = new SerializableKeyframe(timeOfKeyFrame, rightPalmTransform.localPosition.y);
+        SerializableKeyframe rightPalmKeyZ = new SerializableKeyframe(timeOfKeyFrame, rightPalmTransform.localPosition.z);
+        SerializableKeyframe rightPalmKeyRotationX = new SerializableKeyframe(timeOfKeyFrame, rightPalmTransform.localRotation.x);
+        SerializableKeyframe rightPalmKeyRotationY = new SerializableKeyframe(timeOfKeyFrame, rightPalmTransform.localRotation.y);
+        SerializableKeyframe rightPalmKeyRotationZ = new SerializableKeyframe(timeOfKeyFrame, rightPalmTransform.localRotation.z);
+        rightPalmKeyframesX.Add(rightPalmKeyX);
+        rightPalmKeyframesY.Add(rightPalmKeyY);
+        rightPalmKeyframesZ.Add(rightPalmKeyZ);
+        rightPalmKeyframesRotationX.Add(rightPalmKeyRotationX);
+        rightPalmKeyframesRotationY.Add(rightPalmKeyRotationY);
+        rightPalmKeyframesRotationZ.Add(rightPalmKeyRotationZ);
+
         timeOfLastUpdate += Time.deltaTime;
     }
 
 
     private void ResetRecorder()
     {
-        palmKeyframesX = new List<SerializableKeyframe>();
+        leftPalmKeyframesX = new List<SerializableKeyframe>();
         timeOfLastUpdate = 0.0f;
     }
 

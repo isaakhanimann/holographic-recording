@@ -19,11 +19,13 @@ public struct HoloRecording
 [System.Serializable]
 public class AllKeyFrames
 {
-    public PoseKeyframeLists palmPoses;
+    public PoseKeyframeLists leftPalmPoses;
+    public PoseKeyframeLists rightPalmPoses;
 
-    public AllKeyFrames(PoseKeyframeLists palmPoses)
+    public AllKeyFrames(PoseKeyframeLists leftPalmPoses, PoseKeyframeLists rightPalmPoses)
     {
-        this.palmPoses = palmPoses;
+        this.leftPalmPoses = leftPalmPoses;
+        this.rightPalmPoses = rightPalmPoses;
     }
 }
 
