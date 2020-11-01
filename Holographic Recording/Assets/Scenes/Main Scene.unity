@@ -501,8 +501,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2367773768374729666}
   - component: {fileID: 1316851334345963617}
-  - component: {fileID: 1316851334345963616}
   - component: {fileID: 1316851334345963618}
+  - component: {fileID: 1316851334345963616}
   m_Layer: 0
   m_Name: Timer
   m_TagString: Untagged
@@ -519,16 +519,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 1316851334345963615}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f98c97ecd77482f4381fadfeb39cd419, type: 3}
+  m_Script: {fileID: 11500000, guid: 4684083f6dff4a1d8a790bccc354fcf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   updateLinkedTransform: 0
-  moveLerpTime: 0
-  rotateLerpTime: 0
+  moveLerpTime: 0.1
+  rotateLerpTime: 0.1
   scaleLerpTime: 0
   maintainScale: 1
   smoothing: 1
   lifetime: 0
+  referenceDirection: 1
+  minDistance: 0.6
+  maxDistance: 1
+  minViewDegrees: 0
+  maxViewDegrees: 30
+  aspectV: 1
+  ignoreAngleClamp: 0
+  ignoreDistanceClamp: 0
+  useFixedVerticalPosition: 0
+  fixedVerticalPosition: -0.4
+  orientToReferenceDirection: 0
 --- !u!114 &1316851334345963617
 MonoBehaviour:
   m_ObjectHideFlags: 0

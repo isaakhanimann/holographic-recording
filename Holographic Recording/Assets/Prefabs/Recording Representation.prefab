@@ -5276,6 +5276,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Debug Panel
       objectReference: {fileID: 0}
+    - target: {fileID: 251672353265425256, guid: f88dd6b35fa6c35468f1ff8ca2bf9678,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3595137290011810037, guid: f88dd6b35fa6c35468f1ff8ca2bf9678,
         type: 3}
       propertyPath: m_LocalPosition.x
