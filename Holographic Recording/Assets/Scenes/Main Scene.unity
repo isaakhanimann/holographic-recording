@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 942676c65c72a9e48adb957bd857c5dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isHandMeshVisible: 0
+  isHandMeshVisible: 1
   isHandJointVisible: 0
 --- !u!1 &301268644
 GameObject:
@@ -210,7 +210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83d9acc7968244a8886f3af591305bcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activeProfile: {fileID: 11400000, guid: 516c8c7cdb7005842ad1b414d79e7344, type: 2}
+  activeProfile: {fileID: 11400000, guid: a6dc530c212a24044868da0898c17c0d, type: 2}
 --- !u!4 &301268646
 Transform:
   m_ObjectHideFlags: 0
