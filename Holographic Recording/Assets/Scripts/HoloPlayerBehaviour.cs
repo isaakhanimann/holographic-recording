@@ -70,6 +70,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         List<Keyframe> leftKeyframesRotationX = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationX);
         List<Keyframe> leftKeyframesRotationY = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationY);
         List<Keyframe> leftKeyframesRotationZ = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationZ);
+        List<Keyframe> leftKeyframesRotationW = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationW);
 
         AnimationCurve leftTranslateX = new AnimationCurve(leftKeyframesX.ToArray());
         AnimationCurve leftTranslateY = new AnimationCurve(leftKeyframesY.ToArray());
@@ -77,6 +78,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         AnimationCurve leftRotateX = new AnimationCurve(leftKeyframesRotationX.ToArray());
         AnimationCurve leftRotateY = new AnimationCurve(leftKeyframesRotationY.ToArray());
         AnimationCurve leftRotateZ = new AnimationCurve(leftKeyframesRotationZ.ToArray());
+        AnimationCurve leftRotateW = new AnimationCurve(leftKeyframesRotationW.ToArray());
 
         List<Keyframe> rightKeyframesX = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesPositionX);
         List<Keyframe> rightKeyframesY = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesPositionY);
@@ -84,6 +86,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         List<Keyframe> rightKeyframesRotationX = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationX);
         List<Keyframe> rightKeyframesRotationY = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationY);
         List<Keyframe> rightKeyframesRotationZ = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationZ);
+        List<Keyframe> rightKeyframesRotationW = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationW);
 
         AnimationCurve rightTranslateX = new AnimationCurve(rightKeyframesX.ToArray());
         AnimationCurve rightTranslateY = new AnimationCurve(rightKeyframesY.ToArray());
@@ -91,6 +94,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         AnimationCurve rightRotateX = new AnimationCurve(rightKeyframesRotationX.ToArray());
         AnimationCurve rightRotateY = new AnimationCurve(rightKeyframesRotationY.ToArray());
         AnimationCurve rightRotateZ = new AnimationCurve(rightKeyframesRotationZ.ToArray());
+        AnimationCurve rightRotateW = new AnimationCurve(rightKeyframesRotationW.ToArray());
 
         lengthOfAnimationInSeconds = leftKeyframesX[leftKeyframesX.Count - 1].time;
 
@@ -103,6 +107,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.x", leftRotateX);
         newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.y", leftRotateY);
         newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.z", leftRotateZ);
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.w", leftRotateW);
 
         string pathToRightPalm = "HandRig_R";
         newClip.SetCurve(pathToRightPalm, typeof(Transform), "localPosition.x", rightTranslateX);
@@ -111,6 +116,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.x", rightRotateX);
         newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.y", rightRotateY);
         newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.z", rightRotateZ);
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.w", rightRotateW);
         return newClip;
     }
 
