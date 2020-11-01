@@ -88,10 +88,8 @@ public class RecorderFunctions : MonoBehaviour
     private string SaveKeyframes(string filename)
     {
         string path = Application.persistentDataPath + $"/{filename}.txt";
-        PoseKeyframeLists leftPalmPoses = new PoseKeyframeLists(leftPalmKeyframesX, leftPalmKeyframesY, leftPalmKeyframesZ, leftPalmKeyframesRotationX, leftPalmKeyframesRotationY, leftPalmKeyframesRotationZ, leftPalmKeyframesRotationW);
-        PoseKeyframeLists rightPalmPoses = new PoseKeyframeLists(rightPalmKeyframesX, rightPalmKeyframesY, rightPalmKeyframesZ, rightPalmKeyframesRotationX, rightPalmKeyframesRotationY, rightPalmKeyframesRotationZ, rightPalmKeyframesRotationW);
-        AllKeyFrames allKeyFrames = new AllKeyFrames(leftPalmPoses, rightPalmPoses);
-        string keyframesAsJson = JsonUtility.ToJson(allKeyFrames, true);
+        SerializableSnapshots serializable = new SerializableSnapshots(snapshots);
+        string keyframesAsJson = JsonUtility.ToJson(serializable, true);
         File.WriteAllText(path, keyframesAsJson);
         return path;
     }
@@ -108,64 +106,31 @@ public class RecorderFunctions : MonoBehaviour
     {
         if (isRecording)
         {
-            CaptureKeyFrames();
+            CreateSnapshot();
         }
     }
 
     private float timeOfLastUpdate = 0.0f;
-    private List<SerializableKeyframe> leftPalmKeyframesX = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> leftPalmKeyframesY = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> leftPalmKeyframesZ = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> leftPalmKeyframesRotationX = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> leftPalmKeyframesRotationY = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> leftPalmKeyframesRotationZ = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> leftPalmKeyframesRotationW = new List<SerializableKeyframe>();
 
-    private List<SerializableKeyframe> rightPalmKeyframesX = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> rightPalmKeyframesY = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> rightPalmKeyframesZ = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> rightPalmKeyframesRotationX = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> rightPalmKeyframesRotationY = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> rightPalmKeyframesRotationZ = new List<SerializableKeyframe>();
-    private List<SerializableKeyframe> rightPalmKeyframesRotationW = new List<SerializableKeyframe>();
+    private List<Snapshot> snapshots = new List<Snapshot>();
 
-
-
-    private void CaptureKeyFrames()
+    private void CreateSnapshot()
     {
         float timeOfKeyFrame = timeOfLastUpdate + Time.deltaTime;
 
         Transform leftPalmTransform = handJointService.RequestJointTransform(TrackedHandJoint.Palm, Handedness.Left);
-        SerializableKeyframe leftPalmKeyX = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localPosition.x);
-        SerializableKeyframe leftPalmKeyY = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localPosition.y);
-        SerializableKeyframe leftPalmKeyZ = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localPosition.z);
-        SerializableKeyframe leftPalmKeyRotationX = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localRotation.x);
-        SerializableKeyframe leftPalmKeyRotationY = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localRotation.y);
-        SerializableKeyframe leftPalmKeyRotationZ = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localRotation.z);
-        SerializableKeyframe leftPalmKeyRotationW = new SerializableKeyframe(timeOfKeyFrame, leftPalmTransform.localRotation.w);
-        leftPalmKeyframesX.Add(leftPalmKeyX);
-        leftPalmKeyframesY.Add(leftPalmKeyY);
-        leftPalmKeyframesZ.Add(leftPalmKeyZ);
-        leftPalmKeyframesRotationX.Add(leftPalmKeyRotationX);
-        leftPalmKeyframesRotationY.Add(leftPalmKeyRotationY);
-        leftPalmKeyframesRotationZ.Add(leftPalmKeyRotationZ);
-        leftPalmKeyframesRotationW.Add(leftPalmKeyRotationW);
+        Vector3 pl = leftPalmTransform.localPosition;
+        Quaternion rl = leftPalmTransform.localRotation;
+        JointPose leftPalmPose = new JointPose(pl.x, pl.y, pl.z, rl.x, rl.y, rl.z, rl.w);
 
         Transform rightPalmTransform = handJointService.RequestJointTransform(TrackedHandJoint.Palm, Handedness.Right);
-        SerializableKeyframe rightPalmKeyX = new SerializableKeyframe(timeOfKeyFrame, rightPalmTransform.localPosition.x);
-        SerializableKeyframe rightPalmKeyY = new SerializableKeyframe(timeOfKeyFrame, rightPalmTransform.localPosition.y);
-        SerializableKeyframe rightPalmKeyZ = new SerializableKeyframe(timeOfKeyFrame, rightPalmTransform.localPosition.z);
-        SerializableKeyframe rightPalmKeyRotationX = new SerializableKeyframe(timeOfKeyFrame, rightPalmTransform.localRotation.x);
-        SerializableKeyframe rightPalmKeyRotationY = new SerializableKeyframe(timeOfKeyFrame, rightPalmTransform.localRotation.y);
-        SerializableKeyframe rightPalmKeyRotationZ = new SerializableKeyframe(timeOfKeyFrame, rightPalmTransform.localRotation.z);
-        SerializableKeyframe rightPalmKeyRotationW = new SerializableKeyframe(timeOfKeyFrame, rightPalmTransform.localRotation.w);
-        rightPalmKeyframesX.Add(rightPalmKeyX);
-        rightPalmKeyframesY.Add(rightPalmKeyY);
-        rightPalmKeyframesZ.Add(rightPalmKeyZ);
-        rightPalmKeyframesRotationX.Add(rightPalmKeyRotationX);
-        rightPalmKeyframesRotationY.Add(rightPalmKeyRotationY);
-        rightPalmKeyframesRotationZ.Add(rightPalmKeyRotationZ);
-        rightPalmKeyframesRotationW.Add(rightPalmKeyRotationW);
+        Vector3 pr = rightPalmTransform.localPosition;
+        Quaternion rr = rightPalmTransform.localRotation;
+        JointPose rightPalmPose = new JointPose(pr.x, pr.y, pr.z, rr.x, rr.y, rr.z, rr.w);
+
+        Snapshot snapshot = new Snapshot(timeOfKeyFrame, leftPalmPose, rightPalmPose);
+
+        snapshots.Add(snapshot);
 
         timeOfLastUpdate += Time.deltaTime;
     }
@@ -173,7 +138,7 @@ public class RecorderFunctions : MonoBehaviour
 
     private void ResetRecorder()
     {
-        leftPalmKeyframesX = new List<SerializableKeyframe>();
+        snapshots = new List<Snapshot>();
         timeOfLastUpdate = 0.0f;
     }
 
