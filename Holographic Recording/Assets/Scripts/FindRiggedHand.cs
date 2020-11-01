@@ -9,7 +9,6 @@ public class FindRiggedHand : MonoBehaviour
 {
     private TextMeshPro tmPro;
 
-    private IMixedRealityInputSystem inputSystem = null;
 
    
     void Start()
@@ -25,7 +24,7 @@ public class FindRiggedHand : MonoBehaviour
         if (Time.frameCount % 30 == 0)
         {
 
-            GameObject leftHand = GameObject.Find("Left_OurRiggedHandLeft(Clone)");
+            GameObject leftHand = GameObject.Find("Left_OurRiggedHandLeft(Clone)/L_Hand/MainL_JNT/WristL_JNT");
             if(leftHand == null)
             {
                 tmPro.text = "left hand not found";
