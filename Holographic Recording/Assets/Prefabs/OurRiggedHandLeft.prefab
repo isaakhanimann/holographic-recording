@@ -195,8 +195,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1407273616107984079}
-  - component: {fileID: 1407273616107984257}
   - component: {fileID: 1407273616107984243}
+  - component: {fileID: 7415477227034729612}
   m_Layer: 0
   m_Name: OurRiggedHandLeft
   m_TagString: Untagged
@@ -220,25 +220,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &1407273616107984257
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1407273616107984413}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 6c892af280c86f242bf75a7f74a0a017, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &1407273616107984243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,6 +249,21 @@ MonoBehaviour:
   ScaleLastFingerBone: 0
   ModelFingerPointing: {x: 0, y: -1, z: 0}
   ModelPalmFacing: {x: -1, y: 0, z: 0}
+--- !u!111 &7415477227034729612
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1407273616107984413}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 0}
+  m_Animations: []
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &1407273616107984414
 GameObject:
   m_ObjectHideFlags: 0

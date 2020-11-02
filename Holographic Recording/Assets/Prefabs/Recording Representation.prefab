@@ -1818,7 +1818,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 388e8a52b7f5e2c4db312d37d09b7a41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hands: {fileID: 553757024838990270, guid: b59af25ceb7b5c248b705e26d3e1844e, type: 3}
+  leftHand: {fileID: 1407273616107984413, guid: be70cbf798710864585a55aa9e00bb08,
+    type: 3}
+  rightHand: {fileID: 5010038784357591558, guid: 3ac9b95e0c019ca46aa3ab1f4012eb31,
+    type: 3}
   debugLogsObject: {fileID: 5065220033086762956}
 --- !u!82 &-3858803001370912394
 AudioSource:

@@ -10,52 +10,58 @@ using System.Runtime.Serialization.Formatters.Binary;
 public class HoloPlayerBehaviour : MonoBehaviour
 {
 
-    public GameObject hands;
+    public GameObject leftHand;
+    public GameObject rightHand;
     public GameObject debugLogsObject;
 
-    private GameObject instantiatedHands;
-    private Animation instantiatedHandsAnimation;
+    private GameObject instantiatedLeftHand;
+    private GameObject instantiatedRightHand;
     private float lengthOfAnimation;
 
 
     public void PutHoloRecordingIntoPlayer(HoloRecording recording)
     {
         debugLogsObject.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
-        InstantiateHandsAndSetInactive();
+        InstantiateHand(leftHand, ref instantiatedLeftHand);
+        InstantiateHand(rightHand, ref instantiatedRightHand);
 
-        AnimationClip animationClip = GetAnimationClipFromPath(recording.pathToAnimationClip);
-        debugLogsObject.GetComponent<TextMeshPro>().text += "AnimationClip was loaded" + System.Environment.NewLine;
-        instantiatedHandsAnimation.AddClip(animationClip, "test");
+        (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromPath(recording.pathToAnimationClip);
+        debugLogsObject.GetComponent<TextMeshPro>().text += "AnimationClips were loaded" + System.Environment.NewLine;
+
+        instantiatedLeftHand.GetComponent<Animation>().AddClip(leftHandClip, "leftHand");
+        instantiatedRightHand.GetComponent<Animation>().AddClip(rightHandClip, "rightHand");
     }
 
-    private void InstantiateHandsAndSetInactive()
+
+    private void InstantiateHand(GameObject hand, ref GameObject instantiatedHand)
     {
-        debugLogsObject.GetComponent<TextMeshPro>().text += "InstantiateHandsAndSetInactive" + System.Environment.NewLine;
         Quaternion rotationToInstantiate = Quaternion.identity;
         Vector3 positionToInstantiate = Vector3.zero;
-        instantiatedHands = Instantiate(original: hands, position: positionToInstantiate, rotation: rotationToInstantiate);
-        instantiatedHandsAnimation = instantiatedHands.GetComponent<Animation>();
-        instantiatedHands.SetActive(false);
+        instantiatedHand = Instantiate(original: hand, position: positionToInstantiate, rotation: rotationToInstantiate);
+        instantiatedHand.SetActive(false);
     }
 
 
     public void Play()
     {
         debugLogsObject.GetComponent<TextMeshPro>().text += "Play" + System.Environment.NewLine;
-        instantiatedHands.SetActive(true);
-        instantiatedHandsAnimation.Play("test");
-        StartCoroutine(SetInstanceInactive());
+        instantiatedLeftHand.SetActive(true);
+        instantiatedRightHand.SetActive(true);
+        instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
+        instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
+        StartCoroutine(SetInstancesInactive());
     }
 
-    IEnumerator SetInstanceInactive()
+    IEnumerator SetInstancesInactive()
     {
         debugLogsObject.GetComponent<TextMeshPro>().text += "SetInstanceInactive coroutine was called" + System.Environment.NewLine;
         yield return new WaitForSeconds(lengthOfAnimation);
-        instantiatedHands.SetActive(false);
+        instantiatedLeftHand.SetActive(false);
+        instantiatedRightHand.SetActive(false);
     }
 
 
-    private AnimationClip GetAnimationClipFromPath(string path)
+    private (AnimationClip, AnimationClip) GetAnimationClipsFromPath(string path)
     {
         BinaryFormatter binaryFormatter = new BinaryFormatter();
         FileStream fileStream = File.Open(path, FileMode.Open);
@@ -63,7 +69,9 @@ public class HoloPlayerBehaviour : MonoBehaviour
         fileStream.Close();
 
         SetLengthOfAnimation(allKeyFrames);
-        return GetAnimationClipFromRecordedKeyframes(allKeyFrames);
+        AnimationClip leftClip = GetLeftAnimationClipFromRecordedKeyframes(allKeyFrames);
+        AnimationClip rightClip = GetRightAnimationClipFromRecordedKeyframes(allKeyFrames);
+        return (leftClip, rightClip);
     }
 
     private void SetLengthOfAnimation(AllKeyFrames allKeyFrames)
@@ -78,17 +86,28 @@ public class HoloPlayerBehaviour : MonoBehaviour
     }
 
 
-    private AnimationClip GetAnimationClipFromRecordedKeyframes(AllKeyFrames allKeyFrames)
+    private AnimationClip GetLeftAnimationClipFromRecordedKeyframes(AllKeyFrames allKeyFrames)
     {
-        AnimationClip newClip = new AnimationClip();
-        newClip.legacy = true;
+        AnimationClip leftClip = new AnimationClip();
+        leftClip.legacy = true;
 
-        AddAnimationCurvesToPathInAnimationClip("HandRig_L", allKeyFrames.leftPalmPoses, ref newClip);
-        AddAnimationCurvesToPathInAnimationClip("HandRig_R", allKeyFrames.rightPalmPoses, ref newClip);
+        AddAnimationCurvesToPathInAnimationClip("", allKeyFrames.leftPalmPoses, ref leftClip);
 
-        newClip.EnsureQuaternionContinuity();
+        leftClip.EnsureQuaternionContinuity();
 
-        return newClip;
+        return leftClip;
+    }
+
+    private AnimationClip GetRightAnimationClipFromRecordedKeyframes(AllKeyFrames allKeyFrames)
+    {
+        AnimationClip rightClip = new AnimationClip();
+        rightClip.legacy = true;
+
+        AddAnimationCurvesToPathInAnimationClip("", allKeyFrames.rightPalmPoses, ref rightClip);
+
+        rightClip.EnsureQuaternionContinuity();
+
+        return rightClip;
     }
 
     private void AddAnimationCurvesToPathInAnimationClip(string path, PoseKeyframeLists poseKeyframeLists, ref AnimationClip animationClip)
