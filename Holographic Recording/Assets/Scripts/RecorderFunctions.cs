@@ -102,29 +102,35 @@ public class RecorderFunctions : MonoBehaviour
         return randomInt;
     }
 
+    private int captureFrequencyInFrames = 10;
+    private float timeSinceStartOfRecording = 0.0f;
+
+
     void LateUpdate()
     {
+
         if (isRecording)
+        {
+            timeSinceStartOfRecording += Time.deltaTime;
+        }
+
+        if (isRecording && Time.frameCount % captureFrequencyInFrames == 0)
         {
             CaptureKeyFrames();
         }
     }
 
-    private float timeOfLastUpdate = 0.0f;
     private PoseKeyframeLists leftPalmPoses = new PoseKeyframeLists();
     private PoseKeyframeLists rightPalmPoses = new PoseKeyframeLists();
     
 
     private void CaptureKeyFrames()
     {
-        float timeOfKeyFrame = timeOfLastUpdate + Time.deltaTime;
-        timeOfLastUpdate += Time.deltaTime;
-
         Transform leftPalmTransform = handJointService.RequestJointTransform(TrackedHandJoint.Palm, Handedness.Left);
-        AddPose(timeOfKeyFrame, leftPalmTransform, leftPalmPoses);
+        AddPose(timeSinceStartOfRecording, leftPalmTransform, leftPalmPoses);
 
         Transform rightPalmTransform = handJointService.RequestJointTransform(TrackedHandJoint.Palm, Handedness.Right);
-        AddPose(timeOfKeyFrame, rightPalmTransform, rightPalmPoses);
+        AddPose(timeSinceStartOfRecording, rightPalmTransform, rightPalmPoses);
 
     }
 
@@ -154,7 +160,7 @@ public class RecorderFunctions : MonoBehaviour
     {
         leftPalmPoses = new PoseKeyframeLists();
         rightPalmPoses = new PoseKeyframeLists();
-        timeOfLastUpdate = 0.0f;
+        timeSinceStartOfRecording = 0.0f;
     }
 
 }

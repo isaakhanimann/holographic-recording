@@ -117,6 +117,9 @@ public class HoloPlayerBehaviour : MonoBehaviour
         newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.y", rightRotateY);
         newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.z", rightRotateZ);
         newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.w", rightRotateW);
+
+        newClip.EnsureQuaternionContinuity();
+
         return newClip;
     }
 
