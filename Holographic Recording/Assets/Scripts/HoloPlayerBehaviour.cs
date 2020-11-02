@@ -7,7 +7,7 @@ using System.IO;
 
 
 public class HoloPlayerBehaviour : MonoBehaviour
-{ 
+{
 
     public GameObject hands;
     public GameObject debugLogsObject;
@@ -16,7 +16,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     private Animation instantiatedHandsAnimation;
     private float lengthOfAnimationInSeconds;
 
-    
+
     public void PutHoloRecordingIntoPlayer(HoloRecording recording)
     {
         debugLogsObject.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
@@ -57,70 +57,46 @@ public class HoloPlayerBehaviour : MonoBehaviour
     private AnimationClip GetAnimationClipFromPath(string path)
     {
         string keyframesAsJson = File.ReadAllText(path);
-        SerializableSnapshots serializableSnapshots = JsonUtility.FromJson<SerializableSnapshots>(keyframesAsJson);
-        return GetAnimationClipFromRecordedKeyframes(serializableSnapshots);
+        AllKeyFrames allKeyFrames = JsonUtility.FromJson<AllKeyFrames>(keyframesAsJson);
+        return GetAnimationClipFromRecordedKeyframes(allKeyFrames);
     }
 
 
-    private AnimationClip GetAnimationClipFromRecordedKeyframes(SerializableSnapshots serializableSnapshots)
+    private AnimationClip GetAnimationClipFromRecordedKeyframes(AllKeyFrames allKeyFrames)
     {
-        int numberOfKeyframes = serializableSnapshots.snapshots.Count;
-        lengthOfAnimationInSeconds = serializableSnapshots.snapshots[numberOfKeyframes - 1].time;
+        List<Keyframe> leftKeyframesX = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesPositionX);
+        List<Keyframe> leftKeyframesY = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesPositionY);
+        List<Keyframe> leftKeyframesZ = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesPositionZ);
+        List<Keyframe> leftKeyframesRotationX = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationX);
+        List<Keyframe> leftKeyframesRotationY = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationY);
+        List<Keyframe> leftKeyframesRotationZ = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationZ);
+        List<Keyframe> leftKeyframesRotationW = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationW);
 
-        Keyframe[] leftKeyframesX = new Keyframe[numberOfKeyframes];
-        Keyframe[] leftKeyframesY = new Keyframe[numberOfKeyframes];
-        Keyframe[] leftKeyframesZ = new Keyframe[numberOfKeyframes];
-        Keyframe[] leftKeyframesRotationX = new Keyframe[numberOfKeyframes];
-        Keyframe[] leftKeyframesRotationY = new Keyframe[numberOfKeyframes];
-        Keyframe[] leftKeyframesRotationZ = new Keyframe[numberOfKeyframes];
-        Keyframe[] leftKeyframesRotationW = new Keyframe[numberOfKeyframes];
+        AnimationCurve leftTranslateX = new AnimationCurve(leftKeyframesX.ToArray());
+        AnimationCurve leftTranslateY = new AnimationCurve(leftKeyframesY.ToArray());
+        AnimationCurve leftTranslateZ = new AnimationCurve(leftKeyframesZ.ToArray());
+        AnimationCurve leftRotateX = new AnimationCurve(leftKeyframesRotationX.ToArray());
+        AnimationCurve leftRotateY = new AnimationCurve(leftKeyframesRotationY.ToArray());
+        AnimationCurve leftRotateZ = new AnimationCurve(leftKeyframesRotationZ.ToArray());
+        AnimationCurve leftRotateW = new AnimationCurve(leftKeyframesRotationW.ToArray());
 
-        Keyframe[] rightKeyframesX = new Keyframe[numberOfKeyframes];
-        Keyframe[] rightKeyframesY = new Keyframe[numberOfKeyframes];
-        Keyframe[] rightKeyframesZ = new Keyframe[numberOfKeyframes];
-        Keyframe[] rightKeyframesRotationX = new Keyframe[numberOfKeyframes];
-        Keyframe[] rightKeyframesRotationY = new Keyframe[numberOfKeyframes];
-        Keyframe[] rightKeyframesRotationZ = new Keyframe[numberOfKeyframes];
-        Keyframe[] rightKeyframesRotationW = new Keyframe[numberOfKeyframes];
-        for (int i = 0; i < numberOfKeyframes; i++)
-        {
-            Snapshot snapshot = serializableSnapshots.snapshots[i];
-            float time = snapshot.time;
+        List<Keyframe> rightKeyframesX = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesPositionX);
+        List<Keyframe> rightKeyframesY = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesPositionY);
+        List<Keyframe> rightKeyframesZ = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesPositionZ);
+        List<Keyframe> rightKeyframesRotationX = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationX);
+        List<Keyframe> rightKeyframesRotationY = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationY);
+        List<Keyframe> rightKeyframesRotationZ = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationZ);
+        List<Keyframe> rightKeyframesRotationW = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationW);
 
-            leftKeyframesX[i] = new Keyframe(time, snapshot.leftPalm.positionX);
-            leftKeyframesY[i] = new Keyframe(time, snapshot.leftPalm.positionY);
-            leftKeyframesZ[i] = new Keyframe(time, snapshot.leftPalm.positionZ);
-            leftKeyframesRotationX[i] = new Keyframe(time, snapshot.leftPalm.rotationX);
-            leftKeyframesRotationY[i] = new Keyframe(time, snapshot.leftPalm.rotationY);
-            leftKeyframesRotationZ[i] = new Keyframe(time, snapshot.leftPalm.rotationZ);
-            leftKeyframesRotationW[i] = new Keyframe(time, snapshot.leftPalm.rotationW);
+        AnimationCurve rightTranslateX = new AnimationCurve(rightKeyframesX.ToArray());
+        AnimationCurve rightTranslateY = new AnimationCurve(rightKeyframesY.ToArray());
+        AnimationCurve rightTranslateZ = new AnimationCurve(rightKeyframesZ.ToArray());
+        AnimationCurve rightRotateX = new AnimationCurve(rightKeyframesRotationX.ToArray());
+        AnimationCurve rightRotateY = new AnimationCurve(rightKeyframesRotationY.ToArray());
+        AnimationCurve rightRotateZ = new AnimationCurve(rightKeyframesRotationZ.ToArray());
+        AnimationCurve rightRotateW = new AnimationCurve(rightKeyframesRotationW.ToArray());
 
-            rightKeyframesX[i] = new Keyframe(time, snapshot.rightPalm.positionX);
-            rightKeyframesY[i] = new Keyframe(time, snapshot.rightPalm.positionY);
-            rightKeyframesZ[i] = new Keyframe(time, snapshot.rightPalm.positionZ);
-            rightKeyframesRotationX[i] = new Keyframe(time, snapshot.rightPalm.rotationX);
-            rightKeyframesRotationY[i] = new Keyframe(time, snapshot.rightPalm.rotationY);
-            rightKeyframesRotationZ[i] = new Keyframe(time, snapshot.rightPalm.rotationZ);
-            rightKeyframesRotationW[i] = new Keyframe(time, snapshot.rightPalm.rotationW);
-        }
-        
-
-        AnimationCurve leftTranslateX = new AnimationCurve(leftKeyframesX);
-        AnimationCurve leftTranslateY = new AnimationCurve(leftKeyframesY);
-        AnimationCurve leftTranslateZ = new AnimationCurve(leftKeyframesZ);
-        AnimationCurve leftRotateX = new AnimationCurve(leftKeyframesRotationX);
-        AnimationCurve leftRotateY = new AnimationCurve(leftKeyframesRotationY);
-        AnimationCurve leftRotateZ = new AnimationCurve(leftKeyframesRotationZ);
-        AnimationCurve leftRotateW = new AnimationCurve(leftKeyframesRotationW);
-
-        AnimationCurve rightTranslateX = new AnimationCurve(rightKeyframesX);
-        AnimationCurve rightTranslateY = new AnimationCurve(rightKeyframesY);
-        AnimationCurve rightTranslateZ = new AnimationCurve(rightKeyframesZ);
-        AnimationCurve rightRotateX = new AnimationCurve(rightKeyframesRotationX);
-        AnimationCurve rightRotateY = new AnimationCurve(rightKeyframesRotationY);
-        AnimationCurve rightRotateZ = new AnimationCurve(rightKeyframesRotationZ);
-        AnimationCurve rightRotateW = new AnimationCurve(rightKeyframesRotationW);
-
+        lengthOfAnimationInSeconds = leftKeyframesX[leftKeyframesX.Count - 1].time;
 
         AnimationClip newClip = new AnimationClip();
         newClip.legacy = true;
@@ -144,6 +120,17 @@ public class HoloPlayerBehaviour : MonoBehaviour
         return newClip;
     }
 
+    private List<Keyframe> GetKeyframes(List<SerializableKeyframe> serializableKeyframes)
+    {
+        List<Keyframe> keyframes = new List<Keyframe>();
+        for (int index = 0; index < serializableKeyframes.Count; index++)
+        {
+            SerializableKeyframe serializableKeyframe = serializableKeyframes[index];
+            keyframes.Add(new Keyframe(serializableKeyframe.time, serializableKeyframe.value));
+        }
+
+        return keyframes;
+    }
 
 
 }
