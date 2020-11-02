@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using System.IO;
-using JetBrains.Annotations;
+
 
 public class HoloPlayerBehaviour : MonoBehaviour
 { 
@@ -37,6 +37,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         instantiatedHands.SetActive(false);
     }
 
+
     public void Play()
     {
         debugLogsObject.GetComponent<TextMeshPro>().text += "Play" + System.Environment.NewLine;
@@ -52,135 +53,84 @@ public class HoloPlayerBehaviour : MonoBehaviour
         instantiatedHands.SetActive(false);
     }
 
+
     private AnimationClip GetAnimationClipFromPath(string path)
     {
         string keyframesAsJson = File.ReadAllText(path);
-        SerializableSnapshots serializableSnapshots = JsonUtility.FromJson<SerializableSnapshots>(keyframesAsJson);
-        return CreateAnimationClipFromRecordedSnapshots(serializableSnapshots);
+        AllKeyFrames allKeyFrames = JsonUtility.FromJson<AllKeyFrames>(keyframesAsJson);
+        return GetAnimationClipFromRecordedKeyframes(allKeyFrames);
     }
 
-    private AnimationClip CreateAnimationClipFromRecordedSnapshots(SerializableSnapshots serializableSnapshots)
+
+    private AnimationClip GetAnimationClipFromRecordedKeyframes(AllKeyFrames allKeyFrames)
     {
-        int numberOfKeyframes = serializableSnapshots.snapshots.Count;
-        lengthOfAnimationInSeconds = serializableSnapshots.snapshots[numberOfKeyframes - 1].time;
+        List<Keyframe> leftKeyframesX = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesPositionX);
+        List<Keyframe> leftKeyframesY = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesPositionY);
+        List<Keyframe> leftKeyframesZ = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesPositionZ);
+        List<Keyframe> leftKeyframesRotationX = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationX);
+        List<Keyframe> leftKeyframesRotationY = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationY);
+        List<Keyframe> leftKeyframesRotationZ = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationZ);
+        List<Keyframe> leftKeyframesRotationW = GetKeyframes(allKeyFrames.leftPalmPoses.keyframesRotationW);
 
-        CurvesForAllJoints curvesForAllJoints = CreateCurvesForAllJoints(serializableSnapshots.snapshots);
+        AnimationCurve leftTranslateX = new AnimationCurve(leftKeyframesX.ToArray());
+        AnimationCurve leftTranslateY = new AnimationCurve(leftKeyframesY.ToArray());
+        AnimationCurve leftTranslateZ = new AnimationCurve(leftKeyframesZ.ToArray());
+        AnimationCurve leftRotateX = new AnimationCurve(leftKeyframesRotationX.ToArray());
+        AnimationCurve leftRotateY = new AnimationCurve(leftKeyframesRotationY.ToArray());
+        AnimationCurve leftRotateZ = new AnimationCurve(leftKeyframesRotationZ.ToArray());
+        AnimationCurve leftRotateW = new AnimationCurve(leftKeyframesRotationW.ToArray());
 
-        return CreateAnimationClipFromCurves(curvesForAllJoints);
-    }
+        List<Keyframe> rightKeyframesX = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesPositionX);
+        List<Keyframe> rightKeyframesY = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesPositionY);
+        List<Keyframe> rightKeyframesZ = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesPositionZ);
+        List<Keyframe> rightKeyframesRotationX = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationX);
+        List<Keyframe> rightKeyframesRotationY = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationY);
+        List<Keyframe> rightKeyframesRotationZ = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationZ);
+        List<Keyframe> rightKeyframesRotationW = GetKeyframes(allKeyFrames.rightPalmPoses.keyframesRotationW);
 
-    private AnimationClip CreateAnimationClipFromCurves(CurvesForAllJoints curvesForAllJoints)
-    {
+        AnimationCurve rightTranslateX = new AnimationCurve(rightKeyframesX.ToArray());
+        AnimationCurve rightTranslateY = new AnimationCurve(rightKeyframesY.ToArray());
+        AnimationCurve rightTranslateZ = new AnimationCurve(rightKeyframesZ.ToArray());
+        AnimationCurve rightRotateX = new AnimationCurve(rightKeyframesRotationX.ToArray());
+        AnimationCurve rightRotateY = new AnimationCurve(rightKeyframesRotationY.ToArray());
+        AnimationCurve rightRotateZ = new AnimationCurve(rightKeyframesRotationZ.ToArray());
+        AnimationCurve rightRotateW = new AnimationCurve(rightKeyframesRotationW.ToArray());
+
+        lengthOfAnimationInSeconds = leftKeyframesX[leftKeyframesX.Count - 1].time;
+
         AnimationClip newClip = new AnimationClip();
         newClip.legacy = true;
         string pathToLeftPalm = "HandRig_L";
-        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localPosition.x", curvesForAllJoints.leftPalmCurves.translateX);
-        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localPosition.y", curvesForAllJoints.leftPalmCurves.translateY);
-        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localPosition.z", curvesForAllJoints.leftPalmCurves.translateZ);
-        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.x", curvesForAllJoints.leftPalmCurves.rotateX);
-        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.y", curvesForAllJoints.leftPalmCurves.rotateY);
-        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.z", curvesForAllJoints.leftPalmCurves.rotateZ);
-        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.w", curvesForAllJoints.leftPalmCurves.rotateW);
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localPosition.x", leftTranslateX);
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localPosition.y", leftTranslateY);
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localPosition.z", leftTranslateZ);
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.x", leftRotateX);
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.y", leftRotateY);
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.z", leftRotateZ);
+        newClip.SetCurve(pathToLeftPalm, typeof(Transform), "localRotation.w", leftRotateW);
 
         string pathToRightPalm = "HandRig_R";
-        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localPosition.x", curvesForAllJoints.rightPalmCurves.translateX);
-        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localPosition.y", curvesForAllJoints.rightPalmCurves.translateY);
-        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localPosition.z", curvesForAllJoints.rightPalmCurves.translateZ);
-        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.x", curvesForAllJoints.rightPalmCurves.rotateX);
-        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.y", curvesForAllJoints.rightPalmCurves.rotateY);
-        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.z", curvesForAllJoints.rightPalmCurves.rotateZ);
-        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.w", curvesForAllJoints.rightPalmCurves.rotateW);
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localPosition.x", rightTranslateX);
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localPosition.y", rightTranslateY);
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localPosition.z", rightTranslateZ);
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.x", rightRotateX);
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.y", rightRotateY);
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.z", rightRotateZ);
+        newClip.SetCurve(pathToRightPalm, typeof(Transform), "localRotation.w", rightRotateW);
         return newClip;
     }
 
-    private CurvesForAllJoints CreateCurvesForAllJoints(List<Snapshot> snapshots)
+    private List<Keyframe> GetKeyframes(List<SerializableKeyframe> serializableKeyframes)
     {
-        int numberOfKeyframes = snapshots.Count;
-
-        Keyframe[] leftKeyframesX = new Keyframe[numberOfKeyframes];
-        Keyframe[] leftKeyframesY = new Keyframe[numberOfKeyframes];
-        Keyframe[] leftKeyframesZ = new Keyframe[numberOfKeyframes];
-        Keyframe[] leftKeyframesRotationX = new Keyframe[numberOfKeyframes];
-        Keyframe[] leftKeyframesRotationY = new Keyframe[numberOfKeyframes];
-        Keyframe[] leftKeyframesRotationZ = new Keyframe[numberOfKeyframes];
-        Keyframe[] leftKeyframesRotationW = new Keyframe[numberOfKeyframes];
-
-        Keyframe[] rightKeyframesX = new Keyframe[numberOfKeyframes];
-        Keyframe[] rightKeyframesY = new Keyframe[numberOfKeyframes];
-        Keyframe[] rightKeyframesZ = new Keyframe[numberOfKeyframes];
-        Keyframe[] rightKeyframesRotationX = new Keyframe[numberOfKeyframes];
-        Keyframe[] rightKeyframesRotationY = new Keyframe[numberOfKeyframes];
-        Keyframe[] rightKeyframesRotationZ = new Keyframe[numberOfKeyframes];
-        Keyframe[] rightKeyframesRotationW = new Keyframe[numberOfKeyframes];
-
-        for (int i = 0; i < numberOfKeyframes; i++)
+        List<Keyframe> keyframes = new List<Keyframe>();
+        for (int index = 0; index < serializableKeyframes.Count; index++)
         {
-            Snapshot snapshot = snapshots[i];
-            float time = snapshot.time;
-
-            leftKeyframesX[i] = new Keyframe(time, snapshot.leftPalm.positionX);
-            leftKeyframesY[i] = new Keyframe(time, snapshot.leftPalm.positionY);
-            leftKeyframesZ[i] = new Keyframe(time, snapshot.leftPalm.positionZ);
-            leftKeyframesRotationX[i] = new Keyframe(time, snapshot.leftPalm.rotationX);
-            leftKeyframesRotationY[i] = new Keyframe(time, snapshot.leftPalm.rotationY);
-            leftKeyframesRotationZ[i] = new Keyframe(time, snapshot.leftPalm.rotationZ);
-            leftKeyframesRotationW[i] = new Keyframe(time, snapshot.leftPalm.rotationW);
-
-            rightKeyframesX[i] = new Keyframe(time, snapshot.rightPalm.positionX);
-            rightKeyframesY[i] = new Keyframe(time, snapshot.rightPalm.positionY);
-            rightKeyframesZ[i] = new Keyframe(time, snapshot.rightPalm.positionZ);
-            rightKeyframesRotationX[i] = new Keyframe(time, snapshot.rightPalm.rotationX);
-            rightKeyframesRotationY[i] = new Keyframe(time, snapshot.rightPalm.rotationY);
-            rightKeyframesRotationZ[i] = new Keyframe(time, snapshot.rightPalm.rotationZ);
-            rightKeyframesRotationW[i] = new Keyframe(time, snapshot.rightPalm.rotationW);
+            SerializableKeyframe serializableKeyframe = serializableKeyframes[index];
+            keyframes.Add(new Keyframe(serializableKeyframe.time, serializableKeyframe.value));
         }
 
-        JointCurves leftPalmCurves = new JointCurves();
-        leftPalmCurves.translateX = new AnimationCurve(leftKeyframesX);
-        leftPalmCurves.translateY = new AnimationCurve(leftKeyframesY);
-        leftPalmCurves.translateZ = new AnimationCurve(leftKeyframesZ);
-        leftPalmCurves.rotateX = new AnimationCurve(leftKeyframesRotationX);
-        leftPalmCurves.rotateY = new AnimationCurve(leftKeyframesRotationY);
-        leftPalmCurves.rotateZ = new AnimationCurve(leftKeyframesRotationZ);
-        leftPalmCurves.rotateW = new AnimationCurve(leftKeyframesRotationW);
-
-        JointCurves rightPalmCurves = new JointCurves();
-        rightPalmCurves.translateX = new AnimationCurve(rightKeyframesX);
-        rightPalmCurves.translateY = new AnimationCurve(rightKeyframesY);
-        rightPalmCurves.translateZ = new AnimationCurve(rightKeyframesZ);
-        rightPalmCurves.rotateX = new AnimationCurve(rightKeyframesRotationX);
-        rightPalmCurves.rotateY = new AnimationCurve(rightKeyframesRotationY);
-        rightPalmCurves.rotateZ = new AnimationCurve(rightKeyframesRotationZ);
-        rightPalmCurves.rotateW = new AnimationCurve(rightKeyframesRotationW);
-
-        CurvesForAllJoints allCurves = new CurvesForAllJoints();
-
-        allCurves.leftPalmCurves = leftPalmCurves;
-        allCurves.rightPalmCurves = rightPalmCurves;
-        return allCurves;
+        return keyframes;
     }
-
-    private class CurvesForAllJoints
-    {
-        public JointCurves leftPalmCurves;
-        public JointCurves rightPalmCurves;
-    }
-
-    private class JointCurves
-    {
-        public AnimationCurve translateX;
-        public AnimationCurve translateY;
-        public AnimationCurve translateZ;
-
-        public AnimationCurve rotateX;
-        public AnimationCurve rotateY;
-        public AnimationCurve rotateZ;
-        public AnimationCurve rotateW;
-    }
-
 
 
 }
-
-
-

@@ -11,57 +11,67 @@ public struct HoloRecording
         this.pathToAnimationClip = pathToAnimationClip;
         this.animationClipName = animationClipName;
     }
+
+    public override string ToString() => $"HoloRecording: animation clip is called {animationClipName}";
+
 }
 
-
 [System.Serializable]
-public class SerializableSnapshots
+public class AllKeyFrames
 {
-    public List<Snapshot> snapshots;
+    public PoseKeyframeLists leftPalmPoses;
+    public PoseKeyframeLists rightPalmPoses;
 
-    public SerializableSnapshots(List<Snapshot> snapshots)
+    public AllKeyFrames(PoseKeyframeLists leftPalmPoses, PoseKeyframeLists rightPalmPoses)
     {
-        this.snapshots = snapshots;
+        this.leftPalmPoses = leftPalmPoses;
+        this.rightPalmPoses = rightPalmPoses;
     }
 }
 
 [System.Serializable]
-public class Snapshot
+public class PoseKeyframeLists
 {
-    public float time;
+    public List<SerializableKeyframe> keyframesPositionX;
+    public List<SerializableKeyframe> keyframesPositionY;
+    public List<SerializableKeyframe> keyframesPositionZ;
 
-    public JointPose leftPalm;
-    public JointPose rightPalm;
+    public List<SerializableKeyframe> keyframesRotationX;
+    public List<SerializableKeyframe> keyframesRotationY;
+    public List<SerializableKeyframe> keyframesRotationZ;
+    public List<SerializableKeyframe> keyframesRotationW;
 
-    public Snapshot(float time, JointPose leftPalm, JointPose rightPalm)
+
+    public PoseKeyframeLists(List<SerializableKeyframe> keyframesPositionX, List<SerializableKeyframe> keyframesPositionY, List<SerializableKeyframe> keyframesPositionZ, List<SerializableKeyframe> keyframesRotationX, List<SerializableKeyframe> keyframesRotationY, List<SerializableKeyframe> keyframesRotationZ, List<SerializableKeyframe> keyframesRotationW)
+    {
+        this.keyframesPositionX = keyframesPositionX;
+        this.keyframesPositionY = keyframesPositionY;
+        this.keyframesPositionZ = keyframesPositionZ;
+        this.keyframesRotationX = keyframesRotationX;
+        this.keyframesRotationY = keyframesRotationY;
+        this.keyframesRotationZ = keyframesRotationZ;
+        this.keyframesRotationW = keyframesRotationW;
+    }
+}
+
+
+[System.Serializable]
+public struct SerializableKeyframe
+{
+    public SerializableKeyframe(float time, float value)
     {
         this.time = time;
-        this.leftPalm = leftPalm;
-        this.rightPalm = rightPalm;
+        this.value = value;
     }
-}
 
-
-[System.Serializable]
-public class JointPose
-{
-    public float positionX;
-    public float positionY;
-    public float positionZ;
-                 
-    public float rotationX;
-    public float rotationY;
-    public float rotationZ;
-    public float rotationW;
-
-    public JointPose(float positionX, float positionY, float positionZ, float rotationX, float rotationY, float rotationZ, float rotationW)
+    public Keyframe GetKeyframe()
     {
-        this.positionX = positionX;
-        this.positionY = positionY;
-        this.positionZ = positionZ;
-        this.rotationX = rotationX;
-        this.rotationY = rotationY;
-        this.rotationZ = rotationZ;
-        this.rotationW = rotationW;
+        Keyframe keyframe = new Keyframe(this.time, this.value);
+        return keyframe;
     }
+
+
+    public float time;
+    public float value;
+
 }
