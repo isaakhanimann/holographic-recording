@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 
 public class HoloPlayerBehaviour : MonoBehaviour
@@ -56,8 +57,11 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     private AnimationClip GetAnimationClipFromPath(string path)
     {
-        string keyframesAsJson = File.ReadAllText(path);
-        AllKeyFrames allKeyFrames = JsonUtility.FromJson<AllKeyFrames>(keyframesAsJson);
+        BinaryFormatter binaryFormatter = new BinaryFormatter();
+        FileStream fileStream = File.Open(path, FileMode.Open);
+        AllKeyFrames allKeyFrames = (AllKeyFrames)binaryFormatter.Deserialize(fileStream);
+        fileStream.Close();
+
         SetLengthOfAnimation(allKeyFrames);
         return GetAnimationClipFromRecordedKeyframes(allKeyFrames);
     }

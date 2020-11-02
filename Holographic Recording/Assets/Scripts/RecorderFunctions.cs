@@ -4,6 +4,7 @@ using UnityEngine;
 using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit.Utilities;
 using Microsoft.MixedReality.Toolkit;
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class RecorderFunctions : MonoBehaviour
 {
@@ -87,10 +88,14 @@ public class RecorderFunctions : MonoBehaviour
 
     private string SaveKeyframes(string filename)
     {
-        string path = Application.persistentDataPath + $"/{filename}.txt";
         AllKeyFrames allKeyFrames = new AllKeyFrames(leftPalmPoses, rightPalmPoses);
-        string keyframesAsJson = JsonUtility.ToJson(allKeyFrames);
-        File.WriteAllText(path, keyframesAsJson);
+
+        BinaryFormatter binaryFormatter = new BinaryFormatter();
+        string path = Application.persistentDataPath + $"/{filename}.animationClip";
+        FileStream fileStream = File.Create(path);
+        binaryFormatter.Serialize(fileStream, allKeyFrames);
+        fileStream.Close();
+
         return path;
     }
 
