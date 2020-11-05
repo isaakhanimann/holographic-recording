@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using Microsoft.MixedReality.Toolkit.Utilities;
 
 public class HoloPlayerBehaviour : MonoBehaviour
 {
@@ -65,8 +66,8 @@ public class HoloPlayerBehaviour : MonoBehaviour
         AllKeyFrames allKeyFrames = (AllKeyFrames)binaryFormatter.Deserialize(fileStream);
         fileStream.Close();
         SetLengthOfAnimation(allKeyFrames);
-        AnimationClip leftClip = GetLeftAnimationClipFromRecordedKeyframes(allKeyFrames);
-        AnimationClip rightClip = GetRightAnimationClipFromRecordedKeyframes(allKeyFrames);
+        AnimationClip leftClip = GetAnimationClipForOneHandFromRecordedKeyframes(allKeyFrames, Handedness.Left);
+        AnimationClip rightClip = GetAnimationClipForOneHandFromRecordedKeyframes(allKeyFrames, Handedness.Right);
         return (leftClip, rightClip);
     }
 
@@ -80,22 +81,20 @@ public class HoloPlayerBehaviour : MonoBehaviour
     }
 
 
-    private AnimationClip GetLeftAnimationClipFromRecordedKeyframes(AllKeyFrames allKeyFrames)
+    private AnimationClip GetAnimationClipForOneHandFromRecordedKeyframes(AllKeyFrames allKeyFrames, Handedness handedness)
     {
-        AnimationClip leftClip = new AnimationClip();
-        leftClip.legacy = true;
-        AddAnimationCurvesForAllJointsToClip(allKeyFrames.leftJointLists, ref leftClip);
-        leftClip.EnsureQuaternionContinuity();
-        return leftClip;
-    }
-
-    private AnimationClip GetRightAnimationClipFromRecordedKeyframes(AllKeyFrames allKeyFrames)
-    {
-        AnimationClip rightClip = new AnimationClip();
-        rightClip.legacy = true;
-        AddAnimationCurvesForAllJointsToClip(allKeyFrames.rightJointLists, ref rightClip);
-        rightClip.EnsureQuaternionContinuity();
-        return rightClip;
+        AnimationClip animationClip = new AnimationClip();
+        animationClip.legacy = true;
+        if (handedness == Handedness.Left)
+        {
+            AddAnimationCurvesForAllJointsToClip(allKeyFrames.leftJointLists, ref animationClip);
+        }
+        else
+        {
+            AddAnimationCurvesForAllJointsToClip(allKeyFrames.rightJointLists, ref animationClip);
+        }
+        animationClip.EnsureQuaternionContinuity();
+        return animationClip;
     }
 
     private void AddAnimationCurvesForAllJointsToClip(KeyFrameListsForAllHandJoints keyframesForJoints, ref AnimationClip animationClip)
