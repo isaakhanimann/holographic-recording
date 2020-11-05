@@ -2422,7 +2422,7 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1847323690}
         m_MethodName: CancelRecordingAndRemoveRepresentation
         m_Mode: 1
         m_Arguments:
@@ -2433,7 +2433,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1847323689}
         m_MethodName: TurnOffHandMesh
         m_Mode: 1
         m_Arguments:
@@ -3061,6 +3061,8 @@ GameObject:
   - component: {fileID: 8759019805766395085}
   - component: {fileID: 8759019805766395084}
   - component: {fileID: 8759019805766395083}
+  - component: {fileID: 1847323690}
+  - component: {fileID: 1847323689}
   m_Layer: 0
   m_Name: Recording Hand Menu
   m_TagString: Untagged
@@ -3208,6 +3210,34 @@ MonoBehaviour:
   useGazeActivation: 1
   eyeGazeProximityThreshold: 0.0125
   headGazeProximityThreshold: 0.03
+--- !u!114 &1847323690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8759019805766395081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1df07deca5d2694da0b8066e4cb61ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  recordingRepresentationPrefab: {fileID: 2103202255502156003, guid: 3131fa71c06690246923ac7cbca10662,
+    type: 3}
+--- !u!114 &1847323689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8759019805766395081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 942676c65c72a9e48adb957bd857c5dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isHandMeshVisible: 0
+  isHandJointVisible: 0
 --- !u!1 &8759019805969901772
 GameObject:
   m_ObjectHideFlags: 0
@@ -4193,7 +4223,7 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1847323690}
         m_MethodName: StartRecordingAndInstantiateRepresentation
         m_Mode: 1
         m_Arguments:
@@ -4204,7 +4234,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1847323689}
         m_MethodName: TurnOnHandMesh
         m_Mode: 1
         m_Arguments:
@@ -4825,7 +4855,7 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1847323690}
         m_MethodName: StopRecordingAndPutRecordingIntoRepresentation
         m_Mode: 1
         m_Arguments:
@@ -4836,7 +4866,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1847323689}
         m_MethodName: TurnOffHandMesh
         m_Mode: 1
         m_Arguments:

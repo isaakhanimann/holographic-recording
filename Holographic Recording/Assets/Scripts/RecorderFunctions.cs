@@ -5,20 +5,14 @@ using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit.Utilities;
 using Microsoft.MixedReality.Toolkit;
 using System.Runtime.Serialization.Formatters.Binary;
+using TMPro;
 
 public class RecorderFunctions : MonoBehaviour
 {
     public GameObject recordingRepresentationPrefab;
+    public TextMeshPro debugLogTmPro;
 
     private GameObject recordingRepresentationInstance;
-
-    private IMixedRealityHandJointService handJointService;
-
-    void Start()
-    {
-        handJointService = CoreServices.GetInputSystemDataProvider<IMixedRealityHandJointService>();
-    }
-
 
     public void StartRecordingAndInstantiateRepresentation()
     {
@@ -57,18 +51,18 @@ public class RecorderFunctions : MonoBehaviour
 
     private bool isRecording;
 
-    public void StartRecording()
+    private void StartRecording()
     {
         isRecording = true;
     }
 
-    public void CancelRecording()
+    private void CancelRecording()
     {
         isRecording = false;
         ResetRecorder();
     }
 
-    public HoloRecording StopRecording()
+    private HoloRecording StopRecording()
     {
         isRecording = false;
         HoloRecording newRecording = SaveRecording();
@@ -127,16 +121,36 @@ public class RecorderFunctions : MonoBehaviour
 
     private PoseKeyframeLists leftPalmPoses = new PoseKeyframeLists();
     private PoseKeyframeLists rightPalmPoses = new PoseKeyframeLists();
-    
+
+    private GameObject leftHand;
+    private GameObject rightHand;
+
 
     private void CaptureKeyFrames()
     {
-        Transform leftPalmTransform = handJointService.RequestJointTransform(TrackedHandJoint.Palm, Handedness.Left);
-        AddPose(timeSinceStartOfRecording, leftPalmTransform, leftPalmPoses);
+        if (leftHand != null)
+        {
+            debugLogTmPro.text = "leftHand is not null" + System.Environment.NewLine;
+            Transform leftPalmTransform = leftHand.transform.Find("L_Hand/MainL_JNT/WristL_JNT");
+            AddPose(timeSinceStartOfRecording, leftPalmTransform, leftPalmPoses);
+        }
+        else
+        {
+            debugLogTmPro.text = "leftHand is null" + System.Environment.NewLine;
+            leftHand = GameObject.Find("Left_OurRiggedHandLeft(Clone)");
+        }
 
-        Transform rightPalmTransform = handJointService.RequestJointTransform(TrackedHandJoint.Palm, Handedness.Right);
-        AddPose(timeSinceStartOfRecording, rightPalmTransform, rightPalmPoses);
-
+        if(rightHand != null)
+        {
+            debugLogTmPro.text += "rightHand is not null" + System.Environment.NewLine;
+            Transform rightPalmTransform = rightHand.transform.Find("R_Hand/MainR_JNT/WristR_JNT");
+            AddPose(timeSinceStartOfRecording, rightPalmTransform, rightPalmPoses);
+        }
+        else
+        {
+            debugLogTmPro.text += "rightHand is null" + System.Environment.NewLine;
+            rightHand = GameObject.Find("Right_OurRiggedHandRight(Clone)");
+        }
     }
 
     private void AddPose(float time, Transform jointTransform, PoseKeyframeLists listToAddTo)
