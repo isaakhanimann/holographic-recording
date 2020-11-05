@@ -10,6 +10,8 @@ using TMPro;
 public class RecorderFunctions : MonoBehaviour
 {
     public GameObject recordingRepresentationPrefab;
+    public int captureFrequencyInFrames = 10;
+
     public TextMeshPro debugLogTmPro;
 
     private GameObject recordingRepresentationInstance;
@@ -100,7 +102,6 @@ public class RecorderFunctions : MonoBehaviour
         return randomInt;
     }
 
-    private int captureFrequencyInFrames = 10;
     private float timeSinceStartOfRecording = 0.0f;
 
 
