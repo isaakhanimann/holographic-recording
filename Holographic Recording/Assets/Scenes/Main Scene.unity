@@ -605,6 +605,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1847323689, guid: 31bd44970159e194d84bc812d62d9114, type: 3}
+      propertyPath: debugLogTmPro
+      value: 
+      objectReference: {fileID: 166147013}
     - target: {fileID: 1847323690, guid: 31bd44970159e194d84bc812d62d9114, type: 3}
       propertyPath: debugLogTmPro
       value: 

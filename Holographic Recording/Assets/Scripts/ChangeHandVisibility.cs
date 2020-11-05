@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit;
-
+using TMPro;
 
 public class ChangeHandVisibility : MonoBehaviour
 {
 
     public bool isHandMeshVisible = false;
     public bool isHandJointVisible = false;
+
+    public TextMeshPro debugLogTmPro;
 
 
     private void Start()
@@ -21,8 +23,12 @@ public class ChangeHandVisibility : MonoBehaviour
         MixedRealityHandTrackingProfile handTrackingProfile = CoreServices.InputSystem?.InputSystemProfile?.HandTrackingProfile;
         if (handTrackingProfile != null)
         {
+            debugLogTmPro.text = "handTrackingProfile is not null";
             handTrackingProfile.EnableHandMeshVisualization = isHandMeshVisible;
             handTrackingProfile.EnableHandJointVisualization = isHandJointVisible;
+        } else
+        {
+            debugLogTmPro.text = "handTrackingProfile is null";
         }
     }
 
