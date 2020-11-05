@@ -6,7 +6,6 @@ using TMPro;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-
 public class HoloPlayerBehaviour : MonoBehaviour
 {
 
@@ -24,10 +23,8 @@ public class HoloPlayerBehaviour : MonoBehaviour
         debugLogsObject.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
         InstantiateHand(leftHand, ref instantiatedLeftHand);
         InstantiateHand(rightHand, ref instantiatedRightHand);
-
         (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromPath(recording.pathToAnimationClip);
         debugLogsObject.GetComponent<TextMeshPro>().text += "AnimationClips were loaded" + System.Environment.NewLine;
-
         instantiatedLeftHand.GetComponent<Animation>().AddClip(leftHandClip, "leftHand");
         instantiatedRightHand.GetComponent<Animation>().AddClip(rightHandClip, "rightHand");
     }
@@ -67,7 +64,6 @@ public class HoloPlayerBehaviour : MonoBehaviour
         FileStream fileStream = File.Open(path, FileMode.Open);
         AllKeyFrames allKeyFrames = (AllKeyFrames)binaryFormatter.Deserialize(fileStream);
         fileStream.Close();
-
         SetLengthOfAnimation(allKeyFrames);
         AnimationClip leftClip = GetLeftAnimationClipFromRecordedKeyframes(allKeyFrames);
         AnimationClip rightClip = GetRightAnimationClipFromRecordedKeyframes(allKeyFrames);
@@ -76,12 +72,10 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     private void SetLengthOfAnimation(AllKeyFrames allKeyFrames)
     {
-        List<SerializableKeyframe> randomListOfLeftKeyframes = allKeyFrames.leftPalmPoses.keyframesPositionX;
+        List<SerializableKeyframe> randomListOfLeftKeyframes = allKeyFrames.leftJointLists.root.keyframesPositionX;
         float leftTime = randomListOfLeftKeyframes[randomListOfLeftKeyframes.Count - 1].time;
-
-        List<SerializableKeyframe> randomListOfRandomKeyframes = allKeyFrames.leftPalmPoses.keyframesPositionX;
+        List<SerializableKeyframe> randomListOfRandomKeyframes = allKeyFrames.rightJointLists.root.keyframesPositionX;
         float rightTime = randomListOfRandomKeyframes[randomListOfRandomKeyframes.Count - 1].time;
-
         lengthOfAnimation = Math.Max(leftTime, rightTime);
     }
 
@@ -90,11 +84,8 @@ public class HoloPlayerBehaviour : MonoBehaviour
     {
         AnimationClip leftClip = new AnimationClip();
         leftClip.legacy = true;
-
-        AddAnimationCurvesToPathInAnimationClip("", allKeyFrames.leftPalmPoses, ref leftClip);
-
+        AddAnimationCurvesForAllJointsToClip(allKeyFrames.leftJointLists, ref leftClip);
         leftClip.EnsureQuaternionContinuity();
-
         return leftClip;
     }
 
@@ -102,15 +93,44 @@ public class HoloPlayerBehaviour : MonoBehaviour
     {
         AnimationClip rightClip = new AnimationClip();
         rightClip.legacy = true;
-
-        AddAnimationCurvesToPathInAnimationClip("", allKeyFrames.rightPalmPoses, ref rightClip);
-
+        AddAnimationCurvesForAllJointsToClip(allKeyFrames.rightJointLists, ref rightClip);
         rightClip.EnsureQuaternionContinuity();
-
         return rightClip;
     }
 
-    private void AddAnimationCurvesToPathInAnimationClip(string path, PoseKeyframeLists poseKeyframeLists, ref AnimationClip animationClip)
+    private void AddAnimationCurvesForAllJointsToClip(KeyFrameListsForAllHandJoints keyframesForJoints, ref AnimationClip animationClip)
+    {
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.root, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.hand, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.main, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.wrist, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.middle, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.middle1, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.middle2, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.middle3, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.middle3End, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.pinky, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.pinky1, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.pinky2, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.pinky3, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.pinky3End, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.point, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.point1, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.point2, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.point3, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.point3End, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.ring, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.ring1, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.ring2, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.ring3, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.ring3End, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.thumb1, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.thumb2, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.thumb3, ref animationClip);
+        AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.thumb3End, ref animationClip);
+}
+
+private void AddAnimationCurvesForJointToAnimationClip(PoseKeyframeLists poseKeyframeLists, ref AnimationClip animationClip)
     {
         List<Keyframe> keyframesX = GetKeyframes(poseKeyframeLists.keyframesPositionX);
         List<Keyframe> keyframesY = GetKeyframes(poseKeyframeLists.keyframesPositionY);
@@ -119,7 +139,6 @@ public class HoloPlayerBehaviour : MonoBehaviour
         List<Keyframe> keyframesRotationY = GetKeyframes(poseKeyframeLists.keyframesRotationY);
         List<Keyframe> keyframesRotationZ = GetKeyframes(poseKeyframeLists.keyframesRotationZ);
         List<Keyframe> keyframesRotationW = GetKeyframes(poseKeyframeLists.keyframesRotationW);
-
         AnimationCurve translateX = new AnimationCurve(keyframesX.ToArray());
         AnimationCurve translateY = new AnimationCurve(keyframesY.ToArray());
         AnimationCurve translateZ = new AnimationCurve(keyframesZ.ToArray());
@@ -127,14 +146,13 @@ public class HoloPlayerBehaviour : MonoBehaviour
         AnimationCurve rotateY = new AnimationCurve(keyframesRotationY.ToArray());
         AnimationCurve rotateZ = new AnimationCurve(keyframesRotationZ.ToArray());
         AnimationCurve rotateW = new AnimationCurve(keyframesRotationW.ToArray());
-
-        animationClip.SetCurve(path, typeof(Transform), "localPosition.x", translateX);
-        animationClip.SetCurve(path, typeof(Transform), "localPosition.y", translateY);
-        animationClip.SetCurve(path, typeof(Transform), "localPosition.z", translateZ);
-        animationClip.SetCurve(path, typeof(Transform), "localRotation.x", rotateX);
-        animationClip.SetCurve(path, typeof(Transform), "localRotation.y", rotateY);
-        animationClip.SetCurve(path, typeof(Transform), "localRotation.z", rotateZ);
-        animationClip.SetCurve(path, typeof(Transform), "localRotation.w", rotateW);
+        animationClip.SetCurve(poseKeyframeLists.path, typeof(Transform), "localPosition.x", translateX);
+        animationClip.SetCurve(poseKeyframeLists.path, typeof(Transform), "localPosition.y", translateY);
+        animationClip.SetCurve(poseKeyframeLists.path, typeof(Transform), "localPosition.z", translateZ);
+        animationClip.SetCurve(poseKeyframeLists.path, typeof(Transform), "localRotation.x", rotateX);
+        animationClip.SetCurve(poseKeyframeLists.path, typeof(Transform), "localRotation.y", rotateY);
+        animationClip.SetCurve(poseKeyframeLists.path, typeof(Transform), "localRotation.z", rotateZ);
+        animationClip.SetCurve(poseKeyframeLists.path, typeof(Transform), "localRotation.w", rotateW);
     }
 
     private List<Keyframe> GetKeyframes(List<SerializableKeyframe> serializableKeyframes)
@@ -145,7 +163,6 @@ public class HoloPlayerBehaviour : MonoBehaviour
             SerializableKeyframe serializableKeyframe = serializableKeyframes[index];
             keyframes.Add(new Keyframe(serializableKeyframe.time, serializableKeyframe.value));
         }
-
         return keyframes;
     }
 
