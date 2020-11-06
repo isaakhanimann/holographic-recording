@@ -94,7 +94,7 @@ public class RecorderFunctions : MonoBehaviour
         Debug.Log($"SaveRecording called");
         string animationClipName = "AnimationClip" + GetRandomNumberBetween1and100000();
         string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
-        SaveKeyframesAsynchronously(pathToAnimationClip);
+        //SaveKeyframesAsynchronously(pathToAnimationClip);
         HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames);
         return newRecording;
     }

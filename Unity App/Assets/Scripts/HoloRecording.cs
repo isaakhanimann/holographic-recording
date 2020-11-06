@@ -28,7 +28,7 @@ public struct AllKeyFrames
 }
 
 [System.Serializable]
-public class KeyFrameListsForAllHandJoints
+public struct KeyFrameListsForAllHandJoints
 {
     public PoseKeyframeLists root;
     public PoseKeyframeLists hand;
@@ -95,7 +95,7 @@ public class KeyFrameListsForAllHandJoints
 }
 
 [System.Serializable]
-public class PoseKeyframeLists
+public struct PoseKeyframeLists
 {
     public string path;
     public List<SerializableKeyframe> keyframesPositionX;
