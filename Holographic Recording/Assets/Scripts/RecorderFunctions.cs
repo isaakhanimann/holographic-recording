@@ -9,15 +9,26 @@ using TMPro;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
 using System;
+using Unity.Jobs;
+using Unity.Collections;
 
 public class RecorderFunctions : MonoBehaviour
 {
     public GameObject recordingRepresentationPrefab;
     public int captureFrequencyInFrames = 1;
-
     public TextMeshPro debugLogTmPro;
 
     private GameObject recordingRepresentationInstance;
+    private Nullable<JobHandle> saveJobHandle;
+
+
+    void Update()
+    {
+        if (saveJobHandle != null)
+        {
+            debugLogTmPro.text = $"is job completed = {saveJobHandle?.IsCompleted}";
+        }
+    }
 
 
     public void StartRecordingAndInstantiateRepresentation()
@@ -59,6 +70,9 @@ public class RecorderFunctions : MonoBehaviour
 
     private void StartRecording()
     {
+        allKeyFrames = new AllKeyFrames();
+        allKeyFrames.leftJointLists = new KeyFrameListsForAllHandJoints(Handedness.Left);
+        allKeyFrames.rightJointLists = new KeyFrameListsForAllHandJoints(Handedness.Right);
         isRecording = true;
     }
 
@@ -78,9 +92,10 @@ public class RecorderFunctions : MonoBehaviour
 
     private HoloRecording SaveRecording()
     {
+        debugLogTmPro.text += $"SaveRecording called" + System.Environment.NewLine;
         string animationClipName = "AnimationClip" + GetRandomNumberBetween1and100000();
-        string pathToAnimationClip = "random"; //SaveKeyframes(animationClipName);
-        //SavWav.Save("myAudioFile", myAudioClip);
+        string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
+        SaveKeyframesAsynchronously(pathToAnimationClip);
         HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames);
         return newRecording;
     }
@@ -88,7 +103,6 @@ public class RecorderFunctions : MonoBehaviour
 
     private string SaveKeyframes(string filename)
     {
-
         BinaryFormatter binaryFormatter = new BinaryFormatter();
         string path = Application.persistentDataPath + $"/{filename}.animationClip";
         FileStream fileStream = File.Create(path);
@@ -96,6 +110,61 @@ public class RecorderFunctions : MonoBehaviour
         fileStream.Close();
 
         return path;
+    }
+
+    private void SaveKeyframesAsynchronously(string path)
+    {
+        debugLogTmPro.text += $"SaveKeyframesAsynchronously" + System.Environment.NewLine;
+        SaveKeyframesJob saveJob = new SaveKeyframesJob();
+        NativeArray<AllKeyFrames> allKeyframesContainer = new NativeArray<AllKeyFrames>(1, Allocator.Persistent);
+        allKeyframesContainer[0] = allKeyFrames;
+        saveJob.allKeyFramesContainer = allKeyframesContainer;
+        NativeArray<NonNullString> pathContainer = new NativeArray<NonNullString>(1, Allocator.Persistent);
+        NonNullString nonNullPath = new NonNullString(path);
+        pathContainer[0] = nonNullPath;
+        saveJob.pathContainer = pathContainer;
+        saveJobHandle = saveJob.Schedule();
+        debugLogTmPro.text += $"Schedule called" + System.Environment.NewLine;
+    }
+
+    public struct NonNullString
+    {
+        public NonNullString(string value)
+            : this()
+        {
+            Value = value ?? "N/A";
+        }
+
+        public string Value
+        {
+            get;
+            private set;
+        }
+
+        public static implicit operator NonNullString(string value)
+        {
+            return new NonNullString(value);
+        }
+
+        public static implicit operator string(NonNullString value)
+        {
+            return value.Value;
+        }
+    }
+
+
+    public struct SaveKeyframesJob : IJob
+    {
+        public NativeArray<AllKeyFrames> allKeyFramesContainer;
+        public NativeArray<NonNullString> pathContainer;
+
+        public void Execute()
+        {
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            FileStream fileStream = File.Create(pathContainer[0].Value);
+            binaryFormatter.Serialize(fileStream, allKeyFramesContainer[0]);
+            fileStream.Close();
+        }
     }
 
 
@@ -142,7 +211,7 @@ public class RecorderFunctions : MonoBehaviour
             leftHand = GameObject.Find("Left_OurRiggedHandLeft(Clone)");
         }
 
-        if(rightHand != null)
+        if (rightHand != null)
         {
             debugLogTmPro.text += "rightHand is not null" + System.Environment.NewLine;
             AddAllJointPoses(Handedness.Right);

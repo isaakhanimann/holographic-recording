@@ -21,16 +21,10 @@ public struct HoloRecording
 
 
 [System.Serializable]
-public class AllKeyFrames
+public struct AllKeyFrames
 {
     public KeyFrameListsForAllHandJoints leftJointLists;
     public KeyFrameListsForAllHandJoints rightJointLists;
-
-    public AllKeyFrames()
-    {
-        this.leftJointLists = new KeyFrameListsForAllHandJoints(Handedness.Left);
-        this.rightJointLists = new KeyFrameListsForAllHandJoints(Handedness.Right);
-    }
 }
 
 [System.Serializable]
