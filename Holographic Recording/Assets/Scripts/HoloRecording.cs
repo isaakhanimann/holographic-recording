@@ -7,10 +7,12 @@ public struct HoloRecording
 {
     public string pathToAnimationClip;
     public string animationClipName;
-    public HoloRecording(string pathToAnimationClip, string animationClipName)
+    public AllKeyFrames allKeyFrames;
+    public HoloRecording(string pathToAnimationClip, string animationClipName, AllKeyFrames allKeyFrames)
     {
         this.pathToAnimationClip = pathToAnimationClip;
         this.animationClipName = animationClipName;
+        this.allKeyFrames = allKeyFrames;
     }
 
     public override string ToString() => $"HoloRecording: animation clip is called {animationClipName}";

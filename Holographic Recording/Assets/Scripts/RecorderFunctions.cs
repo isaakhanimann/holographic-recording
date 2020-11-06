@@ -6,15 +6,19 @@ using Microsoft.MixedReality.Toolkit.Utilities;
 using Microsoft.MixedReality.Toolkit;
 using System.Runtime.Serialization.Formatters.Binary;
 using TMPro;
+using UnityEngine.Networking;
+using System.Threading.Tasks;
+using System;
 
 public class RecorderFunctions : MonoBehaviour
 {
     public GameObject recordingRepresentationPrefab;
-    public int captureFrequencyInFrames = 10;
+    public int captureFrequencyInFrames = 1;
 
     public TextMeshPro debugLogTmPro;
 
     private GameObject recordingRepresentationInstance;
+
 
     public void StartRecordingAndInstantiateRepresentation()
     {
@@ -75,9 +79,9 @@ public class RecorderFunctions : MonoBehaviour
     private HoloRecording SaveRecording()
     {
         string animationClipName = "AnimationClip" + GetRandomNumberBetween1and100000();
-        string pathToAnimationClip = SaveKeyframes(animationClipName);
-        Debug.Log($"AnimationClip saved under {pathToAnimationClip}");
-        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName);
+        string pathToAnimationClip = "random"; //SaveKeyframes(animationClipName);
+        //SavWav.Save("myAudioFile", myAudioClip);
+        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames);
         return newRecording;
     }
 

@@ -6,13 +6,16 @@ using TMPro;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.MixedReality.Toolkit.Utilities;
+using UnityEngine.Networking;
+using System.Threading.Tasks;
+using System;
 
 public class HoloPlayerBehaviour : MonoBehaviour
 {
 
     public GameObject leftHand;
     public GameObject rightHand;
-    public GameObject debugLogsObject;
+    public TextMeshPro debugLogTmPro;
 
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
@@ -21,11 +24,11 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     public void PutHoloRecordingIntoPlayer(HoloRecording recording)
     {
-        debugLogsObject.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
+        debugLogTmPro.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
         InstantiateHand(leftHand, ref instantiatedLeftHand);
         InstantiateHand(rightHand, ref instantiatedRightHand);
-        (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromPath(recording.pathToAnimationClip);
-        debugLogsObject.GetComponent<TextMeshPro>().text += "AnimationClips were loaded" + System.Environment.NewLine;
+        (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromAllKeyFrames(recording.allKeyFrames);
+        debugLogTmPro.GetComponent<TextMeshPro>().text += "AnimationClips were loaded" + System.Environment.NewLine;
         instantiatedLeftHand.GetComponent<Animation>().AddClip(leftHandClip, "leftHand");
         instantiatedRightHand.GetComponent<Animation>().AddClip(rightHandClip, "rightHand");
     }
@@ -42,7 +45,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     public void Play()
     {
-        debugLogsObject.GetComponent<TextMeshPro>().text += "Play" + System.Environment.NewLine;
+        debugLogTmPro.GetComponent<TextMeshPro>().text += "Play" + System.Environment.NewLine;
         instantiatedLeftHand.SetActive(true);
         instantiatedRightHand.SetActive(true);
         instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
@@ -52,7 +55,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     IEnumerator SetInstancesInactive()
     {
-        debugLogsObject.GetComponent<TextMeshPro>().text += "SetInstanceInactive coroutine was called" + System.Environment.NewLine;
+        debugLogTmPro.GetComponent<TextMeshPro>().text += "SetInstanceInactive coroutine was called" + System.Environment.NewLine;
         yield return new WaitForSeconds(lengthOfAnimation);
         instantiatedLeftHand.SetActive(false);
         instantiatedRightHand.SetActive(false);
@@ -65,6 +68,11 @@ public class HoloPlayerBehaviour : MonoBehaviour
         FileStream fileStream = File.Open(path, FileMode.Open);
         AllKeyFrames allKeyFrames = (AllKeyFrames)binaryFormatter.Deserialize(fileStream);
         fileStream.Close();
+        return GetAnimationClipsFromAllKeyFrames(allKeyFrames);
+    }
+
+    private (AnimationClip, AnimationClip) GetAnimationClipsFromAllKeyFrames(AllKeyFrames allKeyFrames)
+    {
         SetLengthOfAnimation(allKeyFrames);
         AnimationClip leftClip = GetAnimationClipForOneHandFromRecordedKeyframes(allKeyFrames, Handedness.Left);
         AnimationClip rightClip = GetAnimationClipForOneHandFromRecordedKeyframes(allKeyFrames, Handedness.Right);
@@ -127,9 +135,9 @@ public class HoloPlayerBehaviour : MonoBehaviour
         AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.thumb2, ref animationClip);
         AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.thumb3, ref animationClip);
         AddAnimationCurvesForJointToAnimationClip(keyframesForJoints.thumb3End, ref animationClip);
-}
+    }
 
-private void AddAnimationCurvesForJointToAnimationClip(PoseKeyframeLists poseKeyframeLists, ref AnimationClip animationClip)
+    private void AddAnimationCurvesForJointToAnimationClip(PoseKeyframeLists poseKeyframeLists, ref AnimationClip animationClip)
     {
         List<Keyframe> keyframesX = GetKeyframes(poseKeyframeLists.keyframesPositionX);
         List<Keyframe> keyframesY = GetKeyframes(poseKeyframeLists.keyframesPositionY);
@@ -163,6 +171,30 @@ private void AddAnimationCurvesForJointToAnimationClip(PoseKeyframeLists poseKey
             keyframes.Add(new Keyframe(serializableKeyframe.time, serializableKeyframe.value));
         }
         return keyframes;
+    }
+
+    private async Task<AudioClip> LoadClip(string path)
+    {
+        AudioClip clip = null;
+        using (UnityWebRequest uwr = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.WAV))
+        {
+            await uwr.SendWebRequest();
+            // wrap tasks in try/catch, otherwise it'll fail silently
+            try
+            {
+                while (!uwr.isDone) await Task.Delay(5);
+                if (uwr.isNetworkError || uwr.isHttpError) Debug.Log($"{uwr.error}");
+                else
+                {
+                    clip = DownloadHandlerAudioClip.GetContent(uwr);
+                }
+            }
+            catch (Exception err)
+            {
+                debugLogTmPro.text += $"{err.Message}, {err.StackTrace}";
+            }
+        }
+        return clip;
     }
 
 

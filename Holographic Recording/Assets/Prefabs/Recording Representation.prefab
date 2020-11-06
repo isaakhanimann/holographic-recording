@@ -1822,7 +1822,7 @@ MonoBehaviour:
     type: 3}
   rightHand: {fileID: 2870158124925116496, guid: 38f366cd416f6204282e49af5c7d501f,
     type: 3}
-  debugLogsObject: {fileID: 5065220033086762956}
+  debugLogTmPro: {fileID: 5180292029177952201}
 --- !u!82 &-3858803001370912394
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5282,7 +5282,7 @@ PrefabInstance:
     - target: {fileID: 251672353265425256, guid: f88dd6b35fa6c35468f1ff8ca2bf9678,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3595137290011810037, guid: f88dd6b35fa6c35468f1ff8ca2bf9678,
         type: 3}
@@ -5347,9 +5347,15 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5058014933267264458}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &5065220033086762956 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 34598332581026822, guid: f88dd6b35fa6c35468f1ff8ca2bf9678,
+--- !u!114 &5180292029177952201 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 132211806238426115, guid: f88dd6b35fa6c35468f1ff8ca2bf9678,
     type: 3}
   m_PrefabInstance: {fileID: 5058014933267264458}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

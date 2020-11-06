@@ -23,12 +23,8 @@ public class ChangeHandVisibility : MonoBehaviour
         MixedRealityHandTrackingProfile handTrackingProfile = CoreServices.InputSystem?.InputSystemProfile?.HandTrackingProfile;
         if (handTrackingProfile != null)
         {
-            debugLogTmPro.text = "handTrackingProfile is not null";
             handTrackingProfile.EnableHandMeshVisualization = isHandMeshVisible;
             handTrackingProfile.EnableHandJointVisualization = isHandJointVisible;
-        } else
-        {
-            debugLogTmPro.text = "handTrackingProfile is null";
         }
     }
 
