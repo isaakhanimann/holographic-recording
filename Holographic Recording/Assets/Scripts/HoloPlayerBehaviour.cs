@@ -17,6 +17,9 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public GameObject rightHand;
     public TextMeshPro debugLogTmPro;
 
+    public GameObject firstPhaseButtons;
+    public GameObject secondPhaseButtons;
+
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
     private float lengthOfAnimation;
@@ -44,12 +47,17 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
 
     public void Play()
-    {
+    {       
+        
+        firstPhaseButtons.SetActive(false);
+        secondPhaseButtons.SetActive(true);
+
         debugLogTmPro.GetComponent<TextMeshPro>().text += "Play" + System.Environment.NewLine;
         instantiatedLeftHand.SetActive(true);
         instantiatedRightHand.SetActive(true);
         instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
         instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
+
         StartCoroutine(SetInstancesInactive());
     }
 
@@ -197,5 +205,15 @@ public class HoloPlayerBehaviour : MonoBehaviour
         return clip;
     }
 
+    public void Pause()
+    {
+        secondPhaseButtons.SetActive(false);
+        firstPhaseButtons.SetActive(true);
+    }
 
+    public void Stop()
+    {
+        secondPhaseButtons.SetActive(false);
+        firstPhaseButtons.SetActive(true);
+    }
 }
