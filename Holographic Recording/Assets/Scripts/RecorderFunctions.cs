@@ -26,7 +26,7 @@ public class RecorderFunctions : MonoBehaviour
     {
         if (saveJobHandle != null)
         {
-            debugLogTmPro.text = $"is job completed = {saveJobHandle?.IsCompleted}";
+            //debugLogTmPro.text = $"is job completed = {saveJobHandle?.IsCompleted}";
         }
     }
 
