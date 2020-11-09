@@ -54,6 +54,8 @@ public static class SavWav
 			ConvertAndWrite(fileStream, samples);
 
 			WriteHeader(fileStream, hz, channels, lengthInSamples);
+
+			fileStream.Close();
 		}
 
 		return true; // TODO: return false if there's a failure saving the file
