@@ -17,10 +17,22 @@ public class AudioRecorder : MonoBehaviour
     private float duration = 0;
     private bool isRecording = false;
 
+    NativeArray<float> originalSamplesContainer;
+    NativeArray<float> cutSamplesContainer;
+
+    NativeArray<int> lengthInSamplesContainer;
+    NativeArray<int> channelsContainer;
+    NativeArray<int> frequencyContainer;
+
+    JobHandle cutJobHandle;
+    CutAudioJob cutJob;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        lengthInSamplesContainer = new NativeArray<int>(1, Allocator.Persistent);
+        channelsContainer = new NativeArray<int>(1, Allocator.Persistent);
+        frequencyContainer = new NativeArray<int>(1, Allocator.Persistent);
     }
 
     // Update is called once per frame
@@ -58,48 +70,65 @@ public class AudioRecorder : MonoBehaviour
         var originalSamples = new float[audioClip.samples];
         audioClip.GetData(originalSamples, 0);
 
+        originalSamplesContainer = new NativeArray<float>(originalSamples, Allocator.Persistent);
+        cutSamplesContainer = new NativeArray<float>(new float[lengthInSamples], Allocator.Persistent);
 
-        CutAudioJob cutJob = new CutAudioJob();
-        NativeArray<float> originalSamplesContainer = new NativeArray<float>(originalSamples, Allocator.Persistent);
-        cutJob.originalSamplesContainer = originalSamplesContainer;
-
-        NativeArray<int> lengthInSamplesContainer = new NativeArray<int>(1, Allocator.Persistent);
         lengthInSamplesContainer[0] = lengthInSamples;
-        cutJob.lengthInSamplesContainer = lengthInSamplesContainer;
-
-        NativeArray<int> channelsContainer = new NativeArray<int>(1, Allocator.Persistent);
         channelsContainer[0] = audioClip.channels;
-        cutJob.channelsContainer = channelsContainer;
-
-        NativeArray<int> frequencyContainer = new NativeArray<int>(1, Allocator.Persistent);
         frequencyContainer[0] = audioClip.frequency;
-        cutJob.frequencyContainer = frequencyContainer;
+        
+        cutJob = new CutAudioJob()
+        {
+            originalSamplesContainer = originalSamplesContainer,
+            cutSamplesContainer = cutSamplesContainer,
+            lengthInSamplesContainer = lengthInSamplesContainer,
+            channelsContainer = channelsContainer,
+            frequencyContainer = frequencyContainer
+        };
 
-        JobHandle cutJobHandle = cutJob.Schedule();
+        cutJobHandle = cutJob.Schedule();
 
-        duration = 0;
+        duration = 0;       
+    }
+
+    private void LateUpdate()
+    {
+        cutJobHandle.Complete();
+
+        SavWav.Save(
+            "AUDIOFILE_TEST_UNITY", 
+            cutJob.cutSamplesContainer.ToArray(), 
+            cutJob.frequencyContainer[0],
+            cutJob.channelsContainer[0],
+            cutJob.lengthInSamplesContainer[0]
+        );
+    }
+
+    private void OnDestroy()
+    {
+        // make sure to Dispose() any NativeArrays when we're done
+        lengthInSamplesContainer.Dispose();
+        originalSamplesContainer.Dispose();
+        cutSamplesContainer.Dispose();
+        channelsContainer.Dispose();
+        frequencyContainer.Dispose();
     }
 
 
     public struct CutAudioJob : IJob
     {
         public NativeArray<float> originalSamplesContainer;
+        public NativeArray<float> cutSamplesContainer;
         public NativeArray<int> lengthInSamplesContainer;
         public NativeArray<int> channelsContainer;
         public NativeArray<int> frequencyContainer;
 
         public void Execute()
         {
-            List<float> samplesCutShort = new List<float>();
             for (int i = 0; i < lengthInSamplesContainer[0]; i++)
             {
-                samplesCutShort.Add(originalSamplesContainer[i]);
+                cutSamplesContainer[i] = originalSamplesContainer[i];
             }
-
-            AudioClip audioClip = AudioClip.Create("audioClip", lengthInSamplesContainer[0], channelsContainer[0], frequencyContainer[0], false);
-            audioClip.SetData(samplesCutShort.ToArray(), 0);
-
-            SavWav.Save("AUDIOFILE_TEST_UNITY", audioClip);
         }
     }
 }

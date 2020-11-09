@@ -34,7 +34,7 @@ public static class SavWav
 
 	const int HEADER_SIZE = 44;
 
-	public static bool Save(string filename, AudioClip clip)
+	public static bool Save(string filename, float[] samples, int hz, int channels, int lengthInSamples)
 	{
 		if (!filename.ToLower().EndsWith(".wav"))
 		{
@@ -51,57 +51,12 @@ public static class SavWav
 		using (var fileStream = CreateEmpty(filepath))
 		{
 
-			ConvertAndWrite(fileStream, clip);
+			ConvertAndWrite(fileStream, samples);
 
-			WriteHeader(fileStream, clip);
+			WriteHeader(fileStream, hz, channels, lengthInSamples);
 		}
 
 		return true; // TODO: return false if there's a failure saving the file
-	}
-
-	public static AudioClip TrimSilence(AudioClip clip, float min)
-	{
-		var samples = new float[clip.samples];
-
-		clip.GetData(samples, 0);
-
-		return TrimSilence(new List<float>(samples), min, clip.channels, clip.frequency);
-	}
-
-	public static AudioClip TrimSilence(List<float> samples, float min, int channels, int hz)
-	{
-		return TrimSilence(samples, min, channels, hz, false, false);
-	}
-
-	public static AudioClip TrimSilence(List<float> samples, float min, int channels, int hz, bool _3D, bool stream)
-	{
-		int i;
-
-		for (i = 0; i < samples.Count; i++)
-		{
-			if (Mathf.Abs(samples[i]) > min)
-			{
-				break;
-			}
-		}
-
-		samples.RemoveRange(0, i);
-
-		for (i = samples.Count - 1; i > 0; i--)
-		{
-			if (Mathf.Abs(samples[i]) > min)
-			{
-				break;
-			}
-		}
-
-		samples.RemoveRange(i, samples.Count - i);
-
-		var clip = AudioClip.Create("TempClip", samples.Count, channels, hz, _3D, stream);
-
-		clip.SetData(samples.ToArray(), 0);
-
-		return clip;
 	}
 
 	static FileStream CreateEmpty(string filepath)
@@ -117,13 +72,8 @@ public static class SavWav
 		return fileStream;
 	}
 
-	static void ConvertAndWrite(FileStream fileStream, AudioClip clip)
+	static void ConvertAndWrite(FileStream fileStream, float[] samples)
 	{
-
-		var samples = new float[clip.samples];
-
-		clip.GetData(samples, 0);
-
 		Int16[] intData = new Int16[samples.Length];
 		//converting in 2 float[] steps to Int16[], //then Int16[] to Byte[]
 
@@ -144,12 +94,8 @@ public static class SavWav
 		fileStream.Write(bytesData, 0, bytesData.Length);
 	}
 
-	static void WriteHeader(FileStream fileStream, AudioClip clip)
+	static void WriteHeader(FileStream fileStream, int hz, int channels, int samples)
 	{
-
-		var hz = clip.frequency;
-		var channels = clip.channels;
-		var samples = clip.samples;
 
 		fileStream.Seek(0, SeekOrigin.Begin);
 
