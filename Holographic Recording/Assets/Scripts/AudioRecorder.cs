@@ -96,8 +96,8 @@ public class AudioRecorder : MonoBehaviour
         cutJobHandle.Complete();
 
         SavWav.Save(
-            "AUDIOFILE_TEST_UNITY", 
-            cutJob.cutSamplesContainer.ToArray(), 
+            "AUDIOFILE_TEST_UNITY",
+            cutJob.cutSamplesContainer.ToArray(),
             cutJob.frequencyContainer[0],
             cutJob.channelsContainer[0],
             cutJob.lengthInSamplesContainer[0]
