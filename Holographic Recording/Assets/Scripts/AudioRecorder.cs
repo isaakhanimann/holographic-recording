@@ -91,7 +91,7 @@ public class AudioRecorder : MonoBehaviour
         duration = 0;       
     }
 
-    private void LateUpdate()
+/*    private void LateUpdate()
     {
         cutJobHandle.Complete();
 
@@ -102,7 +102,7 @@ public class AudioRecorder : MonoBehaviour
             cutJob.channelsContainer[0],
             cutJob.lengthInSamplesContainer[0]
         );
-    }
+    }*/
 
     private void OnDestroy()
     {
