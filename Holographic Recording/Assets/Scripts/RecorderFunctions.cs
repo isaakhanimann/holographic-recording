@@ -21,9 +21,6 @@ public class RecorderFunctions : MonoBehaviour
     private GameObject recordingRepresentationInstance;
     private Nullable<JobHandle> saveJobHandle;
 
-    public GameObject preRecordingObject;
-    public GameObject postRecordingObject;
-
 
     void Update()
     {
@@ -36,9 +33,6 @@ public class RecorderFunctions : MonoBehaviour
 
     public void StartRecordingAndInstantiateRepresentation()
     {
-        preRecordingObject.SetActive(false);
-        postRecordingObject.SetActive(true);
-
         StartRecording();
         InstantiateRecordingRepresentationAtPalm();
     }
@@ -60,9 +54,6 @@ public class RecorderFunctions : MonoBehaviour
 
     public void StopRecordingAndPutRecordingIntoRepresentation()
     {
-        postRecordingObject.SetActive(false);
-        preRecordingObject.SetActive(true);
-
         HoloRecording newRecording = StopRecording();
         HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
         playerComponent.PutHoloRecordingIntoPlayer(newRecording);
@@ -70,9 +61,6 @@ public class RecorderFunctions : MonoBehaviour
 
     public void CancelRecordingAndRemoveRepresentation()
     {
-        postRecordingObject.SetActive(false);
-        preRecordingObject.SetActive(true);
-
         CancelRecording();
         Destroy(recordingRepresentationInstance);
     }
