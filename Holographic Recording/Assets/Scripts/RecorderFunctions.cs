@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System;
 using Unity.Jobs;
 using Unity.Collections;
+using System.Collections;
 
 public class RecorderFunctions : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class RecorderFunctions : MonoBehaviour
     private GameObject recordingRepresentationInstance;
     private Nullable<JobHandle> saveJobHandle;
     private bool isRecording;
+    private bool isHandDetected;
 
     public GameObject preRecordingMenu;
     public GameObject whileRecordingMenu;
@@ -38,14 +40,23 @@ public class RecorderFunctions : MonoBehaviour
     public void StartRecordingAndInstantiateRepresentation()
     {
         preRecordingMenu.SetActive(false);
-        whileRecordingMenu.SetActive(true);
-
+        StartCoroutine(SetWhileRecordingMenuActiveAfterNSeconds());
         StartRecording();
-        InstantiateRecordingRepresentationAtPalm();
+    }
+
+    IEnumerator SetWhileRecordingMenuActiveAfterNSeconds()
+    {
+        yield return new WaitForSeconds(2);
+        if (isHandDetected)
+        {
+            whileRecordingMenu.SetActive(true);
+        }
     }
 
     public void OnHandDetected()
     {
+        isHandDetected = true;
+
         if (isRecording)
         {
             preRecordingMenu.SetActive(false);
@@ -59,6 +70,7 @@ public class RecorderFunctions : MonoBehaviour
 
     public void OnHandLost()
     {
+        isHandDetected = false;
         preRecordingMenu.SetActive(false);
         whileRecordingMenu.SetActive(false);
     }
@@ -84,6 +96,9 @@ public class RecorderFunctions : MonoBehaviour
         preRecordingMenu.SetActive(true);
 
         HoloRecording newRecording = StopRecording();
+
+        InstantiateRecordingRepresentationAtPalm();
+
         HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
         playerComponent.PutHoloRecordingIntoPlayer(newRecording);
     }
