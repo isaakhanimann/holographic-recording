@@ -18,14 +18,16 @@ public class RecorderFunctions : MonoBehaviour
     public GameObject recordingRepresentationPrefab;
     public int captureFrequencyInFrames = 1;
     public TextMeshPro debugLogTmPro;
+    public GameObject preRecordingMenu;
+    public GameObject whileRecordingMenu;
+
 
     private GameObject recordingRepresentationInstance;
     private Nullable<JobHandle> saveJobHandle;
     private bool isRecording;
     private bool isHandDetected;
-
-    public GameObject preRecordingMenu;
-    public GameObject whileRecordingMenu;
+    private int numberOfRecording;
+    private string pathToScreenshot;
 
 
     void Update()
@@ -37,11 +39,26 @@ public class RecorderFunctions : MonoBehaviour
     }
 
 
-    public void StartRecordingAndInstantiateRepresentation()
+    public void StartRecording()
     {
         preRecordingMenu.SetActive(false);
+        numberOfRecording = GetRandomNumberBetween1and100000();
         StartCoroutine(SetWhileRecordingMenuActiveAfterNSeconds());
-        StartRecording();
+        allKeyFrames = new AllKeyFrames();
+        allKeyFrames.leftJointLists = new KeyFrameListsForAllHandJoints(Handedness.Left);
+        allKeyFrames.rightJointLists = new KeyFrameListsForAllHandJoints(Handedness.Right);
+        isRecording = true;
+        StartCoroutine(MakeScreenshotAfterNSeconds());
+    }
+
+    IEnumerator MakeScreenshotAfterNSeconds()
+    {
+        debugLogTmPro.text += $"MakeScreenshotAfterNSeconds called" + System.Environment.NewLine;
+        yield return new WaitForSeconds(2);
+        string fileName = $"Screenshot{numberOfRecording}";
+        pathToScreenshot = Application.persistentDataPath + $"/{fileName}.png";
+        ScreenCapture.CaptureScreenshot(pathToScreenshot);
+        debugLogTmPro.text += $"CaptureScreenshot executed, pathToScreenshot = {pathToScreenshot}" + System.Environment.NewLine;
     }
 
     IEnumerator SetWhileRecordingMenuActiveAfterNSeconds()
@@ -112,15 +129,6 @@ public class RecorderFunctions : MonoBehaviour
         Destroy(recordingRepresentationInstance);
     }
 
-
-    private void StartRecording()
-    {
-        allKeyFrames = new AllKeyFrames();
-        allKeyFrames.leftJointLists = new KeyFrameListsForAllHandJoints(Handedness.Left);
-        allKeyFrames.rightJointLists = new KeyFrameListsForAllHandJoints(Handedness.Right);
-        isRecording = true;
-    }
-
     private void CancelRecording()
     {
         isRecording = false;
@@ -138,7 +146,7 @@ public class RecorderFunctions : MonoBehaviour
     private HoloRecording SaveRecording()
     {
         debugLogTmPro.text += $"SaveRecording called" + System.Environment.NewLine;
-        string animationClipName = "AnimationClip" + GetRandomNumberBetween1and100000();
+        string animationClipName = "AnimationClip" + numberOfRecording;
         string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
         //SaveKeyframesAsynchronously(pathToAnimationClip);
         HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames);
@@ -236,23 +244,19 @@ public class RecorderFunctions : MonoBehaviour
     {
         if (leftHand != null)
         {
-            debugLogTmPro.text = "leftHand is not null" + System.Environment.NewLine;
             AddAllJointPoses(Handedness.Left);
         }
         else
         {
-            debugLogTmPro.text = "leftHand is null" + System.Environment.NewLine;
             leftHand = GameObject.Find("Left_OurRiggedHandLeft(Clone)");
         }
 
         if (rightHand != null)
         {
-            debugLogTmPro.text += "rightHand is not null" + System.Environment.NewLine;
             AddAllJointPoses(Handedness.Right);
         }
         else
         {
-            debugLogTmPro.text += "rightHand is null" + System.Environment.NewLine;
             rightHand = GameObject.Find("Right_OurRiggedHandRight(Clone)");
         }
     }

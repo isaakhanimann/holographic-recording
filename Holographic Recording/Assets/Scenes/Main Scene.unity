@@ -782,8 +782,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4256641535833665089}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.1305, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.2257, y: 0, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 4646048511542685680}
   - {fileID: 4722058149987547930}
@@ -1234,12 +1234,12 @@ MonoBehaviour:
   minDistance: 0.6
   maxDistance: 1
   minViewDegrees: 0
-  maxViewDegrees: 10
+  maxViewDegrees: 30
   aspectV: 1
   ignoreAngleClamp: 0
   ignoreDistanceClamp: 0
-  useFixedVerticalPosition: 1
-  fixedVerticalPosition: 0.4
+  useFixedVerticalPosition: 0
+  fixedVerticalPosition: 0
   orientToReferenceDirection: 0
 --- !u!114 &1316851334345963617
 MonoBehaviour:
@@ -2340,7 +2340,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4109282155161385155}
-        m_MethodName: StartRecordingAndInstantiateRepresentation
+        m_MethodName: StartRecording
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
