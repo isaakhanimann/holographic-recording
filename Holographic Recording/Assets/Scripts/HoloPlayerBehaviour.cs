@@ -8,6 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.MixedReality.Toolkit.Utilities;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
+using UnityEngine.UI;
 
 public class HoloPlayerBehaviour : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public GameObject playButton;
     public GameObject secondRepresentation;
     public GameObject instructionObject;
+    public RawImage screenshotRawImage;
 
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
@@ -49,6 +51,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     public void PutHoloRecordingIntoPlayer(HoloRecording recording)
     {
+        StartCoroutine(AddScreenshotToRepresentation(recording.pathToScreenshot));
         debugLogTmPro.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
         OpenSystemKeyboard();
         instructionObject.SetActive(true);
@@ -59,6 +62,14 @@ public class HoloPlayerBehaviour : MonoBehaviour
         debugLogTmPro.GetComponent<TextMeshPro>().text += "AnimationClips were loaded" + System.Environment.NewLine;
         instantiatedLeftHand.GetComponent<Animation>().AddClip(leftHandClip, "leftHand");
         instantiatedRightHand.GetComponent<Animation>().AddClip(rightHandClip, "rightHand");
+    }
+
+    IEnumerator AddScreenshotToRepresentation(string pathToScreenshot)
+    {
+        WWW www = new WWW(pathToScreenshot);
+        while (!www.isDone)
+            yield return null;
+        screenshotRawImage.texture = www.texture;
     }
 
 
