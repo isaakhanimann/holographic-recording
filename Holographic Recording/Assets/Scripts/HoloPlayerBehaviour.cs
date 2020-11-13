@@ -22,6 +22,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public GameObject secondRepresentation;
     public GameObject instructionObject;
     public RawImage screenshotRawImage;
+    public AudioSource audioSource;
 
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
@@ -52,6 +53,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public void PutHoloRecordingIntoPlayer(HoloRecording recording)
     {
         StartCoroutine(AddScreenshotToRepresentation(recording.pathToScreenshot));
+        audioSource.clip = recording.audioClip;
         debugLogTmPro.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
         OpenSystemKeyboard();
         instructionObject.SetActive(true);
@@ -87,17 +89,17 @@ public class HoloPlayerBehaviour : MonoBehaviour
         
         firstRepresentation.SetActive(false);
         secondRepresentation.SetActive(true);
-
+        audioSource.Play();
         debugLogTmPro.GetComponent<TextMeshPro>().text += "Play" + System.Environment.NewLine;
         instantiatedLeftHand.SetActive(true);
         instantiatedRightHand.SetActive(true);
         instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
         instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
 
-        StartCoroutine(ResetGameObjectVisibilities());
+        StartCoroutine(ResetRecording());
     }
 
-    IEnumerator ResetGameObjectVisibilities()
+    IEnumerator ResetRecording()
     {
         debugLogTmPro.GetComponent<TextMeshPro>().text += "SetInstanceInactive coroutine was called" + System.Environment.NewLine;
         yield return new WaitForSeconds(lengthOfAnimation);
@@ -105,6 +107,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         instantiatedRightHand.SetActive(false);
         firstRepresentation.SetActive(true);
         secondRepresentation.SetActive(false);
+        audioSource.Stop();
     }
 
 

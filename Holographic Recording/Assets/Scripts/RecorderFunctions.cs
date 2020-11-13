@@ -28,6 +28,7 @@ public class RecorderFunctions : MonoBehaviour
     private bool isHandDetected;
     private int numberOfRecording;
     private string pathToScreenshot;
+    private AudioClip audioClip;
 
 
     void Update()
@@ -42,6 +43,7 @@ public class RecorderFunctions : MonoBehaviour
     public void StartRecording()
     {
         preRecordingMenu.SetActive(false);
+        audioClip = Microphone.Start(null, false, 60, 44100);
         numberOfRecording = GetRandomNumberBetween1and100000();
         StartCoroutine(SetWhileRecordingMenuActiveAfterNSeconds());
         allKeyFrames = new AllKeyFrames();
@@ -132,12 +134,14 @@ public class RecorderFunctions : MonoBehaviour
     private void CancelRecording()
     {
         isRecording = false;
+        Microphone.End(null);
         ResetRecorder();
     }
 
     private HoloRecording StopRecording()
     {
         isRecording = false;
+        Microphone.End(null);
         HoloRecording newRecording = SaveRecording();
         ResetRecorder();
         return newRecording;
@@ -149,7 +153,7 @@ public class RecorderFunctions : MonoBehaviour
         string animationClipName = "AnimationClip" + numberOfRecording;
         string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
         //SaveKeyframesAsynchronously(pathToAnimationClip);
-        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot);
+        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot, audioClip);
         return newRecording;
     }
 

@@ -1633,6 +1633,7 @@ MonoBehaviour:
   secondRepresentation: {fileID: 6774442491233487969}
   instructionObject: {fileID: 5240779247591966131}
   screenshotRawImage: {fileID: 3756674252009165017}
+  audioSource: {fileID: -3858803001370912394}
 --- !u!82 &-3858803001370912394
 AudioSource:
   m_ObjectHideFlags: 0
