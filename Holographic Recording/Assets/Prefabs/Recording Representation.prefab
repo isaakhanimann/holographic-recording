@@ -1981,6 +1981,7 @@ MonoBehaviour:
     type: 3}
   debugLogTmPro: {fileID: 5180292029177952201}
   firstRepresentation: {fileID: 5029952666912075311}
+  titleOfRepresentation: {fileID: 5465836981088275339}
   secondRepresentation: {fileID: 6774442491233487969}
 --- !u!82 &-3858803001370912394
 AudioSource:
@@ -2678,6 +2679,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3612205301034395248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2972815961894932243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a98de877dee5fc341b4eb59dfdab266c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  autoConstraintSelection: 1
+  selectedConstraints: []
 --- !u!1 &2980921381337386635
 GameObject:
   m_ObjectHideFlags: 0
@@ -4871,20 +4886,6 @@ Transform:
   m_Father: {fileID: 2760983841414324795}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3612205301034395248
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2972815961894932243}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a98de877dee5fc341b4eb59dfdab266c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  autoConstraintSelection: 1
-  selectedConstraints: []
 --- !u!1 &5106731232332078655
 GameObject:
   m_ObjectHideFlags: 0
@@ -7586,6 +7587,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5058014933267264458}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2972815961894932243 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8029985847260478681, guid: f88dd6b35fa6c35468f1ff8ca2bf9678,
+    type: 3}
+  m_PrefabInstance: {fileID: 5058014933267264458}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &5180292029177952201 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 132211806238426115, guid: f88dd6b35fa6c35468f1ff8ca2bf9678,
@@ -7598,12 +7605,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &2972815961894932243 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8029985847260478681, guid: f88dd6b35fa6c35468f1ff8ca2bf9678,
-    type: 3}
-  m_PrefabInstance: {fileID: 5058014933267264458}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6772256903080566252
 PrefabInstance:
   m_ObjectHideFlags: 0
