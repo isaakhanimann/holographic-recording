@@ -54,24 +54,35 @@ public class HoloPlayerBehaviour : MonoBehaviour
     {
         StartCoroutine(AddScreenshotToRepresentation(recording.pathToScreenshot));
         audioSource.clip = recording.audioClip;
-        debugLogTmPro.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
+        debugLogTmPro.text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
         OpenSystemKeyboard();
         instructionObject.SetActive(true);
         buttons.SetActive(false);
         InstantiateHand(leftHand, ref instantiatedLeftHand);
         InstantiateHand(rightHand, ref instantiatedRightHand);
         (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromAllKeyFrames(recording.allKeyFrames);
-        debugLogTmPro.GetComponent<TextMeshPro>().text += "AnimationClips were loaded" + System.Environment.NewLine;
+        debugLogTmPro.text += "AnimationClips were loaded" + System.Environment.NewLine;
         instantiatedLeftHand.GetComponent<Animation>().AddClip(leftHandClip, "leftHand");
         instantiatedRightHand.GetComponent<Animation>().AddClip(rightHandClip, "rightHand");
     }
 
     IEnumerator AddScreenshotToRepresentation(string pathToScreenshot)
     {
-        WWW www = new WWW(pathToScreenshot);
-        while (!www.isDone)
-            yield return null;
-        screenshotRawImage.texture = www.texture;
+        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(pathToScreenshot))
+        {
+            yield return uwr.SendWebRequest();
+
+            if (uwr.isNetworkError || uwr.isHttpError)
+            {
+                debugLogTmPro.text += $"{uwr.error}" + System.Environment.NewLine;
+            }
+            else
+            {
+                var texture = DownloadHandlerTexture.GetContent(uwr);
+                screenshotRawImage.texture = texture;
+            }
+        }
+        
     }
 
 
@@ -93,7 +104,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     {
         firstRepresentation.SetActive(false);
         audioSource.Play();
-        debugLogTmPro.GetComponent<TextMeshPro>().text += "Play" + System.Environment.NewLine;
+        debugLogTmPro.text += "Play" + System.Environment.NewLine;
         instantiatedLeftHand.SetActive(true);
         instantiatedRightHand.SetActive(true);
         instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
@@ -110,7 +121,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     IEnumerator ResetRecording()
     {
-        debugLogTmPro.GetComponent<TextMeshPro>().text += "SetInstanceInactive coroutine was called" + System.Environment.NewLine;
+        debugLogTmPro.text += "SetInstanceInactive coroutine was called" + System.Environment.NewLine;
         yield return new WaitForSeconds(lengthOfAnimation);
         if(!stopWasPressed)
         {
