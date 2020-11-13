@@ -18,7 +18,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public TextMeshPro debugLogTmPro;
     public GameObject firstRepresentation;
     public TextMeshPro titleOfRepresentation;
-    public GameObject playButton;
+    public GameObject buttons;
     public GameObject secondRepresentation;
     public GameObject instructionObject;
     public RawImage screenshotRawImage;
@@ -39,7 +39,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
             if (keyboard.status == TouchScreenKeyboard.Status.Done)
             {
-                playButton.SetActive(true);
+                buttons.SetActive(true);
                 instructionObject.SetActive(false);
             }
         }
@@ -57,7 +57,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         debugLogTmPro.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
         OpenSystemKeyboard();
         instructionObject.SetActive(true);
-        playButton.SetActive(false);
+        buttons.SetActive(false);
         InstantiateHand(leftHand, ref instantiatedLeftHand);
         InstantiateHand(rightHand, ref instantiatedRightHand);
         (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromAllKeyFrames(recording.allKeyFrames);
@@ -83,10 +83,14 @@ public class HoloPlayerBehaviour : MonoBehaviour
         instantiatedHand.SetActive(false);
     }
 
+    public void DeleteRecording()
+    {
+        Destroy(gameObject);
+    }
+
 
     public void Play()
     {       
-        
         firstRepresentation.SetActive(false);
         secondRepresentation.SetActive(true);
         audioSource.Play();
@@ -246,15 +250,14 @@ public class HoloPlayerBehaviour : MonoBehaviour
         return clip;
     }
 
-    public void Pause()
-    {
-        secondRepresentation.SetActive(false);
-        firstRepresentation.SetActive(true);
-    }
-
     public void Stop()
     {
         secondRepresentation.SetActive(false);
         firstRepresentation.SetActive(true);
+        instantiatedLeftHand.SetActive(false);
+        instantiatedRightHand.SetActive(false);
+        instantiatedLeftHand.GetComponent<Animation>().Stop();
+        instantiatedRightHand.GetComponent<Animation>().Stop();
+        audioSource.Stop();
     }
 }
