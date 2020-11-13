@@ -17,8 +17,8 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public GameObject rightHand;
     public TextMeshPro debugLogTmPro;
 
-    public GameObject firstPhaseButtons;
-    public GameObject secondPhaseButtons;
+    public GameObject firstRepresentation;
+    public GameObject secondRepresentation;
 
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
@@ -49,8 +49,8 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public void Play()
     {       
         
-        firstPhaseButtons.SetActive(false);
-        secondPhaseButtons.SetActive(true);
+        firstRepresentation.SetActive(false);
+        secondRepresentation.SetActive(true);
 
         debugLogTmPro.GetComponent<TextMeshPro>().text += "Play" + System.Environment.NewLine;
         instantiatedLeftHand.SetActive(true);
@@ -58,15 +58,17 @@ public class HoloPlayerBehaviour : MonoBehaviour
         instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
         instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
 
-        StartCoroutine(SetInstancesInactive());
+        StartCoroutine(ResetGameObjectVisibilities());
     }
 
-    IEnumerator SetInstancesInactive()
+    IEnumerator ResetGameObjectVisibilities()
     {
         debugLogTmPro.GetComponent<TextMeshPro>().text += "SetInstanceInactive coroutine was called" + System.Environment.NewLine;
         yield return new WaitForSeconds(lengthOfAnimation);
         instantiatedLeftHand.SetActive(false);
         instantiatedRightHand.SetActive(false);
+        firstRepresentation.SetActive(true);
+        secondRepresentation.SetActive(false);
     }
 
 
@@ -207,13 +209,13 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     public void Pause()
     {
-        secondPhaseButtons.SetActive(false);
-        firstPhaseButtons.SetActive(true);
+        secondRepresentation.SetActive(false);
+        firstRepresentation.SetActive(true);
     }
 
     public void Stop()
     {
-        secondPhaseButtons.SetActive(false);
-        firstPhaseButtons.SetActive(true);
+        secondRepresentation.SetActive(false);
+        firstRepresentation.SetActive(true);
     }
 }

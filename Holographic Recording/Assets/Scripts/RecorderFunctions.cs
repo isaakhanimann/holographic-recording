@@ -20,9 +20,10 @@ public class RecorderFunctions : MonoBehaviour
 
     private GameObject recordingRepresentationInstance;
     private Nullable<JobHandle> saveJobHandle;
+    private bool isRecording;
 
-    public GameObject preRecordingObject;
-    public GameObject postRecordingObject;
+    public GameObject preRecordingMenu;
+    public GameObject whileRecordingMenu;
 
 
     void Update()
@@ -36,11 +37,30 @@ public class RecorderFunctions : MonoBehaviour
 
     public void StartRecordingAndInstantiateRepresentation()
     {
-        preRecordingObject.SetActive(false);
-        postRecordingObject.SetActive(true);
+        preRecordingMenu.SetActive(false);
+        whileRecordingMenu.SetActive(true);
 
         StartRecording();
         InstantiateRecordingRepresentationAtPalm();
+    }
+
+    public void OnHandDetected()
+    {
+        if (isRecording)
+        {
+            preRecordingMenu.SetActive(false);
+            whileRecordingMenu.SetActive(true);
+        } else
+        {
+            preRecordingMenu.SetActive(true);
+            whileRecordingMenu.SetActive(false);
+        }
+    }
+
+    public void OnHandLost()
+    {
+        preRecordingMenu.SetActive(false);
+        whileRecordingMenu.SetActive(false);
     }
 
     private void InstantiateRecordingRepresentationAtPalm()
@@ -60,8 +80,8 @@ public class RecorderFunctions : MonoBehaviour
 
     public void StopRecordingAndPutRecordingIntoRepresentation()
     {
-        postRecordingObject.SetActive(false);
-        preRecordingObject.SetActive(true);
+        whileRecordingMenu.SetActive(false);
+        preRecordingMenu.SetActive(true);
 
         HoloRecording newRecording = StopRecording();
         HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
@@ -70,15 +90,13 @@ public class RecorderFunctions : MonoBehaviour
 
     public void CancelRecordingAndRemoveRepresentation()
     {
-        postRecordingObject.SetActive(false);
-        preRecordingObject.SetActive(true);
+        whileRecordingMenu.SetActive(false);
+        preRecordingMenu.SetActive(true);
 
         CancelRecording();
         Destroy(recordingRepresentationInstance);
     }
 
-
-    private bool isRecording;
 
     private void StartRecording()
     {
@@ -107,22 +125,11 @@ public class RecorderFunctions : MonoBehaviour
         debugLogTmPro.text += $"SaveRecording called" + System.Environment.NewLine;
         string animationClipName = "AnimationClip" + GetRandomNumberBetween1and100000();
         string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
-        SaveKeyframesAsynchronously(pathToAnimationClip);
+        //SaveKeyframesAsynchronously(pathToAnimationClip);
         HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames);
         return newRecording;
     }
 
-
-    private string SaveKeyframes(string filename)
-    {
-        BinaryFormatter binaryFormatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + $"/{filename}.animationClip";
-        FileStream fileStream = File.Create(path);
-        binaryFormatter.Serialize(fileStream, allKeyFrames);
-        fileStream.Close();
-
-        return path;
-    }
 
     private void SaveKeyframesAsynchronously(string path)
     {
