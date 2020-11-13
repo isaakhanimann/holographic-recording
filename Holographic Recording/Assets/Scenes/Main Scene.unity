@@ -1234,7 +1234,7 @@ MonoBehaviour:
   minDistance: 0.6
   maxDistance: 1
   minViewDegrees: 0
-  maxViewDegrees: 30
+  maxViewDegrees: 10
   aspectV: 1
   ignoreAngleClamp: 0
   ignoreDistanceClamp: 0

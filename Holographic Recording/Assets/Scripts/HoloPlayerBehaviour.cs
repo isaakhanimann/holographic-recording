@@ -85,7 +85,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     public void DeleteRecording()
     {
-        Destroy(gameObject);
+        Destroy(gameObject, 1.5f);
     }
 
 
