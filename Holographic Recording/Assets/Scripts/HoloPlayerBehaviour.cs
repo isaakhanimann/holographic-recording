@@ -19,6 +19,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     public GameObject firstRepresentation;
     public TextMeshPro titleOfRepresentation;
+    public GameObject playButton;
     public GameObject secondRepresentation;
 
     private GameObject instantiatedLeftHand;
@@ -35,9 +36,13 @@ public class HoloPlayerBehaviour : MonoBehaviour
         {
             keyboardText = keyboard.text;
             titleOfRepresentation.text = keyboardText;
+
+            if (keyboard.status == TouchScreenKeyboard.Status.Done)
+            {
+                playButton.SetActive(true);
+            }
         }
     }
-
 
     public void OpenSystemKeyboard()
     {
@@ -48,8 +53,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     {
         debugLogTmPro.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
         OpenSystemKeyboard();
-
-
+        playButton.SetActive(false);
         InstantiateHand(leftHand, ref instantiatedLeftHand);
         InstantiateHand(rightHand, ref instantiatedRightHand);
         (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromAllKeyFrames(recording.allKeyFrames);
