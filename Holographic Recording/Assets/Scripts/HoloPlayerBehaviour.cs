@@ -92,7 +92,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public void Play()
     {       
         firstRepresentation.SetActive(false);
-        secondRepresentation.SetActive(true);
+        StartCoroutine(SetSecondRepresentationActiveAfterNSeconds());
         audioSource.Play();
         debugLogTmPro.GetComponent<TextMeshPro>().text += "Play" + System.Environment.NewLine;
         instantiatedLeftHand.SetActive(true);
@@ -101,6 +101,12 @@ public class HoloPlayerBehaviour : MonoBehaviour
         instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
 
         StartCoroutine(ResetRecording());
+    }
+
+    IEnumerator SetSecondRepresentationActiveAfterNSeconds()
+    {
+        yield return new WaitForSeconds(2);
+        secondRepresentation.SetActive(true);
     }
 
     IEnumerator ResetRecording()
