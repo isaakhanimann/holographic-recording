@@ -8,7 +8,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.MixedReality.Toolkit.Utilities;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
-using System;
 
 public class HoloPlayerBehaviour : MonoBehaviour
 {
@@ -16,17 +15,15 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public GameObject leftHand;
     public GameObject rightHand;
     public TextMeshPro debugLogTmPro;
-
     public GameObject firstRepresentation;
     public TextMeshPro titleOfRepresentation;
     public GameObject playButton;
     public GameObject secondRepresentation;
+    public GameObject instructionObject;
 
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
     private float lengthOfAnimation;
-
-
     private TouchScreenKeyboard keyboard;
     private string keyboardText;
 
@@ -40,6 +37,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
             if (keyboard.status == TouchScreenKeyboard.Status.Done)
             {
                 playButton.SetActive(true);
+                instructionObject.SetActive(false);
             }
         }
     }
@@ -53,6 +51,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     {
         debugLogTmPro.GetComponent<TextMeshPro>().text += "PutHoloRecordingIntoPlayer" + System.Environment.NewLine;
         OpenSystemKeyboard();
+        instructionObject.SetActive(true);
         playButton.SetActive(false);
         InstantiateHand(leftHand, ref instantiatedLeftHand);
         InstantiateHand(rightHand, ref instantiatedRightHand);
