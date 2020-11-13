@@ -12,7 +12,6 @@ using UnityEngine.UI;
 
 public class HoloPlayerBehaviour : MonoBehaviour
 {
-
     public GameObject leftHand;
     public GameObject rightHand;
     public TextMeshPro debugLogTmPro;
@@ -29,6 +28,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     private float lengthOfAnimation;
     private TouchScreenKeyboard keyboard;
     private string keyboardText;
+    private bool stopWasPressed; // needed to stop the reset the representation properly
 
     private void Update()
     {
@@ -90,16 +90,15 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
 
     public void Play()
-    {       
+    {
         firstRepresentation.SetActive(false);
-        StartCoroutine(SetSecondRepresentationActiveAfterNSeconds());
         audioSource.Play();
         debugLogTmPro.GetComponent<TextMeshPro>().text += "Play" + System.Environment.NewLine;
         instantiatedLeftHand.SetActive(true);
         instantiatedRightHand.SetActive(true);
         instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
         instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
-
+        StartCoroutine(SetSecondRepresentationActiveAfterNSeconds());
         StartCoroutine(ResetRecording());
     }
 
@@ -113,11 +112,15 @@ public class HoloPlayerBehaviour : MonoBehaviour
     {
         debugLogTmPro.GetComponent<TextMeshPro>().text += "SetInstanceInactive coroutine was called" + System.Environment.NewLine;
         yield return new WaitForSeconds(lengthOfAnimation);
-        instantiatedLeftHand.SetActive(false);
-        instantiatedRightHand.SetActive(false);
-        firstRepresentation.SetActive(true);
-        secondRepresentation.SetActive(false);
-        audioSource.Stop();
+        if(!stopWasPressed)
+        {
+            instantiatedLeftHand.SetActive(false);
+            instantiatedRightHand.SetActive(false);
+            firstRepresentation.SetActive(true);
+            secondRepresentation.SetActive(false);
+            audioSource.Stop();
+        }
+        stopWasPressed = false;
     }
 
 
@@ -258,12 +261,21 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     public void Stop()
     {
+        stopWasPressed = true;
         secondRepresentation.SetActive(false);
         firstRepresentation.SetActive(true);
+        buttons.SetActive(false);
+        StartCoroutine(SetFirstRepresentationActiveAfterNSeconds());
         instantiatedLeftHand.SetActive(false);
         instantiatedRightHand.SetActive(false);
         instantiatedLeftHand.GetComponent<Animation>().Stop();
         instantiatedRightHand.GetComponent<Animation>().Stop();
         audioSource.Stop();
+    }
+
+    IEnumerator SetFirstRepresentationActiveAfterNSeconds()
+    {
+        yield return new WaitForSeconds(2);
+        buttons.SetActive(true);
     }
 }
