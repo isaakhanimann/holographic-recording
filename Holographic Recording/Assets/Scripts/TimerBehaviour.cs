@@ -22,6 +22,7 @@ public class TimerBehaviour : MonoBehaviour
     {
         gameObject.SetActive(false);
         StopCoroutine(UpdateText());
+        textMeshPro.text = "0s";
     }
 
     IEnumerator UpdateText()
