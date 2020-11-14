@@ -18,7 +18,6 @@ public class TestAnchor : MonoBehaviour
         WorldAnchorStore.GetAsync(AnchorStoreLoaded);
 
     }
-
     // Callback for when anchor store is loaded
     private void AnchorStoreLoaded(WorldAnchorStore st)
     {
@@ -28,7 +27,7 @@ public class TestAnchor : MonoBehaviour
 
     private void LoadAnchors()
     {    
-        bool isAnchorLoaded = store.Load("theGameObjectIWantAnchored", gameObject);
+        bool isAnchorLoaded = store.Load(gameObject.name, gameObject);
         if (!isAnchorLoaded)
         {
             // Until the gameObjectIWantAnchored has an anchor saved at least once it will not be in the AnchorStore
@@ -55,6 +54,16 @@ public class TestAnchor : MonoBehaviour
         {
             // remove any world anchor component from the game object so that it can be moved
             DestroyImmediate(anchor);
+        }
+    }
+
+    // How to iterate all ids stored
+    private void printIds()
+    {
+        string[] ids = store.GetAllIds();
+        for (int index = 0; index < ids.Length; index++)
+        {
+            Debug.Log(ids[index]);
         }
     }
 
