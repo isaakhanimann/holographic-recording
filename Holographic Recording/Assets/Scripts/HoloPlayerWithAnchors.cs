@@ -78,17 +78,26 @@ public class HoloPlayerWithAnchors : MonoBehaviour
         keyboard = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default, false, false, false, false);
     }
 
-    private void LoadAnchors()
+    private void SaveAnchorForGameObject(GameObject gameObject)
     {    
-        bool isLeftHandAnchorLoaded = store.Load(leftHand.name, leftHand);
-        if (!isLeftHandAnchorLoaded)
-        {
+        WorldAnchor anchor = gameObject.AddComponent<WorldAnchor>();
 
+        anchorStore.Delete(gameObject.name);
+        bool isSaved = anchorStore.Save(gameObject.name, anchor);
+        if (!isSaved)
+        {
+            Debug.Log("Anchor could not be saved");
         }
-        bool isRightHandAnchorLoaded = store.Load(rightHand.name, rightHand);
-        if (!isRightHandAnchorLoaded)
-        {
+       
+    }
 
+    private void LoadAnchorForGameObject(ref GameObject gameObject)
+    {    
+
+        bool isLoaded = anchorStore.Load(gameObject.name, gameObject);
+        if (!isLoaded)
+        {
+            Debug.Log("Anchor could not be saved");
         }
        
     }
@@ -104,12 +113,14 @@ public class HoloPlayerWithAnchors : MonoBehaviour
         
         InstantiateHand(leftHand, ref instantiatedLeftHand);
         InstantiateHand(rightHand, ref instantiatedRightHand);
-        LoadAnchors();
-        
+
         (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromAllKeyFrames(recording.allKeyFrames);
         debugLogTmPro.text += "AnimationClips were loaded" + System.Environment.NewLine;
         instantiatedLeftHand.GetComponent<Animation>().AddClip(leftHandClip, "leftHand");
         instantiatedRightHand.GetComponent<Animation>().AddClip(rightHandClip, "rightHand");
+
+        SaveAnchorForGameObject(leftHand);
+        SaveAnchorForGameObject(rightHand);
     }
 
     IEnumerator AddScreenshotToRepresentation(string pathToScreenshot)
@@ -148,6 +159,9 @@ public class HoloPlayerWithAnchors : MonoBehaviour
 
     public void Play()
     {
+        LoadAnchorForGameObject(ref leftHand);
+        LoadAnchorForGameObject(ref rightHand);
+    
         firstRepresentation.SetActive(false);
         audioSource.Play();
         debugLogTmPro.text += "Play" + System.Environment.NewLine;
