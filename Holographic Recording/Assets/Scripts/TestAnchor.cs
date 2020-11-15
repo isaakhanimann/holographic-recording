@@ -9,7 +9,6 @@ using UnityEngine.XR.WSA;
 public class TestAnchor : MonoBehaviour
 {
     public WorldAnchorStore store;
-    GameObject gameObject;
 
     // Start is called before the first frame update
     void Start()
@@ -18,6 +17,12 @@ public class TestAnchor : MonoBehaviour
         WorldAnchorStore.GetAsync(AnchorStoreLoaded);
 
     }
+
+    void OnApplicationQuit()
+    {
+        SaveAnchor();
+    }
+
     // Callback for when anchor store is loaded
     private void AnchorStoreLoaded(WorldAnchorStore st)
     {
@@ -27,10 +32,10 @@ public class TestAnchor : MonoBehaviour
 
     private void LoadAnchors()
     {    
-        bool isAnchorLoaded = store.Load(gameObject.name, gameObject);
+        bool isAnchorLoaded = store.Load(gameObject.name.ToString(), gameObject);
         if (!isAnchorLoaded)
         {
-            // Until the gameObjectIWantAnchored has an anchor saved at least once it will not be in the AnchorStore
+            Debug.Log("No anchor has been stored yet");
         }
     }
 
@@ -39,8 +44,8 @@ public class TestAnchor : MonoBehaviour
         bool isAnchorSaved;
         WorldAnchor anchor = gameObject.AddComponent<WorldAnchor>();
         // Remove any previous worldanchor saved with the same name so we can save new one
-        this.store.Delete(gameObject.name.ToString()); 
-        isAnchorSaved = this.store.Save(gameObject.name.ToString(), anchor);
+        store.Delete(gameObject.name.ToString()); 
+        isAnchorSaved = store.Save(gameObject.name.ToString(), anchor);
         if (!isAnchorSaved)
         {
             Debug.Log("Anchor save failed.");

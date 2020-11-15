@@ -33,31 +33,6 @@ public class HoloPlayerWithAnchors : MonoBehaviour
     private string keyboardText;
     private bool stopWasPressed; // needed to stop the reset the representation properly
 
-
-    private bool anchorStoreLoaded = false;
-    public WorldAnchorStore anchorStore;
-
-    /**
-    Awake is called either when an active GameObject that contains the script is initialized when a Scene loads, or when a previously inactive GameObject is set to active, or after a GameObject created with Object.Instantiate is initialized. Use Awake to initialize variables or states before the application starts.
-    */
-    private void Awake()
-    {
-        WorldAnchorStore.GetAsync(AnchorStoreLoaded);
-
-    }
-
-    // Callback for when anchor store is loaded
-    private void AnchorStoreLoaded(WorldAnchorStore store)
-    {
-        anchorStore = store;
-        anchorStoreLoaded = true;
-        // LoadAnchors();
-    }
-
-    public bool isAnchorStoreLoaded() {
-        return anchorStoreLoaded;
-    }
-
     private void Update()
     {
         if (keyboard != null)
@@ -78,30 +53,6 @@ public class HoloPlayerWithAnchors : MonoBehaviour
         keyboard = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default, false, false, false, false);
     }
 
-    private void SaveAnchorForGameObject(GameObject gameObject)
-    {    
-        WorldAnchor anchor = gameObject.AddComponent<WorldAnchor>();
-
-        anchorStore.Delete(gameObject.name);
-        bool isSaved = anchorStore.Save(gameObject.name, anchor);
-        if (!isSaved)
-        {
-            Debug.Log("Anchor could not be saved");
-        }
-       
-    }
-
-    private void LoadAnchorForGameObject(ref GameObject gameObject)
-    {    
-
-        bool isLoaded = anchorStore.Load(gameObject.name, gameObject);
-        if (!isLoaded)
-        {
-            Debug.Log("Anchor could not be saved");
-        }
-       
-    }
-
     public void PutHoloRecordingIntoPlayer(HoloRecording recording)
     {
         StartCoroutine(AddScreenshotToRepresentation(recording.pathToScreenshot));
@@ -113,14 +64,11 @@ public class HoloPlayerWithAnchors : MonoBehaviour
         
         InstantiateHand(leftHand, ref instantiatedLeftHand);
         InstantiateHand(rightHand, ref instantiatedRightHand);
-
+    
         (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromAllKeyFrames(recording.allKeyFrames);
         debugLogTmPro.text += "AnimationClips were loaded" + System.Environment.NewLine;
         instantiatedLeftHand.GetComponent<Animation>().AddClip(leftHandClip, "leftHand");
         instantiatedRightHand.GetComponent<Animation>().AddClip(rightHandClip, "rightHand");
-
-        SaveAnchorForGameObject(leftHand);
-        SaveAnchorForGameObject(rightHand);
     }
 
     IEnumerator AddScreenshotToRepresentation(string pathToScreenshot)
@@ -149,6 +97,10 @@ public class HoloPlayerWithAnchors : MonoBehaviour
         Vector3 positionToInstantiate = Vector3.zero;
         instantiatedHand = Instantiate(original: hand, position: positionToInstantiate, rotation: rotationToInstantiate);
         instantiatedHand.SetActive(false);
+        GameObject worldAnchor = GameObject.Find("WorldAnchor");
+
+        // Set hands relative to parents
+        instantiatedHand.transform.SetParent(worldAnchor, true);
     }
 
     public void DeleteRecording()
@@ -159,9 +111,6 @@ public class HoloPlayerWithAnchors : MonoBehaviour
 
     public void Play()
     {
-        LoadAnchorForGameObject(ref leftHand);
-        LoadAnchorForGameObject(ref rightHand);
-    
         firstRepresentation.SetActive(false);
         audioSource.Play();
         debugLogTmPro.text += "Play" + System.Environment.NewLine;
