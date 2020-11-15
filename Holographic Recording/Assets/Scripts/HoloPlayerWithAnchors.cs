@@ -100,7 +100,7 @@ public class HoloPlayerWithAnchors : MonoBehaviour
         GameObject worldAnchor = GameObject.Find("WorldAnchor");
 
         // Set hands relative to parents
-        instantiatedHand.transform.SetParent(worldAnchor.transform, true);
+        instantiatedHand.transform.SetParent(worldAnchor.transform, false);
     }
 
     public void DeleteRecording()
