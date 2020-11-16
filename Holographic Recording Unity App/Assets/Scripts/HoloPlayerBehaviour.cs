@@ -27,10 +27,11 @@ public class HoloPlayerBehaviour : MonoBehaviour
     private float lengthOfAnimation;
     private TouchScreenKeyboard keyboard;
     private string keyboardText;
-    private bool stopWasPressed; // needed to stop the reset the representation properly
+    private bool stopWasPressed;
 
     private void Update()
     {
+        // once keyboard is assigned we can read the text that the user types
         if (keyboard != null)
         {
             keyboardText = keyboard.text;
@@ -49,24 +50,29 @@ public class HoloPlayerBehaviour : MonoBehaviour
         keyboard = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default, false, false, false, false);
     }
 
+    // called by the recorder when he is done recording
     public void PutHoloRecordingIntoPlayer(HoloRecording recording)
     {
-        StartCoroutine(AddScreenshotToRepresentation(recording.pathToScreenshot));
-        audioSource.clip = recording.audioClip;
-        Debug.Log("PutHoloRecordingIntoPlayer");
-        OpenSystemKeyboard();
-        instructionObject.SetActive(true);
+        // update UI
+        StartCoroutine(AddScreenshotToRepresentation(recording.pathToScreenshot)); // set the screenshot of the representation, done asynchronously because it loads from disk
+        OpenSystemKeyboard(); // open keyboard to give the representation a title.
+        instructionObject.SetActive(true); // the instructionobject tells the user that he has to type the title of the recording
         buttons.SetActive(false);
-        InstantiateHand(leftHand, ref instantiatedLeftHand);
-        InstantiateHand(rightHand, ref instantiatedRightHand);
+        InstantiateHandAndSetInactive(leftHand, ref instantiatedLeftHand); // the hands should only become visible when the animation is running
+        InstantiateHandAndSetInactive(rightHand, ref instantiatedRightHand);
+
+        // add animationclip to hand prefabs and audio clip of recording to the audiosource of the representation
         (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromAllKeyFrames(recording.allKeyFrames);
         Debug.Log("AnimationClips were loaded");
         instantiatedLeftHand.GetComponent<Animation>().AddClip(leftHandClip, "leftHand");
         instantiatedRightHand.GetComponent<Animation>().AddClip(rightHandClip, "rightHand");
+        // set the audio of the recording
+        audioSource.clip = recording.audioClip;
     }
 
     IEnumerator AddScreenshotToRepresentation(string pathToScreenshot)
     {
+        // load screenshot from file on disk asynchronously and add it to the representation
         using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(pathToScreenshot))
         {
             yield return uwr.SendWebRequest();
@@ -80,12 +86,11 @@ public class HoloPlayerBehaviour : MonoBehaviour
                 var texture = DownloadHandlerTexture.GetContent(uwr);
                 screenshotRawImage.texture = texture;
             }
-        }
-        
+        }  
     }
 
 
-    private void InstantiateHand(GameObject hand, ref GameObject instantiatedHand)
+    private void InstantiateHandAndSetInactive(GameObject hand, ref GameObject instantiatedHand)
     {
         Quaternion rotationToInstantiate = Quaternion.identity;
         Vector3 positionToInstantiate = Vector3.zero;
@@ -95,20 +100,27 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     public void DeleteRecording()
     {
-        Destroy(gameObject, 1.5f);
+        Destroy(gameObject, 1.5f); // adding a delay so the botton has time to bounce back after click
     }
 
 
     public void Play()
     {
-        firstRepresentation.SetActive(false);
-        audioSource.Play();
         Debug.Log("Play");
+        // update UI
+        firstRepresentation.SetActive(false);
+        StartCoroutine(SetSecondRepresentationActiveAfterNSeconds()); // show playback buttons with a delay
+
+        // play audio
+        audioSource.Play();
+
+        // play animation that was added to the hand prefabs
         instantiatedLeftHand.SetActive(true);
         instantiatedRightHand.SetActive(true);
         instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
         instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
-        StartCoroutine(SetSecondRepresentationActiveAfterNSeconds());
+
+        // reset hands to invisible and the recording representation to the start state when playback is done
         StartCoroutine(ResetRecording());
     }
 
@@ -133,7 +145,8 @@ public class HoloPlayerBehaviour : MonoBehaviour
         stopWasPressed = false;
     }
 
-
+    #region Get Animation Clip from File
+    // load the animation clips from the file we saved on disk
     private (AnimationClip, AnimationClip) GetAnimationClipsFromPath(string path)
     {
         BinaryFormatter binaryFormatter = new BinaryFormatter();
@@ -288,4 +301,6 @@ public class HoloPlayerBehaviour : MonoBehaviour
         yield return new WaitForSeconds(2);
         buttons.SetActive(true);
     }
+
+    #endregion
 }
