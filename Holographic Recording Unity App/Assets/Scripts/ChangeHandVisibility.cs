@@ -3,6 +3,8 @@ using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit;
 using TMPro;
 
+// this class is supposed to disable the hand visualization by default and only enable it when we are recording
+// it doesn't work yet
 public class ChangeHandVisibility : MonoBehaviour
 {
 
@@ -26,13 +28,14 @@ public class ChangeHandVisibility : MonoBehaviour
         }
     }
 
-
+    // called when Start Recording is pressed
     public void TurnOnHandMesh()
     {
         isHandMeshVisible = true;
         UpdateHandVisibility();
     }
 
+    // called when Stop or Cancel Recording is pressed
     public void TurnOffHandMesh()
     {
         isHandMeshVisible = false;

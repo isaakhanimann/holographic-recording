@@ -10,6 +10,7 @@ using UnityEngine.Networking;
 using System.Threading.Tasks;
 using UnityEngine.UI;
 
+// Gives the Recording Representation the ability to play back the hand animation
 public class HoloPlayerBehaviour : MonoBehaviour
 {
     public GameObject leftHand;

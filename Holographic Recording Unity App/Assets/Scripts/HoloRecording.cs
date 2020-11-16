@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// used to pass a recording around between classes
 public struct HoloRecording
 {
     public string pathToAnimationClip;
@@ -24,7 +25,8 @@ public struct HoloRecording
 
 }
 
-
+// we save this class to disk because we can retrieve this class again and convert it into an animationclip
+// this class and all the properties in this class must be serializable so that we can use built-in Binary and Json Serializers
 [System.Serializable]
 public struct AllKeyFrames
 {
@@ -32,6 +34,7 @@ public struct AllKeyFrames
     public KeyFrameListsForAllHandJoints rightJointLists;
 }
 
+// stores keyframes for all the joints of the rigged hand
 [System.Serializable]
 public class KeyFrameListsForAllHandJoints
 {
@@ -99,9 +102,11 @@ public class KeyFrameListsForAllHandJoints
     }
 }
 
+// store keyframes for one joint
 [System.Serializable]
 public class PoseKeyframeLists
 {
+    // path to the joint
     public string path;
     public List<SerializableKeyframe> keyframesPositionX;
     public List<SerializableKeyframe> keyframesPositionY;
@@ -137,7 +142,7 @@ public class PoseKeyframeLists
     }
 }
 
-
+// keyframe that we can serialize and convert to a regular keyframe
 [System.Serializable]
 public struct SerializableKeyframe
 {
