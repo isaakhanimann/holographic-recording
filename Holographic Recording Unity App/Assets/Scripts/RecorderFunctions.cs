@@ -32,23 +32,29 @@ public class RecorderFunctions : MonoBehaviour
 
     void Update()
     {
+        // check saveJobHandle to know when the saving of the recording is done
         if (saveJobHandle != null)
         {
-            //debugLogTmPro.text = $"is job completed = {saveJobHandle?.IsCompleted}";
+            Debug.Log("is job completed = {saveJobHandle?.IsCompleted}");
         }
     }
 
 
     public void StartRecording()
     {
+        // update the UI
         preRecordingMenu.SetActive(false);
+        StartCoroutine(SetWhileRecordingMenuActiveAfterNSeconds()); // delay the activation of next menu so buttons are not pressed accidentally
+
+        // start recording audio and keyframes
         audioClip = Microphone.Start(null, false, 60, 44100);
         numberOfRecording = GetRandomNumberBetween1and100000();
-        StartCoroutine(SetWhileRecordingMenuActiveAfterNSeconds());
         allKeyFrames = new AllKeyFrames();
         allKeyFrames.leftJointLists = new KeyFrameListsForAllHandJoints(Handedness.Left);
         allKeyFrames.rightJointLists = new KeyFrameListsForAllHandJoints(Handedness.Right);
         isRecording = true;
+
+        // make a screenshot for the recording representation
         StartCoroutine(MakeScreenshotAfterNSeconds());
     }
 
@@ -71,31 +77,24 @@ public class RecorderFunctions : MonoBehaviour
         }
     }
 
-    public void OnHandDetected()
+    public void StopRecordingAndPutRecordingIntoRepresentation()
     {
-
-        isHandDetected = true;        
-
-        if (isRecording)
-        {
-            preRecordingMenu.SetActive(false);
-            whileRecordingMenu.SetActive(true);
-        } else
-        {
-            preRecordingMenu.SetActive(true);
-            whileRecordingMenu.SetActive(false);
-        }
-    }
-
-    public void OnHandLost()
-    {
-        isHandDetected = false;
-        preRecordingMenu.SetActive(false);
+        // update UI
         whileRecordingMenu.SetActive(false);
+        preRecordingMenu.SetActive(true);
+
+        // stop recording and get the recording object
+        HoloRecording newRecording = StopRecording();
+
+        // instantiate representation and pass the recording to it
+        InstantiateRecordingRepresentationAtPalm();
+        HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
+        playerComponent.PutHoloRecordingIntoPlayer(newRecording);
     }
 
     private void InstantiateRecordingRepresentationAtPalm()
     {
+        // get palm position
         Vector3 positionToInstantiate;
         Quaternion rotationToInstantiate = Quaternion.identity;
         if (HandJointUtils.TryGetJointPose(TrackedHandJoint.Palm, Handedness.Left, out MixedRealityPose pose))
@@ -106,28 +105,18 @@ public class RecorderFunctions : MonoBehaviour
         {
             positionToInstantiate = Camera.main.transform.position + 0.5f * Vector3.forward;
         }
+        // instantiate representation at palm
         recordingRepresentationInstance = Instantiate(original: recordingRepresentationPrefab, position: positionToInstantiate, rotation: rotationToInstantiate);
     }
 
-    public void StopRecordingAndPutRecordingIntoRepresentation()
-    {
-        whileRecordingMenu.SetActive(false);
-        preRecordingMenu.SetActive(true);
-
-        HoloRecording newRecording = StopRecording();
-
-        InstantiateRecordingRepresentationAtPalm();
-
-        HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
-        playerComponent.PutHoloRecordingIntoPlayer(newRecording);
-    }
 
     public void CancelRecordingAndRemoveRepresentation()
     {
+        CancelRecording();
+
+        // update UI
         whileRecordingMenu.SetActive(false);
         preRecordingMenu.SetActive(true);
-
-        CancelRecording();
         Destroy(recordingRepresentationInstance);
     }
 
@@ -152,6 +141,7 @@ public class RecorderFunctions : MonoBehaviour
         Debug.Log($"SaveRecording called");
         string animationClipName = "AnimationClip" + numberOfRecording;
         string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
+        // saving is uncommented to unclutter the hololens
         //SaveKeyframesAsynchronously(pathToAnimationClip);
         HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot, audioClip);
         return newRecording;
@@ -161,7 +151,10 @@ public class RecorderFunctions : MonoBehaviour
     private void SaveKeyframesAsynchronously(string path)
     {
         Debug.Log($"SaveKeyframesAsynchronously");
+        // create a job to be executed asynchronously
         SaveKeyframesJob saveJob = new SaveKeyframesJob();
+
+        // pass arguments to that job
         NativeArray<AllKeyFrames> allKeyframesContainer = new NativeArray<AllKeyFrames>(1, Allocator.Persistent);
         allKeyframesContainer[0] = allKeyFrames;
         saveJob.allKeyFramesContainer = allKeyframesContainer;
@@ -169,10 +162,13 @@ public class RecorderFunctions : MonoBehaviour
         NonNullString nonNullPath = new NonNullString(path);
         pathContainer[0] = nonNullPath;
         saveJob.pathContainer = pathContainer;
+
+        // start the job
         saveJobHandle = saveJob.Schedule();
         Debug.Log($"Schedule called");
     }
 
+    // needed because a normal string can be null and something nullable can't be passed as an argument to a job
     public struct NonNullString
     {
         public NonNullString(string value)
@@ -198,7 +194,6 @@ public class RecorderFunctions : MonoBehaviour
         }
     }
 
-
     public struct SaveKeyframesJob : IJob
     {
         public NativeArray<AllKeyFrames> allKeyFramesContainer;
@@ -213,7 +208,7 @@ public class RecorderFunctions : MonoBehaviour
         }
     }
 
-
+    // this number defines the filenames of all the files associated with a recording
     private int GetRandomNumberBetween1and100000()
     {
         System.Random random = new System.Random();
@@ -221,12 +216,12 @@ public class RecorderFunctions : MonoBehaviour
         return randomInt;
     }
 
+    // to keep track of the time for each keyframe
     private float timeSinceStartOfRecording = 0.0f;
-
 
     void LateUpdate()
     {
-
+        // only capture keyframes if we are recording
         if (isRecording)
         {
             timeSinceStartOfRecording += Time.deltaTime;
@@ -238,14 +233,15 @@ public class RecorderFunctions : MonoBehaviour
         }
     }
 
+    // while recording this object is updated, it stores all the keyframes that are serialized/deserialized
     private AllKeyFrames allKeyFrames = new AllKeyFrames();
 
     private GameObject leftHand;
     private GameObject rightHand;
 
-
     private void CaptureKeyFrames()
     {
+        // only if the hand is visible we can record keyframes, else we have to find it.
         if (leftHand != null)
         {
             AddAllJointPoses(Handedness.Left);
@@ -366,5 +362,33 @@ public class RecorderFunctions : MonoBehaviour
         allKeyFrames = new AllKeyFrames();
         timeSinceStartOfRecording = 0.0f;
     }
+
+    #region Hand Menu Activation
+
+    public void OnHandDetected()
+    {
+
+        isHandDetected = true;
+
+        if (isRecording)
+        {
+            preRecordingMenu.SetActive(false);
+            whileRecordingMenu.SetActive(true);
+        }
+        else
+        {
+            preRecordingMenu.SetActive(true);
+            whileRecordingMenu.SetActive(false);
+        }
+    }
+
+    public void OnHandLost()
+    {
+        isHandDetected = false;
+        preRecordingMenu.SetActive(false);
+        whileRecordingMenu.SetActive(false);
+    }
+
+    #endregion
 
 }
