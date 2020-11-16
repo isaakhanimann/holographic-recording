@@ -10,9 +10,6 @@ using Unity.Collections;
 public class AudioRecorder : MonoBehaviour
 {
     int MAX_RECORD_TIME = 2000;
-
-    public TextMeshPro debugLog;
-
     private AudioClip audioClip;
     private float duration = 0;
     private bool isRecording = false;
@@ -56,14 +53,14 @@ public class AudioRecorder : MonoBehaviour
 
     public void StartRecording() {
         isRecording = true;
-        debugLog.text += "a was pressed: Recording audio" + System.Environment.NewLine;
+        Debug.Log("a was pressed: Recording audio");
         audioClip = Microphone.Start ( null, false, MAX_RECORD_TIME, 44100 );
     }
 
     public void StopAndSaveRecording() {
         isRecording = false;
         Microphone.End(null);
-        debugLog.text += "StopAndSaveRecording executed: Saving audio of length " + duration + System.Environment.NewLine;
+        Debug.Log("StopAndSaveRecording executed: Saving audio of length " + duration);
 
         int lengthInSamples = (int)(Mathf.Ceil(duration) * audioClip.channels * audioClip.frequency);
 

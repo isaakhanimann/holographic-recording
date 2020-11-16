@@ -1832,6 +1832,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 9060075853412315772}
+        m_MethodName: TurnOnHandMesh
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   Events:
   - Event:
       m_PersistentCalls:
@@ -2207,7 +2218,7 @@ Transform:
   m_GameObject: {fileID: 1969873534}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.01}
-  m_LocalScale: {x: 0.039129496, y: 0.03693847, z: 0.02}
+  m_LocalScale: {x: 0.03849716, y: 0.032400686, z: 0.02}
   m_Children: []
   m_Father: {fileID: 369766261}
   m_RootOrder: 0
@@ -3569,6 +3580,17 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 8850533197130742945}
         m_MethodName: StopTimer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 9060075853412315772}
+        m_MethodName: TurnOffHandMesh
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5344,6 +5366,17 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 8850533197130742945}
         m_MethodName: StopTimer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 9060075853412315772}
+        m_MethodName: TurnOffHandMesh
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

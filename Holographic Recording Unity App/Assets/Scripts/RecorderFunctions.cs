@@ -73,12 +73,8 @@ public class RecorderFunctions : MonoBehaviour
 
     public void OnHandDetected()
     {
-        Debug.Log("OnHandDetected is called");
 
-        isHandDetected = true;
-
-        Debug.Log($"isRecording = {isRecording}");
-        
+        isHandDetected = true;        
 
         if (isRecording)
         {
@@ -89,13 +85,10 @@ public class RecorderFunctions : MonoBehaviour
             preRecordingMenu.SetActive(true);
             whileRecordingMenu.SetActive(false);
         }
-        Debug.Log($"preRecordingMenu active = {preRecordingMenu.active}");
-        Debug.Log($"whileRecordingMenu active = {whileRecordingMenu.active}");
     }
 
     public void OnHandLost()
     {
-        Debug.Log($"OnHandLost is called");
         isHandDetected = false;
         preRecordingMenu.SetActive(false);
         whileRecordingMenu.SetActive(false);
