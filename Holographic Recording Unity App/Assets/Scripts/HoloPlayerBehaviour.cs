@@ -104,6 +104,25 @@ public class HoloPlayerBehaviour : MonoBehaviour
         Destroy(gameObject, 1.5f); // adding a delay so the botton has time to bounce back after click
     }
 
+    IEnumerator PlayAudioClip(string path)
+    {
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + path, AudioType.WAV))
+        {
+            yield return www.Send();
+
+            if (www.isNetworkError)
+            {
+                Debug.Log(www.error);
+            }
+            else if (www != null && www.isDone)
+            {
+                AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
+                audioSource.clip = clip;
+                audioSource.Play();
+            }
+        }
+    }
+
 
     public void Play()
     {
@@ -114,6 +133,8 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
         // play audio
         //audioSource.Play();
+        string filename = "AUDIOFILE_TEST_UNITY.wav";
+        StartCoroutine(PlayAudioClip(Application.persistentDataPath + "/" + filename));
 
         // play animation that was added to the hand prefabs
         instantiatedLeftHand.SetActive(true);
