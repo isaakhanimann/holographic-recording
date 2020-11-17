@@ -34,14 +34,14 @@ public static class SavWav
 
 	const int HEADER_SIZE = 44;
 
-	public static bool Save(string filename, float[] samples, int hz, int channels, int lengthInSamples)
+	public static bool Save(string filepath, float[] samples, int hz, int channels, int lengthInSamples)
 	{
-		if (!filename.ToLower().EndsWith(".wav"))
+		if (!filepath.ToLower().EndsWith(".wav"))
 		{
-			filename += ".wav";
+			filepath += ".wav";
 		}
 
-		var filepath = Path.Combine(Application.persistentDataPath, filename);
+		// var filepath = Path.Combine(Application.persistentDataPath, filename);
 
 		Debug.Log(filepath);
 
@@ -50,6 +50,8 @@ public static class SavWav
 
 		using (var fileStream = CreateEmpty(filepath))
 		{
+
+			Debug.Log("saving");
 
 			ConvertAndWrite(fileStream, samples);
 
@@ -94,6 +96,8 @@ public static class SavWav
 		}
 
 		fileStream.Write(bytesData, 0, bytesData.Length);
+
+		fileStream.Flush();
 	}
 
 	static void WriteHeader(FileStream fileStream, int hz, int channels, int samples)
@@ -144,6 +148,6 @@ public static class SavWav
 		Byte[] subChunk2 = BitConverter.GetBytes(samples * channels * 2);
 		fileStream.Write(subChunk2, 0, 4);
 
-		//		fileStream.Close();
+		fileStream.Flush();
 	}
 }

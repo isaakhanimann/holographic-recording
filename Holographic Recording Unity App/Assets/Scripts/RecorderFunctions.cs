@@ -28,8 +28,8 @@ public class RecorderFunctions : MonoBehaviour
     private int numberOfRecording;
     private string pathToScreenshot;
     private AudioClip audioClip;
-
-
+    NativeArray<AllKeyFrames> allKeyframesContainer;
+    NativeArray<NonNullString> pathContainer;
     void Update()
     {
         // check saveJobHandle to know when the saving of the recording is done
@@ -47,7 +47,7 @@ public class RecorderFunctions : MonoBehaviour
         StartCoroutine(SetWhileRecordingMenuActiveAfterNSeconds()); // delay the activation of next menu so buttons are not pressed accidentally
 
         // start recording audio and keyframes
-        audioClip = Microphone.Start(null, false, 60, 44100);
+        //audioClip = Microphone.Start(null, false, 60, 44100);
         numberOfRecording = GetRandomNumberBetween1and100000();
         allKeyFrames = new AllKeyFrames();
         allKeyFrames.leftJointLists = new KeyFrameListsForAllHandJoints(Handedness.Left);
@@ -143,7 +143,7 @@ public class RecorderFunctions : MonoBehaviour
         string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
         // saving is uncommented to unclutter the hololens
         //SaveKeyframesAsynchronously(pathToAnimationClip);
-        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot, audioClip);
+        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot, null);
         return newRecording;
     }
 
@@ -155,10 +155,10 @@ public class RecorderFunctions : MonoBehaviour
         SaveKeyframesJob saveJob = new SaveKeyframesJob();
 
         // pass arguments to that job
-        NativeArray<AllKeyFrames> allKeyframesContainer = new NativeArray<AllKeyFrames>(1, Allocator.Persistent);
+        allKeyframesContainer = new NativeArray<AllKeyFrames>(1, Allocator.Persistent);
         allKeyframesContainer[0] = allKeyFrames;
         saveJob.allKeyFramesContainer = allKeyframesContainer;
-        NativeArray<NonNullString> pathContainer = new NativeArray<NonNullString>(1, Allocator.Persistent);
+        pathContainer = new NativeArray<NonNullString>(1, Allocator.Persistent);
         NonNullString nonNullPath = new NonNullString(path);
         pathContainer[0] = nonNullPath;
         saveJob.pathContainer = pathContainer;
@@ -192,6 +192,12 @@ public class RecorderFunctions : MonoBehaviour
         {
             return value.Value;
         }
+    }
+
+    void OnDestroy()
+    {
+        allKeyframesContainer.Dispose();
+        pathContainer.Dispose();
     }
 
     public struct SaveKeyframesJob : IJob

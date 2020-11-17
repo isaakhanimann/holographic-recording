@@ -68,7 +68,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         instantiatedLeftHand.GetComponent<Animation>().AddClip(leftHandClip, "leftHand");
         instantiatedRightHand.GetComponent<Animation>().AddClip(rightHandClip, "rightHand");
         // set the audio of the recording
-        audioSource.clip = recording.audioClip;
+        //audioSource.clip = recording.audioClip;
     }
 
     IEnumerator AddScreenshotToRepresentation(string pathToScreenshot)
@@ -113,7 +113,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         StartCoroutine(SetSecondRepresentationActiveAfterNSeconds()); // show playback buttons with a delay
 
         // play audio
-        audioSource.Play();
+        //audioSource.Play();
 
         // play animation that was added to the hand prefabs
         instantiatedLeftHand.SetActive(true);
