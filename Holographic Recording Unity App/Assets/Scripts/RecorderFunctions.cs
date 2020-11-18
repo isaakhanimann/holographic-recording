@@ -19,7 +19,7 @@ public class RecorderFunctions : MonoBehaviour
     public int captureFrequencyInFrames = 1;
     public GameObject preRecordingMenu;
     public GameObject whileRecordingMenu;
-
+    public AudioRecorder audioRecorder;
 
     private GameObject recordingRepresentationInstance;
     private Nullable<JobHandle> saveJobHandle;
@@ -27,8 +27,10 @@ public class RecorderFunctions : MonoBehaviour
     private bool isHandDetected;
     private int numberOfRecording;
     private string pathToScreenshot;
-    private AudioClip audioClip;
 
+    void Start() {
+        audioRecorder = new AudioRecorder();
+    }
 
     void Update()
     {
@@ -47,8 +49,9 @@ public class RecorderFunctions : MonoBehaviour
         StartCoroutine(SetWhileRecordingMenuActiveAfterNSeconds()); // delay the activation of next menu so buttons are not pressed accidentally
 
         // start recording audio and keyframes
-        audioClip = Microphone.Start(null, false, 60, 44100);
         numberOfRecording = GetRandomNumberBetween1and100000();
+        audioRecorder.StartRecording();
+
         allKeyFrames = new AllKeyFrames();
         allKeyFrames.leftJointLists = new KeyFrameListsForAllHandJoints(Handedness.Left);
         allKeyFrames.rightJointLists = new KeyFrameListsForAllHandJoints(Handedness.Right);
@@ -85,7 +88,7 @@ public class RecorderFunctions : MonoBehaviour
 
         // stop recording and get the recording object
         HoloRecording newRecording = StopRecording();
-
+        audioRecorder.StopAndSaveRecording(numberOfRecording.ToString());
         // instantiate representation and pass the recording to it
         InstantiateRecordingRepresentationAtPalm();
         HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
@@ -143,7 +146,7 @@ public class RecorderFunctions : MonoBehaviour
         string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
         // saving is uncommented to unclutter the hololens
         //SaveKeyframesAsynchronously(pathToAnimationClip);
-        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot, audioClip);
+        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot);
         return newRecording;
     }
 

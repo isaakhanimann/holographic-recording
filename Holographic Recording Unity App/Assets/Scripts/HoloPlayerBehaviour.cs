@@ -67,8 +67,6 @@ public class HoloPlayerBehaviour : MonoBehaviour
         Debug.Log("AnimationClips were loaded");
         instantiatedLeftHand.GetComponent<Animation>().AddClip(leftHandClip, "leftHand");
         instantiatedRightHand.GetComponent<Animation>().AddClip(rightHandClip, "rightHand");
-        // set the audio of the recording
-        audioSource.clip = recording.audioClip;
     }
 
     IEnumerator AddScreenshotToRepresentation(string pathToScreenshot)
@@ -104,6 +102,26 @@ public class HoloPlayerBehaviour : MonoBehaviour
         Destroy(gameObject, 1.5f); // adding a delay so the botton has time to bounce back after click
     }
 
+    IEnumerator PlayAudioClip(string path)
+    {
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + path, AudioType.WAV))
+        {
+            yield return www.Send();
+
+            if (www.isNetworkError)
+            {
+                Debug.Log(www.error);
+            }
+            else if (www != null && www.isDone)
+            {
+                AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
+                audioSource.clip = clip;
+                audioSource.Play();
+            }
+        }
+    }
+
+
 
     public void Play()
     {
@@ -113,7 +131,8 @@ public class HoloPlayerBehaviour : MonoBehaviour
         StartCoroutine(SetSecondRepresentationActiveAfterNSeconds()); // show playback buttons with a delay
 
         // play audio
-        audioSource.Play();
+        string filename = "AUDIOFILE_TEST_UNITY.wav";
+        StartCoroutine(PlayAudioClip(Application.persistentDataPath + "/" + filename));
 
         // play animation that was added to the hand prefabs
         instantiatedLeftHand.SetActive(true);
