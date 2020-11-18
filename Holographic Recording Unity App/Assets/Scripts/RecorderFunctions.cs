@@ -16,20 +16,23 @@ using System.Collections;
 public class RecorderFunctions : MonoBehaviour
 {
     public GameObject recordingRepresentationPrefab;
+    public GameObject audioRecorderInstance;
+
     public int captureFrequencyInFrames = 1;
     public GameObject preRecordingMenu;
     public GameObject whileRecordingMenu;
-    public AudioRecorder audioRecorder;
 
     private GameObject recordingRepresentationInstance;
+    private AudioRecorder audioRecorder;
     private Nullable<JobHandle> saveJobHandle;
     private bool isRecording;
     private bool isHandDetected;
     private int numberOfRecording;
     private string pathToScreenshot;
 
-    void Start() {
-        audioRecorder = new AudioRecorder();
+    void Start()
+    {
+        audioRecorder = audioRecorderInstance.GetComponent<AudioRecorder>();
     }
 
     void Update()
@@ -88,7 +91,7 @@ public class RecorderFunctions : MonoBehaviour
 
         // stop recording and get the recording object
         HoloRecording newRecording = StopRecording();
-        audioRecorder.StopAndSaveRecording(numberOfRecording.ToString());
+        audioRecorder.StopAndSaveRecording("AnimationClip" + numberOfRecording.ToString());
         // instantiate representation and pass the recording to it
         InstantiateRecordingRepresentationAtPalm();
         HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();

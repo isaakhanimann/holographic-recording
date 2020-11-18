@@ -29,6 +29,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     private TouchScreenKeyboard keyboard;
     private string keyboardText;
     private bool stopWasPressed;
+    private string filename;
 
     private void Update()
     {
@@ -63,6 +64,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         InstantiateHandAndSetInactive(rightHand, ref instantiatedRightHand);
 
         // add animationclip to hand prefabs and audio clip of recording to the audiosource of the representation
+        filename = recording.animationClipName;
         (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromAllKeyFrames(recording.allKeyFrames);
         Debug.Log("AnimationClips were loaded");
         instantiatedLeftHand.GetComponent<Animation>().AddClip(leftHandClip, "leftHand");
@@ -131,8 +133,8 @@ public class HoloPlayerBehaviour : MonoBehaviour
         StartCoroutine(SetSecondRepresentationActiveAfterNSeconds()); // show playback buttons with a delay
 
         // play audio
-        string filename = "AUDIOFILE_TEST_UNITY.wav";
-        StartCoroutine(PlayAudioClip(Application.persistentDataPath + "/" + filename));
+        string audioFilename = "AUDIOFILE_" + filename + ".wav";
+        StartCoroutine(PlayAudioClip(Path.Combine(Application.persistentDataPath, audioFilename)));
 
         // play animation that was added to the hand prefabs
         instantiatedLeftHand.SetActive(true);

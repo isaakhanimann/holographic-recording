@@ -20,7 +20,6 @@ public class AudioRecorder : MonoBehaviour
     private AudioClip audioClip;
     private float duration = 0;
     private bool isRecording = false;
-    private bool isSaving = false;
 
     NativeArray<float> originalSamplesContainer;
     NativeArray<int> lengthInSamplesContainer;
@@ -31,7 +30,6 @@ public class AudioRecorder : MonoBehaviour
     JobHandle cutJobHandle;
     string persistentPath;
     string filenamePrefix = "AUDIOFILE_";
-    bool isSaved = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -60,7 +58,6 @@ public class AudioRecorder : MonoBehaviour
     public void StopAndSaveRecording(string filename)
     {
         isRecording = false;
-        isSaving = true;
 
         Microphone.End(null);
 
@@ -70,6 +67,7 @@ public class AudioRecorder : MonoBehaviour
         audioClip.GetData(originalSamples, 0);
 
         originalSamplesContainer = new NativeArray<float>(originalSamples, Allocator.Persistent);
+
         string filepath = Path.Combine(persistentPath, filenamePrefix + filename);
         pathContainer = new NativeArray<char>(filepath.ToCharArray(), Allocator.Persistent);
 
@@ -86,7 +84,6 @@ public class AudioRecorder : MonoBehaviour
             pathContainer = pathContainer,
         };
 
-        isSaved = false;
         cutJobHandle = cutJob.Schedule();
 
         duration = 0;
@@ -94,10 +91,7 @@ public class AudioRecorder : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!isSaved) {
-            cutJobHandle.Complete();
-            isSaved = true;
-        }
+        cutJobHandle.Complete();
     }
 
     private void OnDestroy()
