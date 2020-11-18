@@ -6226,10 +6226,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   recordingRepresentationPrefab: {fileID: 2103202255502156003, guid: 3131fa71c06690246923ac7cbca10662,
     type: 3}
+  audioRecorderInstance: {fileID: 1246088763}
   captureFrequencyInFrames: 1
   preRecordingMenu: {fileID: 369766260}
   whileRecordingMenu: {fileID: 7942679821729158764}
-  audioRecorderInstance: {fileID: 1246088763}
 --- !u!114 &9060075853412315774
 MonoBehaviour:
   m_ObjectHideFlags: 0
