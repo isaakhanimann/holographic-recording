@@ -10,7 +10,6 @@ public class TimerBehaviour : MonoBehaviour
 
     private int currentRecordingTimeInSeconds = 0;
 
-
     public void StartTimer()
     {
         gameObject.SetActive(true);
@@ -23,6 +22,11 @@ public class TimerBehaviour : MonoBehaviour
         gameObject.SetActive(false);
         StopCoroutine(UpdateText());
         textMeshPro.text = "0s";
+    }
+
+    public int GetCurrentRecordingTime()
+    {
+        return currentRecordingTimeInSeconds;
     }
 
     IEnumerator UpdateText()

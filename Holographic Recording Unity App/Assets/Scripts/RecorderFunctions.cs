@@ -17,6 +17,7 @@ public class RecorderFunctions : MonoBehaviour
 {
     public GameObject recordingRepresentationPrefab;
     public GameObject audioRecorderInstance;
+    public GameObject timerInstance;
 
     public int captureFrequencyInFrames = 1;
     public GameObject preRecordingMenu;
@@ -70,7 +71,16 @@ public class RecorderFunctions : MonoBehaviour
         yield return new WaitForSeconds(2);
         string fileName = $"Screenshot{numberOfRecording}";
         pathToScreenshot = Application.persistentDataPath + $"/{fileName}.png";
+        
+        // hide timer so it doesn't appear in screenshot
+        timerInstance.gameObject.GetComponentInChildren<MeshRenderer>().enabled = false;
+        
         ScreenCapture.CaptureScreenshot(pathToScreenshot);
+        
+        // add short delay for the screenshot to be captured before rendering timer again
+        yield return new WaitForSeconds((float)0.10);
+        timerInstance.gameObject.GetComponentInChildren<MeshRenderer>().enabled = true;
+
         Debug.Log($"CaptureScreenshot executed, pathToScreenshot = {pathToScreenshot}");
     }
 
@@ -92,10 +102,14 @@ public class RecorderFunctions : MonoBehaviour
         // stop recording and get the recording object
         HoloRecording newRecording = StopRecording();
         audioRecorder.StopAndSaveRecording("AnimationClip" + numberOfRecording.ToString());
+
+        // get final length of recording in seconds
+        int recordingLength = timerInstance.GetComponent<TimerBehaviour>().GetCurrentRecordingTime();
+
         // instantiate representation and pass the recording to it
         InstantiateRecordingRepresentationAtPalm();
         HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
-        playerComponent.PutHoloRecordingIntoPlayer(newRecording);
+        playerComponent.PutHoloRecordingIntoPlayer(newRecording, recordingLength);
     }
 
     private void InstantiateRecordingRepresentationAtPalm()

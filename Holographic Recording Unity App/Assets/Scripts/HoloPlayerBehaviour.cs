@@ -22,6 +22,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public GameObject instructionObject;
     public RawImage screenshotRawImage;
     public AudioSource audioSource;
+    public TextMeshPro timerText;
 
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
@@ -53,12 +54,13 @@ public class HoloPlayerBehaviour : MonoBehaviour
     }
 
     // called by the recorder when he is done recording
-    public void PutHoloRecordingIntoPlayer(HoloRecording recording)
+    public void PutHoloRecordingIntoPlayer(HoloRecording recording, int recordingLength)
     {
         // update UI
         StartCoroutine(AddScreenshotToRepresentation(recording.pathToScreenshot)); // set the screenshot of the representation, done asynchronously because it loads from disk
         OpenSystemKeyboard(); // open keyboard to give the representation a title.
         instructionObject.SetActive(true); // the instructionobject tells the user that he has to type the title of the recording
+        timerText.text = recordingLength.ToString() + "s";
         buttons.SetActive(false);
         InstantiateHandAndSetInactive(leftHand, ref instantiatedLeftHand); // the hands should only become visible when the animation is running
         InstantiateHandAndSetInactive(rightHand, ref instantiatedRightHand);
