@@ -32,8 +32,18 @@ public class HoloPlayerBehaviour : MonoBehaviour
     private bool stopWasPressed;
     private string filename;
 
+    public LayerMask spatial;
+
     public Material occludedMat;
     public Material notOccludedMat;
+
+    public GameObject Camera;
+
+    private void Start()
+    {
+        Camera = GameObject.FindGameObjectWithTag("MainCamera");
+        InvokeRepeating("rayInvoker", 0, 0.25f);
+    }
 
     private void Update()
     {
@@ -59,6 +69,28 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public void OpenSystemKeyboard()
     {
         keyboard = TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default, false, false, false, false);
+    }
+
+    public void sendRayToCamFromHand(GameObject hand)
+    {
+        RaycastHit hit;
+        Vector3 dir = Camera.transform.position - hand.transform.position;
+
+        // Does the ray intersect any objects excluding the player layer
+        if (Physics.Raycast(hand.transform.position, -dir, out hit, 5, spatial))
+        {
+            hand.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material = occludedMat;
+        }
+        else
+        {
+            hand.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material = notOccludedMat;
+        }
+    }
+
+    void rayInvoker()
+    {
+        sendRayToCamFromHand(instantiatedLeftHand);
+        sendRayToCamFromHand(instantiatedRightHand);
     }
 
     // called by the recorder when he is done recording
