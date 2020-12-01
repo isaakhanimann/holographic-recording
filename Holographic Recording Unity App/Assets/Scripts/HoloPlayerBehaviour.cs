@@ -77,7 +77,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         Vector3 dir = Camera.transform.position - hand.transform.position;
 
         // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(hand.transform.position, -dir, out hit, 5, spatial))
+        if (Physics.Raycast(hand.transform.position, dir, out hit, 5, spatial))
         {
             hand.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().material = occludedMat;
         }
