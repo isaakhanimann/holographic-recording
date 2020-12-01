@@ -13,6 +13,8 @@ public class ResearchMode : MonoBehaviour
 #if ENABLE_WINMD_SUPPORT
     HL2ResearchMode researchMode;
 #endif
+    static bool startRealtimePreview = false;
+    static float startTime = 0.0F;
 
     void Start()
     {
@@ -21,7 +23,6 @@ public class ResearchMode : MonoBehaviour
         researchMode.InitializeDepthSensor();
         
 #endif
-        StartPreviewEvent();
         StartDepthSensingLoopEvent();
     }
 
@@ -39,24 +40,29 @@ public class ResearchMode : MonoBehaviour
 #endif
     }
 
-    static bool startRealtimePreview = false;
-    public static void StartPreviewEvent()
+    // use this call to control recording
+    public static void TogglePreviewEvent()
     {
         startRealtimePreview = !startRealtimePreview;
+        if (startRealtimePreview)
+        {
+            startTime = Time.time;
+        }
     }
 
     private void LateUpdate()
     {
 #if ENABLE_WINMD_SUPPORT
         // update depth map texture
-        if (startRealtimePreview && researchMode.PointCloudBufferUpdated())
+        if (startRealtimePreview && researchMode.PointCloudUpdated())
         {
             float[] pointCloud = researchMode.GetPointCloudBuffer();
             if (pointCloud.Length > 0)
             {
-                //var byteArray = new byte[pointCloud.Length * 4];
-                //Buffer.BlockCopy(pointCloud, 0, byteArray, 0, byteArray.Length);
-                //File.WriteAllBytes(String.Format(Application.persistentDataPath+"/"+"pointCloud_{0}.dat", frame), byteArray2);
+                float timeStamp = Time.time - startTime;
+                var byteArray = new byte[pointCloud.Length * 4];
+                Buffer.BlockCopy(pointCloud, 0, byteArray, 0, byteArray.Length);
+                File.WriteAllBytes(String.Format(Application.persistentDataPath+"/PointClouds/"+"points_{0}.dat", timeStamp), byteArray2);
                 Debug.Log("research mode: point cloud data written");
             }
         }

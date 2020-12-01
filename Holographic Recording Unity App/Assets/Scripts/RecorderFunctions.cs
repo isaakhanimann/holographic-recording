@@ -30,10 +30,12 @@ public class RecorderFunctions : MonoBehaviour
     private bool isHandDetected;
     private int numberOfRecording;
     private string pathToScreenshot;
+    private ResearchMode rm;
 
     void Start()
     {
         audioRecorder = audioRecorderInstance.GetComponent<AudioRecorder>();
+        rm = gameObject.AddComponent<ResearchMode>();
     }
 
     void Update()
@@ -60,6 +62,9 @@ public class RecorderFunctions : MonoBehaviour
         allKeyFrames.leftJointLists = new KeyFrameListsForAllHandJoints(Handedness.Left);
         allKeyFrames.rightJointLists = new KeyFrameListsForAllHandJoints(Handedness.Right);
         isRecording = true;
+
+        //start research mode loop
+        ResearchMode.TogglePreviewEvent();
 
         // make a screenshot for the recording representation
         StartCoroutine(MakeScreenshotAfterNSeconds());
@@ -98,6 +103,9 @@ public class RecorderFunctions : MonoBehaviour
         // update UI
         whileRecordingMenu.SetActive(false);
         preRecordingMenu.SetActive(true);
+
+        // stop research mode events
+        ResearchMode.TogglePreviewEvent();
 
         // stop recording and get the recording object
         HoloRecording newRecording = StopRecording();
