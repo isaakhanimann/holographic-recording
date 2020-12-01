@@ -31,9 +31,32 @@ public class RecorderFunctions : MonoBehaviour
     private int numberOfRecording;
     private string pathToScreenshot;
 
+    public MixedRealityControllerVisualizationProfile visualizationProfile;
+    public GameObject leftHandRep;
+    public GameObject rightHandRep;
+
+    public GameObject tutorial;
+
     void Start()
     {
         audioRecorder = audioRecorderInstance.GetComponent<AudioRecorder>();
+
+        visualizationProfile.GlobalLeftHandVisualizer.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().enabled = false;
+        visualizationProfile.GlobalRightHandVisualizer.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().enabled = false;
+
+        InvokeRepeating("findHands", 0, 0.5f);
+    }
+
+    public void visualizer(bool isVisible)
+    {
+        leftHandRep.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().enabled = isVisible;
+        rightHandRep.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>().enabled = isVisible;
+    }
+
+    public void findHands()
+    {
+        if (leftHandRep == null) leftHandRep = GameObject.Find("Left_OurRiggedHandLeft(Clone)");
+        if (rightHandRep == null) rightHandRep = GameObject.Find("Right_OurRiggedHandRight(Clone)"); 
     }
 
     void Update()
@@ -43,11 +66,23 @@ public class RecorderFunctions : MonoBehaviour
         {
             Debug.Log("is job completed = {saveJobHandle?.IsCompleted}");
         }
+
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            StartRecording();
+        }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            StopRecordingAndPutRecordingIntoRepresentation();
+        }
     }
 
 
     public void StartRecording()
     {
+        visualizer(true);
+
         // update the UI
         preRecordingMenu.SetActive(false);
         StartCoroutine(SetWhileRecordingMenuActiveAfterNSeconds()); // delay the activation of next menu so buttons are not pressed accidentally
@@ -95,6 +130,8 @@ public class RecorderFunctions : MonoBehaviour
 
     public void StopRecordingAndPutRecordingIntoRepresentation()
     {
+        visualizer(false);
+
         // update UI
         whileRecordingMenu.SetActive(false);
         preRecordingMenu.SetActive(true);
@@ -132,6 +169,8 @@ public class RecorderFunctions : MonoBehaviour
 
     public void CancelRecordingAndRemoveRepresentation()
     {
+        visualizer(false);
+
         CancelRecording();
 
         // update UI
@@ -387,6 +426,7 @@ public class RecorderFunctions : MonoBehaviour
 
     public void OnHandDetected()
     {
+        tutorial.SetActive(false);
 
         isHandDetected = true;
 

@@ -24,13 +24,16 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public AudioSource audioSource;
     public TextMeshPro timerText;
 
-    private GameObject instantiatedLeftHand;
-    private GameObject instantiatedRightHand;
+    [SerializeField] private GameObject instantiatedLeftHand;
+    [SerializeField] private GameObject instantiatedRightHand;
     private float lengthOfAnimation;
     private TouchScreenKeyboard keyboard;
     private string keyboardText;
     private bool stopWasPressed;
     private string filename;
+
+    public Material occludedMat;
+    public Material notOccludedMat;
 
     private void Update()
     {
@@ -45,6 +48,11 @@ public class HoloPlayerBehaviour : MonoBehaviour
                 buttons.SetActive(true);
                 instructionObject.SetActive(false);
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Play();
         }
     }
 
