@@ -27,6 +27,12 @@ MonoBehaviour:
     - com.microsoft.mixedreality
     - com.microsoft.spatialaudio
     m_IsDefault: 0
+  - m_Id: scoped:Azure Mixed Reality Services
+    m_Name: Azure Mixed Reality Services
+    m_Url: https://api.bintray.com/npm/microsoft/AzureMixedReality-NPM
+    m_Scopes:
+    - com.microsoft.azure.spatial-anchors-sdk
+    m_IsDefault: 0
   m_UserSelectedRegistryName: 
   m_UserAddingNewScopedRegistry: 0
   m_RegistryInfoDraft:

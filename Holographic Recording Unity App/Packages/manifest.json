@@ -7,6 +7,13 @@
         "com.microsoft.mixedreality",
         "com.microsoft.spatialaudio"
       ]
+    },
+    {
+      "name": "Azure Mixed Reality Services",
+      "url": "https://api.bintray.com/npm/microsoft/AzureMixedReality-NPM",
+      "scopes": [
+        "com.microsoft.azure.spatial-anchors-sdk"
+      ]
     }
   ],
   "dependencies": {
@@ -20,7 +27,7 @@
     "com.unity.textmeshpro": "2.1.1",
     "com.unity.timeline": "1.2.17",
     "com.unity.ugui": "1.0.0",
-    "com.unity.xr.windowsmr": "2.4.1",
+    "com.unity.xr.windowsmr.metro": "4.2.3",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
@@ -51,6 +58,7 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0"
+    "com.unity.modules.xr": "1.0.0",
+    "com.microsoft.azure.spatial-anchors-sdk.windows": "2.7.0"
   }
 }

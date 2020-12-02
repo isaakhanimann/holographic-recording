@@ -7,9 +7,5 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/Main Scene.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
-  m_configObjects:
-    Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: 69250bd66f0630442bcc71787a6d4412,
-      type: 2}
-    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 8042091946759a74391c32119dbd5aef,
-      type: 2}
+    guid: 273e58fe277ba8f45938056a4a406fd2
+  m_configObjects: {}
