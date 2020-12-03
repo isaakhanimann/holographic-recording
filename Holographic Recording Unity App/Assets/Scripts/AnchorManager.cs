@@ -7,65 +7,160 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using TMPro;
+using UnityEngine.XR.WSA;
 
 public class AnchorManager : DemoScriptBase
 {
-  private Task saveAnchorTask;
-  private bool saved = false;
 
-  public override Task AdvanceDemoAsync()
-  {
-	throw new NotImplementedException();
-  }
+    private string currentAnchorId = "";
+    public override Task AdvanceDemoAsync()
+    {
+        throw new NotImplementedException();
+    }
 
-  protected override Color GetStepColor()
-  {
-	throw new NotImplementedException();
-  }
+    protected override Color GetStepColor()
+    {
+        throw new NotImplementedException();
+    }
 
-  protected override bool IsPlacingObject()
-  {
-	throw new NotImplementedException();
-  }
+    protected override bool IsPlacingObject()
+    {
+        throw new NotImplementedException();
+    }
 
-  async void Start()
-  {
-	debugText.text += "AnchorManager.Start() called \n";
-	base.Start();
-	SpawnNewAnchoredObject(new Vector3(0.1f, 0, 0), new Quaternion(0, 0, 0, 1));
-	await SaveCurrentObjectAnchorToCloudAsync();
-  }
+    void Start()
+    {
+        debugText.text += "AnchorManager.Start() called \n";
+        base.Start();
+        base.SpawnOrMoveCurrentAnchoredObject(new Vector3(0.1f, 0, 0), new Quaternion(0, 0, 0, 1));
+    }
 
-  /*    public async void OnButtonClicked()
-	  {
-		  debugText.text += "Button Clicked, calling save current object anchor \n";
-		  await SaveCurrentObjectAnchorToCloudAsync();
+    // Step 1
+    public void OnCreateSessionClicked()
+    {
+        CreateSession();
+    }
 
-		  while (!saved)
-		  {
-			  await Task.Yield();
-		  }
-	  }
-  */
+    // Step 2
+    public void OnStartSessionClicked()
+    {
+        StartSession();
+    }
 
-  // Update is called once per frame
-  void Update()
-  {
+    // Step 3
+    public void OnSaveAnchorClicked()
+    {
+        debugText.text += "Button Clicked, calling save current object anchor \n";
+        SaveAnchorForObjectAsync();
+    }
 
-  }
+    // For this poc we need to reset session manually (since Id is stored locally)
+    public void OnResetSessionClicked()
+    {
+        ResetSession();
+    }
 
-  protected override async Task OnSaveCloudAnchorSuccessfulAsync()
-  {
-	await base.OnSaveCloudAnchorSuccessfulAsync();
+    // Step 5 Find Anchors
+    public void FindAnchors()
+    {
+        List<string> anchorsToFind = new List<string>();
+        debugText.text += currentAnchorId + "\n";
 
-	debugText.text += "Save cloud anchor successful \n";
-  }
+        anchorsToFind.Add(currentAnchorId);
 
-  protected override void OnSaveCloudAnchorFailed(Exception exception)
-  {
-	base.OnSaveCloudAnchorFailed(exception);
+        SetAnchorIdsToLocate(anchorsToFind);
 
-	debugText.text += "Save cloud anchor failed \n";
-  }
+        currentWatcher = CreateWatcher();
+    }
+
+    async void SaveAnchorForObjectAsync()
+    {
+        await SaveCurrentObjectAnchorToCloudAsync();
+    }
+
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    async void ResetSession()
+    {
+        CloudManager.StopSession();
+        base.CleanupSpawnedObjects();
+        await CloudManager.ResetSessionAsync();
+    }
+
+   
+    async void CreateSession()
+    {
+        if (CloudManager.Session == null)
+
+        {
+            debugText.text += "Creating session \n";
+
+            await CloudManager.CreateSessionAsync();
+
+        }
+
+        currentCloudAnchor = null;
+    }
+
+    async void StartSession()
+    {
+        debugText.text += "Start session \n";
+
+        await CloudManager.StartSessionAsync();
+    }
+
+    protected override void OnCloudAnchorLocated(AnchorLocatedEventArgs args)
+    {
+        debugText.text += "ON Cloud anchor located \n";
+
+        //base.OnCloudAnchorLocated(args);
+        if (args.Status == LocateAnchorStatus.Located)
+        {
+            debugText.text += "spawning object again \n";
+
+            currentCloudAnchor = args.Anchor;
+            UnityDispatcher.InvokeOnAppThread(() =>
+
+            {
+                Pose anchorPose = Pose.identity;
+
+                SpawnOrMoveCurrentAnchoredObject(anchorPose.position, anchorPose.rotation);
+
+                UnityEngine.XR.WSA.WorldAnchor wa = spawnedObject.AddComponent<UnityEngine.XR.WSA.WorldAnchor>();
+                wa.SetNativeSpatialAnchorPtr(args.Anchor.LocalAnchor);
+                debugText.text += "Spawned and moved object \n";
+            });
+
+        }
+    }
+
+    protected override async Task SaveCurrentObjectAnchorToCloudAsync()
+    {
+        await base.SaveCurrentObjectAnchorToCloudAsync();
+    }
+
+
+    protected override async Task OnSaveCloudAnchorSuccessfulAsync()
+    {
+        await base.OnSaveCloudAnchorSuccessfulAsync();
+
+        // For now store Id locally (needs to be retrieved from ASA for cross device persitence)
+        currentAnchorId = currentCloudAnchor.Identifier;
+        debugText.text += currentAnchorId + "\n";
+
+        debugText.text += "Save cloud anchor successful \n";
+    }
+
+    protected override void OnSaveCloudAnchorFailed(Exception exception)
+    {
+        base.OnSaveCloudAnchorFailed(exception);
+
+        debugText.text += "Save cloud anchor failed \n";
+    }
 
 }
