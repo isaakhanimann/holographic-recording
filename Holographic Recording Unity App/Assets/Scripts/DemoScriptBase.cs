@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 {
@@ -25,6 +26,8 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
     #endregion // Member Variables
 
     #region Unity Inspector Variables
+    public TextMeshPro debugText;
+
     [SerializeField]
     [Tooltip("The prefab used to represent an anchored object.")]
     private GameObject anchoredObjectPrefab = null;
@@ -76,30 +79,24 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
     /// </summary>
     public override void Start()
     {
-      /*feedbackBox = XRUXPicker.Instance.GetFeedbackText();
-      if (feedbackBox == null)
-      {
-        Debug.Log($"{nameof(feedbackBox)} not found in scene by XRUXPicker.");
-        Destroy(this);
-        return;
-      }*/
+      debugText.text += "DemoScriptBase.Start() called \n";
 
       if (CloudManager == null)
       {
         Debug.Break();
-        feedbackBox.text = $"{nameof(CloudManager)} reference has not been set. Make sure it has been added to the scene and wired up to {this.name}.";
+        debugText.text += $"{nameof(CloudManager)} reference has not been set. Make sure it has been added to the scene and wired up to {this.name}.\n";
         return;
       }
 
       if (!SanityCheckAccessConfiguration())
       {
-        feedbackBox.text = $"{nameof(SpatialAnchorManager.SpatialAnchorsAccountId)}, {nameof(SpatialAnchorManager.SpatialAnchorsAccountKey)} and {nameof(SpatialAnchorManager.SpatialAnchorsAccountDomain)} must be set on {nameof(SpatialAnchorManager)}";
+        debugText.text += $"{nameof(SpatialAnchorManager.SpatialAnchorsAccountId)}, {nameof(SpatialAnchorManager.SpatialAnchorsAccountKey)} and {nameof(SpatialAnchorManager.SpatialAnchorsAccountDomain)} must be set on {nameof(SpatialAnchorManager)}\n";
       }
 
 
       if (AnchoredObjectPrefab == null)
       {
-        feedbackBox.text = "CreationTarget must be set on the demo script.";
+        debugText.text += "CreationTarget must be set on the demo script.\n";
         return;
       }
 
@@ -136,7 +133,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
       catch (Exception ex)
       {
         Debug.LogError($"{nameof(DemoScriptBase)} - Error in {nameof(AdvanceDemo)}: {ex.Message} {ex.StackTrace}");
-        feedbackBox.text = $"Demo failed, check debugger output for more information";
+        debugText.text += $"Demo failed, check debugger output for more information\n";
       }
     }
 
@@ -151,7 +148,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
       catch (Exception ex)
       {
         Debug.LogError($"{nameof(DemoScriptBase)} - Error in {nameof(EnumerateAllNearbyAnchors)}: === {ex.GetType().Name} === {ex.ToString()} === {ex.Source} === {ex.Message} {ex.StackTrace}");
-        feedbackBox.text = $"Enumeration failed, check debugger output for more information";
+        debugText.text += $"Enumeration failed, check debugger output for more information\n";
       }
     }
 
@@ -370,7 +367,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
       Debug.LogException(exception);
       Debug.Log("Failed to save anchor " + exception.ToString());
 
-      UnityDispatcher.InvokeOnAppThread(() => this.feedbackBox.text = string.Format("Error: {0}", exception.ToString()));
+      UnityDispatcher.InvokeOnAppThread(() => this.debugText.text += string.Format("Error: {0}\n", exception.ToString()));
     }
 
     /// <summary>
@@ -431,6 +428,8 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
     /// </summary>
     protected virtual async Task SaveCurrentObjectAnchorToCloudAsync()
     {
+      debugText.text += "SaveCurrentObjectAnchorToCloudAsync() called \n";
+
       // Get the cloud-native anchor behavior
       CloudNativeAnchor cna = spawnedObject.GetComponent<CloudNativeAnchor>();
 
@@ -447,12 +446,12 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
       {
         await Task.Delay(330);
         float createProgress = CloudManager.SessionStatus.RecommendedForCreateProgress;
-        feedbackBox.text = $"Move your device to capture more environment data: {createProgress:0%}";
+        debugText.text += $"Move your device to capture more environment data: {createProgress:0%}\n";
       }
 
       bool success = false;
 
-      feedbackBox.text = "Saving...";
+      debugText.text += "Saving...\n";
 
       try
       {
@@ -579,7 +578,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
       isErrorActive = true;
       Debug.Log(args.ErrorMessage);
 
-      UnityDispatcher.InvokeOnAppThread(() => this.feedbackBox.text = string.Format("Error: {0}", args.ErrorMessage));
+      UnityDispatcher.InvokeOnAppThread(() => this.debugText.text += string.Format("Error: {0}\n", args.ErrorMessage));
     }
 
     private void CloudManager_LogDebug(object sender, OnLogDebugEventArgs args)
