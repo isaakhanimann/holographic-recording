@@ -68,9 +68,9 @@ public class AnchorManager : DemoScriptBase
 
         anchorsToFind.Add(currentAnchorId);
 
-        SetAnchorIdsToLocate(anchorsToFind);
+        base.SetAnchorIdsToLocate(anchorsToFind);
 
-        currentWatcher = CreateWatcher();
+        currentWatcher = base.CreateWatcher();
     }
 
     async void SaveAnchorForObjectAsync()
@@ -119,24 +119,27 @@ public class AnchorManager : DemoScriptBase
         debugText.text += "ON Cloud anchor located \n";
 
         //base.OnCloudAnchorLocated(args);
-        if (args.Status == LocateAnchorStatus.Located)
-        {
-            debugText.text += "spawning object again \n";
+        //if (args.Status == LocateAnchorStatus.Located)
+        //{
 
             currentCloudAnchor = args.Anchor;
-            UnityDispatcher.InvokeOnAppThread(() =>
+        debugText.text += "get located anchor \n";
+
+        UnityDispatcher.InvokeOnAppThread(() =>
 
             {
+                debugText.text += "spawning object again \n";
+
                 Pose anchorPose = Pose.identity;
 
                 SpawnOrMoveCurrentAnchoredObject(anchorPose.position, anchorPose.rotation);
 
                 UnityEngine.XR.WSA.WorldAnchor wa = spawnedObject.AddComponent<UnityEngine.XR.WSA.WorldAnchor>();
-                wa.SetNativeSpatialAnchorPtr(args.Anchor.LocalAnchor);
+                wa.SetNativeSpatialAnchorPtr(currentCloudAnchor.LocalAnchor);
                 debugText.text += "Spawned and moved object \n";
             });
 
-        }
+       // }
     }
 
     protected override async Task SaveCurrentObjectAnchorToCloudAsync()
