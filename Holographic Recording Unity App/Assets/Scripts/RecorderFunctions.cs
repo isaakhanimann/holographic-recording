@@ -12,12 +12,21 @@ using System;
 using Unity.Jobs;
 using Unity.Collections;
 using System.Collections;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 
 public class RecorderFunctions : MonoBehaviour
 {
     public GameObject recordingRepresentationPrefab;
     public GameObject audioRecorderInstance;
     public GameObject timerInstance;
+    public GameObject anchorManagerInstance;
+    public GameObject parentOfAnchoredObjects;
 
     public int captureFrequencyInFrames = 1;
     public GameObject preRecordingMenu;
@@ -25,15 +34,22 @@ public class RecorderFunctions : MonoBehaviour
 
     private GameObject recordingRepresentationInstance;
     private AudioRecorder audioRecorder;
+    private AnchorManager anchorManager;
     private Nullable<JobHandle> saveJobHandle;
     private bool isRecording;
     private bool isHandDetected;
     private int numberOfRecording;
     private string pathToScreenshot;
 
-    void Start()
+    public TextMeshPro debugText;
+
+    async void Start()
     {
         audioRecorder = audioRecorderInstance.GetComponent<AudioRecorder>();
+        anchorManager = anchorManagerInstance.GetComponent<AnchorManager>();
+
+        // Set one gameobject as parent of all anchored objects
+        parentOfAnchoredObjects = new GameObject();
     }
 
     void Update()
@@ -45,9 +61,17 @@ public class RecorderFunctions : MonoBehaviour
         }
     }
 
+    private void InitAnchorSession()
+    {
+        debugText.text += "Init Anchor Session \n";
+        anchorManager.InitAnchorSession();
+    }
+
 
     public void StartRecording()
     {
+        InitAnchorSession();
+
         // update the UI
         preRecordingMenu.SetActive(false);
         StartCoroutine(SetWhileRecordingMenuActiveAfterNSeconds()); // delay the activation of next menu so buttons are not pressed accidentally
@@ -106,13 +130,44 @@ public class RecorderFunctions : MonoBehaviour
         // get final length of recording in seconds
         int recordingLength = timerInstance.GetComponent<TimerBehaviour>().GetCurrentRecordingTime();
 
+        // Instantiate anchored object - will be the parent object of hands recording and representation
+        GameObject anchoredObject = InstantiateAnchoredObject();
         // instantiate representation and pass the recording to it
-        InstantiateRecordingRepresentationAtPalm();
+        InstantiateRecordingRepresentationAtPalm(anchoredObject);
+
+        debugText.text += "playing recording \n";
         HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
-        playerComponent.PutHoloRecordingIntoPlayer(newRecording, recordingLength);
+        playerComponent.PutHoloRecordingIntoPlayer(newRecording, recordingLength, anchoredObject);
+        // Save anchor to cloud
+
+        anchorManager.SaveObjectAnchorToCloudAndStopSession(anchoredObject);
+
     }
 
-    private void InstantiateRecordingRepresentationAtPalm()
+    private GameObject InstantiateAnchoredObject()
+    {
+        debugText.text += "instantiate anchored object \n";
+
+        Vector3 positionToInstantiate;
+        Quaternion rotationToInstantiate = Quaternion.identity;
+        if (HandJointUtils.TryGetJointPose(TrackedHandJoint.Palm, Handedness.Left, out MixedRealityPose pose))
+        {
+            positionToInstantiate = pose.Position;
+        }
+        else
+        {
+
+            positionToInstantiate = Camera.main.transform.position + 0.5f * Vector3.forward;
+        }
+        GameObject anchoredObject = new GameObject();
+        anchoredObject.transform.position = positionToInstantiate;
+        anchoredObject.transform.rotation = rotationToInstantiate;
+        anchorManager.AddCloudNativeAnchorToObject(ref anchoredObject);
+        anchoredObject.transform.SetParent(parentOfAnchoredObjects.transform);
+        return anchoredObject;
+    }
+
+    private void InstantiateRecordingRepresentationAtPalm(GameObject anchoredObject)
     {
         // get palm position
         Vector3 positionToInstantiate;
@@ -127,6 +182,7 @@ public class RecorderFunctions : MonoBehaviour
         }
         // instantiate representation at palm
         recordingRepresentationInstance = Instantiate(original: recordingRepresentationPrefab, position: positionToInstantiate, rotation: rotationToInstantiate);
+        recordingRepresentationInstance.transform.SetParent(anchoredObject.transform);
     }
 
 

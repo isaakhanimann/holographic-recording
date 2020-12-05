@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine;
 
 namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 {
@@ -187,6 +188,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
         {
             if ((CloudManager != null) && (CloudManager.Session != null))
             {
+                debugText.text += "session exits will create watcher with critera now";
                 return CloudManager.Session.CreateWatcher(anchorLocateCriteria);
             }
             else
@@ -588,7 +590,6 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 
         private void CloudManager_LocateAnchorsCompleted(object sender, LocateAnchorsCompletedEventArgs args)
         {
-            debugText.text += "locateAnchorsCompleted \n";
             OnCloudLocateAnchorsCompleted(args);
         }
 
@@ -601,14 +602,11 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
         {
             isErrorActive = true;
             Debug.Log(args.ErrorMessage);
-            debugText.text += args.ErrorMessage + "\n";
             UnityDispatcher.InvokeOnAppThread(() => this.debugText.text += string.Format("Error: {0}\n", args.ErrorMessage));
         }
 
         private void CloudManager_LogDebug(object sender, OnLogDebugEventArgs args)
         {
-            debugText.text += args.Message + " \n";
-
             Debug.Log(args.Message);
         }
 

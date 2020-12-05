@@ -54,7 +54,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     }
 
     // called by the recorder when he is done recording
-    public void PutHoloRecordingIntoPlayer(HoloRecording recording, int recordingLength)
+    public void PutHoloRecordingIntoPlayer(HoloRecording recording, int recordingLength, GameObject anchoredObject)
     {
         // update UI
         StartCoroutine(AddScreenshotToRepresentation(recording.pathToScreenshot)); // set the screenshot of the representation, done asynchronously because it loads from disk
@@ -64,6 +64,8 @@ public class HoloPlayerBehaviour : MonoBehaviour
         buttons.SetActive(false);
         InstantiateHandAndSetInactive(leftHand, ref instantiatedLeftHand); // the hands should only become visible when the animation is running
         InstantiateHandAndSetInactive(rightHand, ref instantiatedRightHand);
+        instantiatedLeftHand.transform.SetParent(anchoredObject.transform);
+        instantiatedRightHand.transform.SetParent(anchoredObject.transform);
 
         // add animationclip to hand prefabs and audio clip of recording to the audiosource of the representation
         filename = recording.animationClipName;
