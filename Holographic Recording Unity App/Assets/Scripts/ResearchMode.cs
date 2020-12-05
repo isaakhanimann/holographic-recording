@@ -15,6 +15,7 @@ public class ResearchMode : MonoBehaviour
 #endif
     static bool startRealtimePreview = false;
     static float startTime = 0.0F;
+    static int recordingNumber = 0;
 
     void Start()
     {
@@ -41,12 +42,13 @@ public class ResearchMode : MonoBehaviour
     }
 
     // use this call to control recording
-    public static void TogglePreviewEvent()
+    public static void TogglePreviewEvent(int numberOfRecording)
     {
         startRealtimePreview = !startRealtimePreview;
         if (startRealtimePreview)
         {
             startTime = Time.time;
+            recordingNumber = numberOfRecording;
         }
     }
 
@@ -62,7 +64,7 @@ public class ResearchMode : MonoBehaviour
                 float timeStamp = Time.time - startTime;
                 var byteArray = new byte[pointCloud.Length * 4];
                 Buffer.BlockCopy(pointCloud, 0, byteArray, 0, byteArray.Length);
-                File.WriteAllBytes(String.Format(Application.persistentDataPath+"/PointClouds/"+"points_{0}.dat", timeStamp), byteArray2);
+                File.WriteAllBytes(String.Format(Application.persistentDataPath+"/points_{0}_{1}.dat", numberOfRecording, timeStamp), byteArray);
                 Debug.Log("research mode: point cloud data written");
             }
         }

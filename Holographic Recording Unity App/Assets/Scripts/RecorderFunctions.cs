@@ -64,7 +64,7 @@ public class RecorderFunctions : MonoBehaviour
         isRecording = true;
 
         //start research mode loop
-        ResearchMode.TogglePreviewEvent();
+        ResearchMode.TogglePreviewEvent(numberOfRecording);
 
         // make a screenshot for the recording representation
         StartCoroutine(MakeScreenshotAfterNSeconds());
