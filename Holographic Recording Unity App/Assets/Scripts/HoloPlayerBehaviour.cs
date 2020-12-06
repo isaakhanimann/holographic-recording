@@ -27,6 +27,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
 
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
+    private GameObject instantiatedPointCloud;
     private float lengthOfAnimation;
     private TouchScreenKeyboard keyboard;
     private string keyboardText;
@@ -65,6 +66,9 @@ public class HoloPlayerBehaviour : MonoBehaviour
         buttons.SetActive(false);
         InstantiateHandAndSetInactive(leftHand, ref instantiatedLeftHand); // the hands should only become visible when the animation is running
         InstantiateHandAndSetInactive(rightHand, ref instantiatedRightHand);
+
+        instantiatedPointCloud = Instantiate(original: pointCloudDisplay, position: Vector3.zero, rotation: Quaternion.identity);
+        instantiatedPointCloud.SetActive(true);
 
         // add animationclip to hand prefabs and audio clip of recording to the audiosource of the representation
         filename = recording.animationClipName;
@@ -140,13 +144,13 @@ public class HoloPlayerBehaviour : MonoBehaviour
         StartCoroutine(PlayAudioClip(Path.Combine(Application.persistentDataPath, audioFilename)));
 
         // play animation that was added to the hand prefabs
-        instantiatedLeftHand.SetActive(true);
-        instantiatedRightHand.SetActive(true);
-        instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
-        instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
+        //instantiatedLeftHand.SetActive(true);
+        //instantiatedRightHand.SetActive(true);
+        //instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
+        //instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
 
         // play point cloud
-        StartCoroutine(pointCloudDisplay.GetComponent<PointCloudRenderer>().Play(filename));
+        StartCoroutine(instantiatedPointCloud.GetComponent<PointCloudRenderer>().Play(filename));
 
         // reset hands to invisible and the recording representation to the start state when playback is done
         StartCoroutine(ResetRecording());
@@ -166,6 +170,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         {
             instantiatedLeftHand.SetActive(false);
             instantiatedRightHand.SetActive(false);
+            instantiatedPointCloud.SetActive(false);
             firstRepresentation.SetActive(true);
             secondRepresentation.SetActive(false);
             audioSource.Stop();

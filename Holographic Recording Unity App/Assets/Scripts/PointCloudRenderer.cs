@@ -10,10 +10,10 @@ using System;
 public class PointCloudRenderer : MonoBehaviour
 {
     Mesh mesh;
-    public MeshRenderer meshRenderer;
+    //public MeshRenderer meshRenderer;
     MeshFilter mf;
 
-    public Transform offset; // Put any gameobject that faciliatates adjusting the origin of the pointcloud in VR. 
+    //public Transform offset; // Put any gameobject that faciliatates adjusting the origin of the pointcloud in VR. 
     private bool showRecording = false;
     private int runningFrame = -1;
     private string[] files;
@@ -29,8 +29,8 @@ public class PointCloudRenderer : MonoBehaviour
         };
         mf.mesh = mesh;
 
-        transform.position = offset.position;
-        transform.rotation = offset.rotation;
+        transform.position = Vector3.zero;
+        transform.rotation = Quaternion.identity;
     }
 
     void UpdateMesh(int runningFrame)
@@ -38,14 +38,6 @@ public class PointCloudRenderer : MonoBehaviour
         //runningFrame++;
         Debug.Log("Update Mesh");
 
-        //if(runningFrame >= files.Length)
-        //{
-        //    showRecording = false;
-        //    runningFrame = -1;
-        //    return;
-        //}
-
-        //positions = PointCloudSubscriber.GetPCL(runningFrame);
         Vector3[] positions = readFile(files[runningFrame]);
 
         Debug.Log("Renderer: points received");
@@ -101,7 +93,7 @@ public class PointCloudRenderer : MonoBehaviour
         for (int i = 0; i < files.Length; i++)
         {
             UpdateMesh(i);
-            yield return new WaitForSeconds(.1f);
+            yield return new WaitForSeconds(0.02f);
         }
     }
 
