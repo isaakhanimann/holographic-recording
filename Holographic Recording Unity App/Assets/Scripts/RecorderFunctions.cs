@@ -64,7 +64,7 @@ public class RecorderFunctions : MonoBehaviour
         isRecording = true;
 
         //start research mode loop
-        ResearchMode.TogglePreviewEvent(numberOfRecording);
+        rm.RecordDepthData(true);
 
         // make a screenshot for the recording representation
         StartCoroutine(MakeScreenshotAfterNSeconds());
@@ -105,7 +105,7 @@ public class RecorderFunctions : MonoBehaviour
         preRecordingMenu.SetActive(true);
 
         // stop research mode events
-        ResearchMode.TogglePreviewEvent();
+        rm.RecordDepthData(false);
 
         // stop recording and get the recording object
         HoloRecording newRecording = StopRecording();
@@ -171,6 +171,7 @@ public class RecorderFunctions : MonoBehaviour
         string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
         // saving is uncommented to unclutter the hololens
         //SaveKeyframesAsynchronously(pathToAnimationClip);
+        rm.SavePointClouds(numberOfRecording);
         HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot);
         return newRecording;
     }

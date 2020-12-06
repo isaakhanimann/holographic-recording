@@ -23,6 +23,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public RawImage screenshotRawImage;
     public AudioSource audioSource;
     public TextMeshPro timerText;
+    public GameObject pointCloudDisplay;
 
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
@@ -143,6 +144,9 @@ public class HoloPlayerBehaviour : MonoBehaviour
         instantiatedRightHand.SetActive(true);
         instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
         instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
+
+        // play point cloud
+        StartCoroutine(pointCloudDisplay.GetComponent<PointCloudRenderer>().Play(filename));
 
         // reset hands to invisible and the recording representation to the start state when playback is done
         StartCoroutine(ResetRecording());
