@@ -14,12 +14,12 @@ public class PointCloudRenderer : MonoBehaviour
     MeshFilter mf;
 
     //public Transform offset; // Put any gameobject that faciliatates adjusting the origin of the pointcloud in VR. 
-    private bool showRecording = false;
+    private bool showRecording = true;
     private int runningFrame = -1;
     private string[] files;
 
     // Start is called before the first frame update
-    void SetUp()
+    void Start()
     {
         mf = gameObject.AddComponent<MeshFilter>();
         mesh = new Mesh
@@ -79,6 +79,7 @@ public class PointCloudRenderer : MonoBehaviour
 
     public IEnumerator Play(string recordingName)
     {
+        //float timeStart = Time.time;
         string recording_num = recordingName.Replace("AnimationClip", "");
         Debug.Log(string.Format("points_{0}", recording_num));
 
@@ -88,13 +89,14 @@ public class PointCloudRenderer : MonoBehaviour
         Debug.Log("Point Cloud files:" + files.Length);
 
         showRecording = true;
-        SetUp();
 
         for (int i = 0; i < files.Length; i++)
         {
             UpdateMesh(i);
-            yield return new WaitForSeconds(0.02f);
+            yield return new WaitForSeconds(0.05f);
         }
+
+        mf.mesh.Clear();
     }
 
     private Vector3[] readFile(string str)
