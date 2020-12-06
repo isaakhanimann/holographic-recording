@@ -67,8 +67,10 @@ public class HoloPlayerBehaviour : MonoBehaviour
         InstantiateHandAndSetInactive(leftHand, ref instantiatedLeftHand); // the hands should only become visible when the animation is running
         InstantiateHandAndSetInactive(rightHand, ref instantiatedRightHand);
 
-        instantiatedPointCloud = Instantiate(original: pointCloudDisplay, position: Vector3.zero, rotation: Quaternion.identity);
-        instantiatedPointCloud.SetActive(true);
+        instantiatedPointCloud = Instantiate(
+            original: pointCloudDisplay,
+            position: Vector3.zero, 
+            rotation: Quaternion.identity);
 
         // add animationclip to hand prefabs and audio clip of recording to the audiosource of the representation
         filename = recording.animationClipName;
@@ -150,6 +152,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         //instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
 
         // play point cloud
+        instantiatedPointCloud.SetActive(true);
         StartCoroutine(instantiatedPointCloud.GetComponent<PointCloudRenderer>().Play(filename));
 
         // reset hands to invisible and the recording representation to the start state when playback is done

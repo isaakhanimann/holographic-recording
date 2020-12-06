@@ -62,6 +62,8 @@ public class ResearchMode : MonoBehaviour
             frameCount = 0;
             timesteps = new Dictionary<int, float>();
             points = new Dictionary<int, float[]>();
+            leftPalmCoords = new Dictionary<int, Vector3>();
+            rightPalmCoords = new Dictionary<int, Vector3>();
         }
     }
 
