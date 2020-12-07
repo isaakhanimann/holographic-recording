@@ -29,6 +29,12 @@ public class RecorderFunctions : MonoBehaviour
     private int numberOfRecording;
     private string pathToScreenshot;
     private AudioClip audioClip;
+    private ResearchMode rm;
+
+    void Start()
+    {
+        rm = gameObject.AddComponent<ResearchMode>();
+    }
 
 
     void Update()
@@ -50,6 +56,10 @@ public class RecorderFunctions : MonoBehaviour
         allKeyFrames.leftJointLists = new KeyFrameListsForAllHandJoints(Handedness.Left);
         allKeyFrames.rightJointLists = new KeyFrameListsForAllHandJoints(Handedness.Right);
         isRecording = true;
+
+        //start research mode loop
+        rm.RecordDepthData(true);
+
         StartCoroutine(MakeScreenshotAfterNSeconds());
     }
 
@@ -114,6 +124,9 @@ public class RecorderFunctions : MonoBehaviour
         whileRecordingMenu.SetActive(false);
         preRecordingMenu.SetActive(true);
 
+        // stop research mode events
+        rm.RecordDepthData(false);
+
         HoloRecording newRecording = StopRecording();
 
         InstantiateRecordingRepresentationAtPalm();
@@ -153,6 +166,8 @@ public class RecorderFunctions : MonoBehaviour
         string animationClipName = "AnimationClip" + numberOfRecording;
         string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
         //SaveKeyframesAsynchronously(pathToAnimationClip);
+        rm.SavePointClouds(numberOfRecording);
+
         HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot, audioClip);
         return newRecording;
     }
