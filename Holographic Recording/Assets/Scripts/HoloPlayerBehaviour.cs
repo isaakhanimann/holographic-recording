@@ -22,13 +22,16 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public GameObject instructionObject;
     public RawImage screenshotRawImage;
     public AudioSource audioSource;
+    public GameObject pointCloudDisplay;
 
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
+    private GameObject instantiatedPointCloud;
     private float lengthOfAnimation;
     private TouchScreenKeyboard keyboard;
     private string keyboardText;
     private bool stopWasPressed; // needed to stop the reset the representation properly
+    private string filename;
 
     private void Update()
     {
@@ -60,6 +63,13 @@ public class HoloPlayerBehaviour : MonoBehaviour
         buttons.SetActive(false);
         InstantiateHand(leftHand, ref instantiatedLeftHand);
         InstantiateHand(rightHand, ref instantiatedRightHand);
+
+        instantiatedPointCloud = Instantiate(
+            original: pointCloudDisplay,
+            position: Vector3.zero,
+            rotation: Quaternion.identity);
+
+        filename = recording.animationClipName;
         (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromAllKeyFrames(recording.allKeyFrames);
         debugLogTmPro.text += "AnimationClips were loaded" + System.Environment.NewLine;
         instantiatedLeftHand.GetComponent<Animation>().AddClip(leftHandClip, "leftHand");
@@ -109,6 +119,11 @@ public class HoloPlayerBehaviour : MonoBehaviour
         instantiatedRightHand.SetActive(true);
         instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
         instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
+
+        // play point cloud
+        instantiatedPointCloud.SetActive(true);
+        StartCoroutine(instantiatedPointCloud.GetComponent<PointCloudRenderer>().Play(filename));
+
         StartCoroutine(SetSecondRepresentationActiveAfterNSeconds());
         StartCoroutine(ResetRecording());
     }
@@ -127,6 +142,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         {
             instantiatedLeftHand.SetActive(false);
             instantiatedRightHand.SetActive(false);
+            instantiatedPointCloud.SetActive(false);
             firstRepresentation.SetActive(true);
             secondRepresentation.SetActive(false);
             audioSource.Stop();
