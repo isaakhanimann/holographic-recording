@@ -33,7 +33,7 @@ public class RecorderFunctions : MonoBehaviour
 
     void Start()
     {
-        rm = gameObject.AddComponent<ResearchMode>();
+        rm = Camera.main.gameObject.AddComponent<ResearchMode>();
     }
 
 

@@ -27,7 +27,7 @@ public class ResearchMode : MonoBehaviour
     Dictionary<int, float[]> points;
 
     private const float THRESH = 0.3F;
-    private const bool filterPointClouds = false;
+    private const bool filterPointClouds = true;
 
     void Start()
     {
