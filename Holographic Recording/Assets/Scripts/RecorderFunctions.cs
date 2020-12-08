@@ -20,7 +20,7 @@ public class RecorderFunctions : MonoBehaviour
     public TextMeshPro debugLogTmPro;
     public GameObject preRecordingMenu;
     public GameObject whileRecordingMenu;
-
+    public GameObject pointCloudRecorder;
 
     private GameObject recordingRepresentationInstance;
     private Nullable<JobHandle> saveJobHandle;
@@ -33,7 +33,7 @@ public class RecorderFunctions : MonoBehaviour
 
     void Start()
     {
-        rm = Camera.main.gameObject.AddComponent<ResearchMode>();
+        rm = pointCloudRecorder.GetComponent<ResearchMode>();
     }
 
 

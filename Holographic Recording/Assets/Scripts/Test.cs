@@ -7,13 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-public class PointCloudRenderer : MonoBehaviour
+public class Test : MonoBehaviour
 {
     Mesh mesh;
     //public MeshRenderer meshRenderer;
     MeshFilter mf;
 
-    //public Transform offset; // Put any gameobject that faciliatates adjusting the origin of the pointcloud in VR. 
     private bool showRecording = true;
     private int runningFrame = -1;
     private string[] files;
@@ -29,8 +28,11 @@ public class PointCloudRenderer : MonoBehaviour
         };
         mf.mesh = mesh;
 
-        transform.position = Vector3.zero;
-        transform.rotation = Quaternion.identity;
+        //Vector3 v = new Vector3(0, 1, 0);
+        //transform.position = new Vector3(0, -0.2F, 0);
+        //transform.rotation = Quaternion.identity;
+
+        Play();
     }
 
     void UpdateMesh(int runningFrame)
@@ -39,6 +41,7 @@ public class PointCloudRenderer : MonoBehaviour
         Debug.Log("Update Mesh");
 
         Vector3[] positions = readFile(files[runningFrame]);
+        Debug.Log(files[runningFrame]);
 
         Debug.Log("Renderer: points received");
         if (positions == null || positions.Length == 0)
@@ -77,26 +80,26 @@ public class PointCloudRenderer : MonoBehaviour
         Debug.Log("Renderer: points updated");
     }
 
-    public IEnumerator Play(string recordingName)
+    public void Play()
     {
         //float timeStart = Time.time;
-        string recording_num = recordingName.Replace("AnimationClip", "");
-        Debug.Log(string.Format("points_{0}", recording_num));
+        //string recording_num = recordingName.Replace("AnimationClip", "");
+        //Debug.Log(string.Format("points_{0}", recording_num));
 
         files = Directory.GetFiles(Application.persistentDataPath, "*.dat", SearchOption.AllDirectories)
-                        .Where(s => s.Contains(string.Format("points_{0}", recording_num)))
+                        .Where(s => s.Contains("points_"))
                         .OrderBy(s => s).ToArray();
         Debug.Log("Point Cloud files:" + files.Length);
 
         showRecording = true;
+        UpdateMesh(0);
+        //for (int i = 0; i < files.Length; i++)
+        //{
+        //    UpdateMesh(i);
+        //    yield return new WaitForSeconds(0.05f);
+        //}
 
-        for (int i = 0; i < files.Length; i++)
-        {
-            UpdateMesh(i);
-            yield return null;// new WaitForSeconds(0.05f);
-        }
-
-        mf.mesh.Clear();
+        //mf.mesh.Clear();
     }
 
     private Vector3[] readFile(string str)
