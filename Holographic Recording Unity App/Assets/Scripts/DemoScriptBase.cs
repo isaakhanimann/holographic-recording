@@ -31,7 +31,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 
         [SerializeField]
         [Tooltip("The prefab used to represent an anchored object.")]
-        private GameObject anchoredObjectPrefab = null;
+        protected GameObject anchoredObjectPrefab = null;
 
         [SerializeField]
         [Tooltip("SpatialAnchorManager instance to use for this demo. This is required.")]
@@ -188,7 +188,6 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
         {
             if ((CloudManager != null) && (CloudManager.Session != null))
             {
-                debugText.text += "session exits will create watcher with critera now";
                 return CloudManager.Session.CreateWatcher(anchorLocateCriteria);
             }
             else
@@ -309,6 +308,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
         /// <param name="args">The <see cref="AnchorLocatedEventArgs"/> instance containing the event data.</param>
         protected virtual void OnCloudAnchorLocated(AnchorLocatedEventArgs args)
         {
+            debugText.text += "base.OnCloudAnchorLocated() called \n";
             // To be overridden.
         }
 
@@ -318,7 +318,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
         /// <param name="args">The <see cref="LocateAnchorsCompletedEventArgs"/> instance containing the event data.</param>
         protected virtual void OnCloudLocateAnchorsCompleted(LocateAnchorsCompletedEventArgs args)
         {
-            Debug.Log("Locate pass complete");
+            // Debug.Log("Locate pass complete");
         }
 
         /// <summary>
@@ -430,12 +430,12 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
         /// </summary>
         protected virtual async Task SaveCurrentObjectAnchorToCloudAsync()
         {
-            debugText.text += "SaveCurrentObjectAnchorToCloudAsync() called \n";
+            debugText.text += "SaveCurrentObjectAnchorToCloudAsync() called\n";
 
             // Get the cloud-native anchor behavior
             CloudNativeAnchor cna = spawnedObject.GetComponent<CloudNativeAnchor>();
 
-            debugText.text += "get component from spawned object...\n";
+            debugText.text += "Get CloudNativeAnchor component from spawned object\n";
 
 
             // If the cloud portion of the anchor hasn't been created yet, create it
@@ -448,23 +448,22 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
                 debugText.text += "Cloud anchor is not null\n";
             }
 
-            debugText.text += "checked anchor is noull or not \n";
+            debugText.text += "Completed check of whether anchor is null or not \n";
 
 
             // Get the cloud portion of the anchor
             CloudSpatialAnchor cloudAnchor = cna.CloudAnchor;
-            debugText.text += "get cloud anchor\n";
+            debugText.text += "Get cloud anchor\n";
 
             // In this sample app we delete the cloud anchor explicitly, but here we show how to set an anchor to expire automatically
             //cloudAnchor.Expiration = DateTimeOffset.Now.AddDays(7);
 
             while (!CloudManager.IsReadyForCreate)
             {
-                debugText.text += "CloudManager not is ready for create\n";
+                debugText.text += "CloudManager is not ready for create\n";
 
                 await Task.Delay(330);
                 float createProgress = CloudManager.SessionStatus.RecommendedForCreateProgress;
-                debugText.text += createProgress + "\n";
                 debugText.text += $"Move your device to capture more environment data: {createProgress:0%}\n";
 
             }
@@ -580,11 +579,10 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 
         private void CloudManager_AnchorLocated(object sender, AnchorLocatedEventArgs args)
         {
-            debugText.text += "Anchor recognized as a possible anchor" + args.Identifier + args.Status + "\n";
-            Debug.LogFormat("Anchor recognized as a possible anchor {0} {1}", args.Identifier, args.Status);
+            debugText.text += "Anchor recognized as a possible anchor " + args.Identifier + ", status: " + args.Status + "\n";
             if (args.Status == LocateAnchorStatus.Located)
             {
-                OnCloudAnchorLocated(args);
+              OnCloudAnchorLocated(args);
             }
         }
 
