@@ -88,10 +88,11 @@ public class ResearchMode : MonoBehaviour
                 yield return new WaitForSeconds(0.2f);
             }
             else{
-                break;
+                yield break;
             }
         }
 #endif
+        yield break;
     }
 
     private void StorePalmVectors(int count)

@@ -115,16 +115,16 @@ public class HoloPlayerBehaviour : MonoBehaviour
         firstRepresentation.SetActive(false);
         audioSource.Play();
         debugLogTmPro.text += "Play" + System.Environment.NewLine;
-        //instantiatedLeftHand.SetActive(true);
-        //instantiatedRightHand.SetActive(true);
-        //instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
-        //instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
+        instantiatedLeftHand.SetActive(true);
+        instantiatedRightHand.SetActive(true);
+        instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
+        instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
 
         // play point cloud
         instantiatedPointCloud.SetActive(true);
         StartCoroutine(instantiatedPointCloud.GetComponent<PointCloudRenderer>().Play(filename));
 
-        //StartCoroutine(SetSecondRepresentationActiveAfterNSeconds());
+        StartCoroutine(SetSecondRepresentationActiveAfterNSeconds());
         StartCoroutine(ResetRecording());
     }
 
