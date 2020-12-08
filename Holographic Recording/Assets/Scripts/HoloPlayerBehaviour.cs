@@ -124,7 +124,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         instantiatedPointCloud.SetActive(true);
         StartCoroutine(instantiatedPointCloud.GetComponent<PointCloudRenderer>().Play(filename));
 
-        StartCoroutine(SetSecondRepresentationActiveAfterNSeconds());
+        //StartCoroutine(SetSecondRepresentationActiveAfterNSeconds());
         StartCoroutine(ResetRecording());
     }
 
