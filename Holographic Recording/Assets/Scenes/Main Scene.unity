@@ -445,7 +445,7 @@ GameObject:
   - component: {fileID: 1326201290}
   - component: {fileID: 1326201291}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: ResearchModeRecorder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
