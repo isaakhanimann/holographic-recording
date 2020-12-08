@@ -64,23 +64,31 @@ public class ResearchMode : MonoBehaviour
             points = new Dictionary<int, float[]>();
             leftPalmCoords = new Dictionary<int, Vector3>();
             rightPalmCoords = new Dictionary<int, Vector3>();
+
+            StartCoroutine(StartRecording());
         }
     }
 
-    private void LateUpdate()
+    private IEnumerator StartRecording()
     {
 #if ENABLE_WINMD_SUPPORT
         // update depth map texture
-        if (startRealtimePreview && researchMode.PointCloudUpdated())
-        {
-            frameCount++;
-            float[] pointCloud = researchMode.GetPointCloudBuffer();
-            if (pointCloud.Length > 0)
+        while(true){
+            if (startRealtimePreview && researchMode.PointCloudUpdated())
             {
-                float timeStamp = Time.time - startTime;
-                timesteps[frameCount] = timeStamp;
-                points[frameCount] = pointCloud;
-                StorePalmVectors(frameCount);
+                frameCount++;
+                float[] pointCloud = researchMode.GetPointCloudBuffer();
+                if (pointCloud.Length > 0)
+                {
+                    float timeStamp = Time.time - startTime;
+                    timesteps[frameCount] = timeStamp;
+                    points[frameCount] = pointCloud;
+                    StorePalmVectors(frameCount);
+                }
+                yield return new WaitForSeconds(0.2f);
+            }
+            else{
+                break;
             }
         }
 #endif

@@ -93,7 +93,7 @@ public class PointCloudRenderer : MonoBehaviour
         for (int i = 0; i < files.Length; i++)
         {
             UpdateMesh(i);
-            yield return null;// new WaitForSeconds(0.05f);
+            yield return WaitForSeconds(0.2f);
         }
 
         mf.mesh.Clear();
