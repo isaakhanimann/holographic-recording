@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 using UnityEngine;
 using TMPro;
 using UnityEngine.XR.WSA;
+using System.Collections.Concurrent;
 
 public class AnchorManager : DemoScriptBase
 {
 
   public AnchorStoreManager anchorStore;
   private string currentAnchorId = "";
-  private Queue<Action> dispatchQueue;
 
   public override Task AdvanceDemoAsync()
   {
@@ -34,24 +34,12 @@ public class AnchorManager : DemoScriptBase
   void Start()
   {
 	anchorStore = new AnchorStoreManager();
-	dispatchQueue = new Queue<Action>();
 
 	//UnityDispatcher.InvokeOnAppThread(() => { FindAnchors(); });
 
 	debugText.text += "AnchorManager.Start() called \n";
 	base.Start();
 	base.SpawnOrMoveCurrentAnchoredObject(new Vector3(1, 0, 0.5f), new Quaternion(0, 0, 0, 1));
-  }
-
-  private void Update()
-  {
-	lock (dispatchQueue)
-	{
-	  if (dispatchQueue.Count > 0)
-	  {
-		dispatchQueue.Dequeue();
-	  }
-	}
   }
 
   // Step 1
@@ -84,8 +72,6 @@ public class AnchorManager : DemoScriptBase
   {
 	ResetAnchorIdsToLocate();
 
-	debugText.text += "FindAnchorsTask() called\n";
-
 	// Fetch the IDs of anchors stored in the text file
 	List<string> anchorKeysToFind = await anchorStore.RetrieveAnchorKeys();
 
@@ -106,9 +92,7 @@ public class AnchorManager : DemoScriptBase
 	  debugText.text += "Creating watcher \n";
 
 	  // Create the watcher for those anchor GUIDs
-	  // SetNearDevice(3.0f, 10);
-	  CloudSpatialAnchorWatcher watcher = CreateWatcher();
-	  debugText.text += "Watcher ID: " + watcher.Identifier + "\n";
+	  CreateWatcher();
 	}
 	else
 	{
@@ -163,50 +147,30 @@ public class AnchorManager : DemoScriptBase
 
   protected override void OnCloudAnchorLocated(AnchorLocatedEventArgs args)
   {
+	debugText.text += "here\n";
+
 	//debugText.text += "AnchorManager.OnCloudAnchorLocated() called\n";
 
 	//debugText.text += "args.Status: " + args.Status + "\n";
-	base.OnCloudAnchorLocated(args);
+	//base.OnCloudAnchorLocated(args);
 
-	if (args.Status == LocateAnchorStatus.Located)
+	currentCloudAnchor = args.Anchor;
+
+	//debugText.text += "Spawning prefab again \n";
+
+	QueueOnUpdate(() =>
 	{
-	  currentCloudAnchor = args.Anchor;
-
-	  //debugText.text += "Spawning prefab again \n";
-
 	  UnityDispatcher.InvokeOnAppThread(() =>
 	  {
-		QueueOnUpdate(() =>
-		{
-		  Pose anchorPose = currentCloudAnchor.GetPose();
-		  Instantiate(original: anchoredObjectPrefab, position: anchorPose.position, rotation: anchorPose.rotation);
+		Pose anchorPose = currentCloudAnchor.GetPose();
+		Instantiate(original: anchoredObjectPrefab, position: anchorPose.position, rotation: anchorPose.rotation);
 
-		  Task.Run(async () => {
-			await Task.Delay(1000);
-		  });
+		Task.Run(async () =>
+		{
+		  await Task.Delay(1000);
 		});
 	  });
-
-	  /*UnityDispatcher.InvokeOnAppThread(() =>
-	  {      
-		Pose anchorPose = Pose.identity;
-
-		SpawnOrMoveCurrentAnchoredObject(anchorPose.position, anchorPose.rotation);
-
-		UnityEngine.XR.WSA.WorldAnchor wa = spawnedObject.AddComponent<UnityEngine.XR.WSA.WorldAnchor>();
-		wa.SetNativeSpatialAnchorPtr(currentCloudAnchor.LocalAnchor);
-		debugText.text += "Spawned and moved object \n";
-	  });*/
-
-	}
-  }
-
-  private void QueueOnUpdate(Action p)
-  {
-	lock (dispatchQueue)
-	{
-	  dispatchQueue.Enqueue(p);
-	}
+	});
   }
 
   public void AddCloudNativeAnchorToObject(ref GameObject go)
@@ -242,7 +206,7 @@ public class AnchorManager : DemoScriptBase
 	  debugText.text += "Cloud anchor is not null\n";
 	}
 
-	debugText.text += "checked anchor is noull or not \n";
+	debugText.text += "Checked whether anchor is null or not \n";
 
 
 	// Get the cloud portion of the anchor
@@ -254,11 +218,10 @@ public class AnchorManager : DemoScriptBase
 
 	while (!CloudManager.IsReadyForCreate)
 	{
-	  debugText.text += "CloudManager not is ready for create\n";
+	  debugText.text += "CloudManager is not ready for create\n";
 
 	  await Task.Delay(330);
 	  float createProgress = CloudManager.SessionStatus.RecommendedForCreateProgress;
-	  debugText.text += createProgress + "\n";
 	  debugText.text += $"Move your device to capture more environment data: {createProgress:0%}\n";
 
 	}
