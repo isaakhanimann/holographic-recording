@@ -21,6 +21,7 @@ public class AnchorStore : MonoBehaviour
         Debug.Log(filePath);
     	if (System.IO.File.Exists(filePath))
 		{
+            anchorToRecordingMap = new SerializableAnchorMap();
 		    LoadAll();
 		} else 
 		{
@@ -76,7 +77,7 @@ public class AnchorStore : MonoBehaviour
     public void Save(string anchorId, string recordingId)
     {
     	FileStream fs = File.Open(filePath, FileMode.OpenOrCreate);
-
+       
     	try
         {
             anchorToRecordingMap[anchorId] = recordingId;

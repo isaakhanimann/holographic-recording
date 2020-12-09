@@ -42,7 +42,7 @@ public class RecorderFunctions : AnchorManager
     private int numberOfRecording;
     private string pathToScreenshot;
 
-    async void Start()
+    public override void Start()
     {
         base.Start();
         audioRecorder = audioRecorderInstance.GetComponent<AudioRecorder>();
@@ -50,13 +50,15 @@ public class RecorderFunctions : AnchorManager
         // parentOfAnchoredObjects = new GameObject();
     }
 
-    void Update()
+    public override void Update()
     {
         // check saveJobHandle to know when the saving of the recording is done
         if (saveJobHandle != null)
         {
             Debug.Log("is job completed = {saveJobHandle?.IsCompleted}");
         }
+
+        base.Update();
     }
 
     public void OnClickInitSession() {
@@ -68,13 +70,16 @@ public class RecorderFunctions : AnchorManager
         FindAnchors();
     }
 
-    protected override void OnCloudAnchorLocated(AnchorLocatedEventArgs args)
+    public override void OnCloudAnchorLocated(AnchorLocatedEventArgs args)
     {
+        debugText.text += "on cloud anchor located";
         CloudSpatialAnchor cloudAnchor = args.Anchor;
 
         // callback is sometimes called multiple times for the same anchor, so we ensure only one object is instantiated per anchor ID
         if (!instantiatedAnchorIds.Contains(args.Identifier))
-        {            
+        {
+            debugText.text += args.Identifier + "\n";
+            debugText.text += "current anchor not yet instantitated\n";
             // load recording
             HoloRecording loadedRecording = LoadHoloRecording(anchorStore.GetRecordingId(args.Identifier));
 
@@ -82,12 +87,15 @@ public class RecorderFunctions : AnchorManager
             GameObject anchoredObject = new GameObject();
             WorldAnchor wa = anchoredObject.AddComponent<WorldAnchor>();
             wa.SetNativeSpatialAnchorPtr(cloudAnchor.LocalAnchor);
+            debugText.text += "SetNativeSpatialAnchorPtr\n";
 
             // instantiate representation and pass the recording to it
             InstantiateRecordingRepresentation(anchoredObject, atPalm: false);
+            debugText.text += "Instantiated Recording rep\n";
 
             HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
             playerComponent.PutHoloRecordingIntoPlayer(loadedRecording, anchoredObject);
+            debugText.text += "Put holorecording into player\n";
 
             // Mark already instantiated Anchor Ids so that nothing is instantiated more than once.
             instantiatedAnchorIds.Add(args.Identifier);
@@ -95,6 +103,8 @@ public class RecorderFunctions : AnchorManager
     }
 
     public HoloRecording LoadHoloRecording(string recordingId) {
+        debugText.text += "Load holorecording \n";
+
         string filePath = Application.persistentDataPath + "/" + "holorecording_" + recordingId + ".bin";
         FileStream fs = File.Open(filePath, FileMode.Open);
         BinaryFormatter bf = new BinaryFormatter();
@@ -111,11 +121,14 @@ public class RecorderFunctions : AnchorManager
         finally
         {
             fs.Close();
+            debugText.text += "close filestream successfully \n";
+
         }
         return holoRecording;
     }
 
     public void StoreHoloRecording(string recordingId, HoloRecording holoRecording) {
+        debugText.text += "Store holorecording \n";
         string filePath = Application.persistentDataPath + "/" + "holorecording_" + recordingId + ".bin";
         FileStream fs = File.Open(filePath, FileMode.OpenOrCreate);
         BinaryFormatter bf = new BinaryFormatter();
@@ -132,6 +145,8 @@ public class RecorderFunctions : AnchorManager
         finally
         {
             fs.Close();
+            debugText.text += "close filestream successfully \n";
+
         }
     }
 

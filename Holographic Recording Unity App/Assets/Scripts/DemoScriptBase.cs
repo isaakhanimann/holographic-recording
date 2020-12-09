@@ -82,6 +82,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	/// </summary>
 	public override void Start()
 	{
+			debugText.text += "Start in demoscript base being called";
 	  if (CloudManager == null)
 	  {
 		Debug.Break();
@@ -95,11 +96,11 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	  }
 
 
-	  if (AnchoredObjectPrefab == null)
-	  {
-		debugText.text += "CreationTarget must be set on the demo script.\n";
-		return;
-	  }
+	 // if (AnchoredObjectPrefab == null)
+	//  {
+	//	debugText.text += "CreationTarget must be set on the demo script.\n";
+	//	return;
+	//  }
 
 	  dispatchQueue = new ConcurrentQueue<Action>();
 
@@ -114,7 +115,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	  base.Start();
 	}
 
-	void Update()
+	public override void Update()
 	{
 	  if (dispatchQueue.Count > 0)
 	  {
@@ -330,7 +331,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	/// Called when a cloud anchor is located.
 	/// </summary>
 	/// <param name="args">The <see cref="AnchorLocatedEventArgs"/> instance containing the event data.</param>
-	protected virtual void OnCloudAnchorLocated(AnchorLocatedEventArgs args)
+	public virtual void OnCloudAnchorLocated(AnchorLocatedEventArgs args)
 	{
 	  // To be overridden.
 	}
@@ -604,9 +605,12 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 
 	private void CloudManager_AnchorLocated(object sender, AnchorLocatedEventArgs args)
 	{
+			debugText.text += "anchor located caling OnCloudAnchoLocated \n";
 	  if (args.Status == LocateAnchorStatus.Located)
 	  {
-		OnCloudAnchorLocated(args);
+				debugText.text += "status is located\n";
+
+				OnCloudAnchorLocated(args);
 	  }
 	}
 
