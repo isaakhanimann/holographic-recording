@@ -161,8 +161,9 @@ public struct SerializableKeyframe
         return keyframe;
     }
 
-
+	[SerializeField]
     public float time;
+    
+    [SerializeField]
     public float value;
-
 }
