@@ -12,8 +12,8 @@ using System.Collections.Concurrent;
 
 public class AnchorManager : DemoScriptBase
 {
-
-  public AnchorStoreManager anchorStore;
+  GameObject anchorStoreInstance;
+  AnchorStore anchorStore;
   private string currentAnchorId = "";
 
   public override Task AdvanceDemoAsync()
@@ -33,11 +33,13 @@ public class AnchorManager : DemoScriptBase
 
   void Start()
   {
-	anchorStore = new AnchorStoreManager();
-
-	//UnityDispatcher.InvokeOnAppThread(() => { FindAnchors(); });
 
 	debugText.text += "AnchorManager.Start() called \n";
+    anchorStoreInstance = new GameObject();
+	anchorStoreInstance.AddComponent<AnchorStore>();
+	anchorStore = anchorStoreInstance.GetComponent<AnchorStore>();
+	anchorStore.Init();
+
 	base.Start();
 	base.SpawnOrMoveCurrentAnchoredObject(new Vector3(1, 0, 0.5f), new Quaternion(0, 0, 0, 1));
   }
@@ -67,13 +69,17 @@ public class AnchorManager : DemoScriptBase
 	FindAnchorsTask();
   }
 
+  public void DeleteAllAnchors() {
+	  anchorStore.DeleteAll();
+  }
+
   // Trying to retrieve anchors from stored file, but somehow after CreateWatcher() is called, app crashes or doesnt trigger anchor_located
   public async void FindAnchorsTask()
   {
 	ResetAnchorIdsToLocate();
 
 	// Fetch the IDs of anchors stored in the text file
-	List<string> anchorKeysToFind = await anchorStore.RetrieveAnchorKeys();
+	List<string> anchorKeysToFind = anchorStore.GetAllAnchorIds();
 
 	if (anchorKeysToFind.Count > 0)
 	{
@@ -249,13 +255,21 @@ public class AnchorManager : DemoScriptBase
 	}
   }
 
+  private int GetRandomNumberBetween1and100000()
+    {
+        System.Random random = new System.Random();
+        int randomInt = random.Next(1, 100001);
+        return randomInt;
+    }
+
   protected override async Task OnSaveCloudAnchorSuccessfulAsync()
   {
 	await base.OnSaveCloudAnchorSuccessfulAsync();
 
 	// For now store Id locally (needs to be retrieved from ASA for cross device persitence)
 	currentAnchorId = currentCloudAnchor.Identifier;
-	await anchorStore.StoreAnchorKey(currentAnchorId);
+	int num = GetRandomNumberBetween1and100000();
+	anchorStore.Save("" + num, currentAnchorId);
 
 	debugText.text += "currentAnchorId: " + currentAnchorId + "\n";
 
