@@ -82,8 +82,6 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	/// </summary>
 	public override void Start()
 	{
-	  debugText.text += "DemoScriptBase.Start() called \n";
-
 	  if (CloudManager == null)
 	  {
 		Debug.Break();
@@ -606,7 +604,6 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 
 	private void CloudManager_AnchorLocated(object sender, AnchorLocatedEventArgs args)
 	{
-	  debugText.text += "Anchor recognized as a possible anchor " + args.Identifier + ", status: " + args.Status + "\n";
 	  if (args.Status == LocateAnchorStatus.Located)
 	  {
 		OnCloudAnchorLocated(args);
