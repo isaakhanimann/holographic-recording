@@ -4,19 +4,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // used to pass a recording around between classes
+[System.Serializable]
 public struct HoloRecording
 {
     public string pathToAnimationClip;
     public string animationClipName;
     public AllKeyFrames allKeyFrames;
     public string pathToScreenshot;
+    public int lengthOfClip;
+    public string titleOfClip;
 
-    public HoloRecording(string pathToAnimationClip, string animationClipName, AllKeyFrames allKeyFrames, string pathToScreenshot)
+    public HoloRecording(string pathToAnimationClip, string animationClipName, AllKeyFrames allKeyFrames, string pathToScreenshot, int length, string title)
     {
         this.pathToAnimationClip = pathToAnimationClip;
         this.animationClipName = animationClipName;
         this.allKeyFrames = allKeyFrames;
         this.pathToScreenshot = pathToScreenshot;
+        this.lengthOfClip = length;
+        this.titleOfClip = title;
     }
 
     public override string ToString() => $"HoloRecording: animation clip is called {animationClipName}";

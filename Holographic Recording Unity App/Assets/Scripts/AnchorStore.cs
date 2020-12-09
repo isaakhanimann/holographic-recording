@@ -9,9 +9,9 @@ using System.Runtime.Serialization;
 public class AnchorStore : MonoBehaviour
 {
     // Start is called before the first frame update
-    private SerializableAnchorMap recordingToAnchorMap;
+    private SerializableAnchorMap anchorToRecordingMap;
     private BinaryFormatter bf;
-    private string fileName = "holographic_recording_recordingToAnchorMap.bin";
+    private string fileName = "holographic_recording_anchorToRecordingMap.bin";
     private string filePath;
 
     public void Init()
@@ -24,33 +24,34 @@ public class AnchorStore : MonoBehaviour
 		    LoadAll();
 		} else 
 		{
-			recordingToAnchorMap = new SerializableAnchorMap();
+			anchorToRecordingMap = new SerializableAnchorMap();
 		}
     }
 
     public string GetAnchorId(string recordingId) {
-        if (!recordingToAnchorMap.ContainsKey(recordingId)) {
-            return null;
-        }
-    	return recordingToAnchorMap[recordingId];
-    }
-
-    public string GetRecordingId(string anchorId) {
-    	foreach(var item in recordingToAnchorMap)
+        foreach(var item in anchorToRecordingMap)
 		{
-		  if (item.Value == anchorId) {
+		  if (item.Value == recordingId) {
     		return item.Key;
 		  }
 		}
 		return null;
+    
+    }
+
+    public string GetRecordingId(string anchorId) {
+        if (!anchorToRecordingMap.ContainsKey(anchorId)) {
+            return null;
+        }
+    	return anchorToRecordingMap[anchorId];
     }
 
     public List<string> GetAllAnchorIds() {
         LoadAll();
     	List<string> anchorIds = new List<string>();
-    	foreach(var item in recordingToAnchorMap)
+    	foreach(var item in anchorToRecordingMap)
 		{
-		  anchorIds.Add(item.Value);
+		  anchorIds.Add(item.Key);
 		}
 		return anchorIds;
     }
@@ -59,7 +60,7 @@ public class AnchorStore : MonoBehaviour
     	FileStream fs = File.Open(filePath, FileMode.Open);
     	try
         {
-            recordingToAnchorMap = (SerializableAnchorMap) bf.Deserialize(fs);
+            anchorToRecordingMap = (SerializableAnchorMap) bf.Deserialize(fs);
         }
         catch (SerializationException e)
         {
@@ -72,14 +73,14 @@ public class AnchorStore : MonoBehaviour
         }
     }
 
-    public void Save(string recordingId, string anchorId)
+    public void Save(string anchorId, string recordingId)
     {
     	FileStream fs = File.Open(filePath, FileMode.OpenOrCreate);
 
     	try
         {
-            recordingToAnchorMap[recordingId] = anchorId;
-	        bf.Serialize(fs, recordingToAnchorMap);
+            anchorToRecordingMap[anchorId] = recordingId;
+	        bf.Serialize(fs, anchorToRecordingMap);
 	        fs.Close();
         }
         catch (SerializationException e)
@@ -96,16 +97,11 @@ public class AnchorStore : MonoBehaviour
 
     public void DeleteByAnchorId(string anchorId) {
     	FileStream fs = File.Open(filePath, FileMode.OpenOrCreate);
-    	foreach(var item in recordingToAnchorMap)
-		{
-		  if (item.Value == anchorId) {
-    		recordingToAnchorMap.Remove(item.Key);
-		  }
-		}
-
+    	
+        anchorToRecordingMap.Remove(anchorId);
     	try
         {
-	        bf.Serialize(fs, recordingToAnchorMap);
+	        bf.Serialize(fs, anchorToRecordingMap);
 	        fs.Close();
         }
         catch (SerializationException e)
@@ -122,10 +118,15 @@ public class AnchorStore : MonoBehaviour
 
     public void DeleteByRecordingId(string recordingId) {
     	FileStream fs = File.Open(filePath, FileMode.OpenOrCreate);
+        foreach(var item in anchorToRecordingMap)
+		{
+		  if (item.Value == recordingId) {
+    		anchorToRecordingMap.Remove(item.Key);
+		  }
+		}
     	try
         {
-            recordingToAnchorMap.Remove(recordingId);
-	        bf.Serialize(fs, recordingToAnchorMap);
+	        bf.Serialize(fs, anchorToRecordingMap);
         }
         catch (SerializationException e)
         {
@@ -142,8 +143,8 @@ public class AnchorStore : MonoBehaviour
     	FileStream fs = File.Open(filePath, FileMode.OpenOrCreate);
     	try
         {
-            recordingToAnchorMap.Clear();
-	        bf.Serialize(fs, recordingToAnchorMap);
+            anchorToRecordingMap.Clear();
+	        bf.Serialize(fs, anchorToRecordingMap);
         }
         catch (SerializationException e)
         {

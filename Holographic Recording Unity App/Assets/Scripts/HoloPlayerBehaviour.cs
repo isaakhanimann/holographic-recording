@@ -24,6 +24,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public AudioSource audioSource;
     public TextMeshPro timerText;
 
+    // private AnchorManager anchorManager;
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
     private float lengthOfAnimation;
@@ -54,19 +55,18 @@ public class HoloPlayerBehaviour : MonoBehaviour
     }
 
     // called by the recorder when he is done recording
-    public void PutHoloRecordingIntoPlayer(HoloRecording recording, int recordingLength, GameObject anchoredObject)
+    public void PutHoloRecordingIntoPlayer(HoloRecording recording, GameObject anchoredObject)
     {
         // update UI
         StartCoroutine(AddScreenshotToRepresentation(recording.pathToScreenshot)); // set the screenshot of the representation, done asynchronously because it loads from disk
         OpenSystemKeyboard(); // open keyboard to give the representation a title.
         instructionObject.SetActive(true); // the instructionobject tells the user that he has to type the title of the recording
-        timerText.text = recordingLength.ToString() + "s";
+        timerText.text = recording.lengthOfClip.ToString() + "s";
+        recording.titleOfClip = titleOfRepresentation.text;
         buttons.SetActive(false);
-        InstantiateHandAndSetInactive(leftHand, ref instantiatedLeftHand); // the hands should only become visible when the animation is running
-        InstantiateHandAndSetInactive(rightHand, ref instantiatedRightHand);
-        instantiatedLeftHand.transform.SetParent(anchoredObject.transform);
-        instantiatedRightHand.transform.SetParent(anchoredObject.transform);
-
+        InstantiateHandAndSetInactive(leftHand, ref instantiatedLeftHand, ref anchoredObject); // the hands should only become visible when the animation is running
+        InstantiateHandAndSetInactive(rightHand, ref instantiatedRightHand, ref anchoredObject);
+    
         // add animationclip to hand prefabs and audio clip of recording to the audiosource of the representation
         filename = recording.animationClipName;
         (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromAllKeyFrames(recording.allKeyFrames);
@@ -95,16 +95,18 @@ public class HoloPlayerBehaviour : MonoBehaviour
     }
 
 
-    private void InstantiateHandAndSetInactive(GameObject hand, ref GameObject instantiatedHand)
+    private void InstantiateHandAndSetInactive(GameObject hand, ref GameObject instantiatedHand, ref GameObject anchoredObject)
     {
         Quaternion rotationToInstantiate = Quaternion.identity;
         Vector3 positionToInstantiate = Vector3.zero;
-        instantiatedHand = Instantiate(original: hand, position: positionToInstantiate, rotation: rotationToInstantiate);
+        instantiatedHand = Instantiate(original: hand, position: positionToInstantiate, rotation: rotationToInstantiate, parent: anchoredObject.transform);
         instantiatedHand.SetActive(false);
     }
 
     public void DeleteRecording()
     {
+        // Delete anchor mapped to recording
+        // anchorManager.DeleteAnchorByRecording(filename);
         Destroy(gameObject, 1.5f); // adding a delay so the botton has time to bounce back after click
     }
 

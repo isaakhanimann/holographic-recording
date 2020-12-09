@@ -11,9 +11,8 @@ using UnityEngine.XR.WSA;
 public class AnchorManager : DemoScriptBase
 {
   GameObject anchorStoreInstance;
-  AnchorStore anchorStore;
-  private string currentAnchorId = "";
-  private HashSet<string> instantiatedAnchorIds;
+  protected AnchorStore anchorStore;
+  protected HashSet<string> instantiatedAnchorIds;
 
   public override Task AdvanceDemoAsync()
   {
@@ -40,7 +39,7 @@ public class AnchorManager : DemoScriptBase
 	instantiatedAnchorIds = new HashSet<string>();
 
 	base.Start();
-	base.SpawnOrMoveCurrentAnchoredObject(new Vector3(1, 0, 0.5f), new Quaternion(0, 0, 0, 1));
+	// base.SpawnOrMoveCurrentAnchoredObject(new Vector3(1, 0, 0.5f), new Quaternion(0, 0, 0, 1));
   }
 
   // Step 1
@@ -119,6 +118,10 @@ public class AnchorManager : DemoScriptBase
 	}
   }
 
+  public void DeleteAnchorByRecording(string recordingId) {
+	anchorStore.DeleteByRecordingId(recordingId);
+  }
+
 
   protected override void OnCloudLocateAnchorsCompleted(LocateAnchorsCompletedEventArgs args)
   {
@@ -128,37 +131,18 @@ public class AnchorManager : DemoScriptBase
 	args.Watcher.Stop();
   }
 
-  protected override void OnCloudAnchorLocated(AnchorLocatedEventArgs args)
-  {
-	CloudSpatialAnchor cloudAnchor = args.Anchor;
-
-	Pose anchorPose = Pose.identity;
-
-	// callback is sometimes called multiple times for the same anchor, so we ensure only one object is instantiated per anchor ID
-	if (!instantiatedAnchorIds.Contains(args.Identifier))
-	{
-	  GameObject representation = Instantiate(anchoredObjectPrefab, position: anchorPose.position, rotation: anchorPose.rotation);
-
-	  WorldAnchor wa = representation.AddComponent<WorldAnchor>();
-
-	  wa.SetNativeSpatialAnchorPtr(cloudAnchor.LocalAnchor);
-
-	  instantiatedAnchorIds.Add(args.Identifier);
-	}
-  }
-
   public void AddCloudNativeAnchorToObject(ref GameObject go)
   {
 	go.AddComponent<CloudNativeAnchor>();
   }
 
-  public async void SaveObjectAnchorToCloudAndStopSession(GameObject go)
+  public async void SaveObjectAnchorToCloud(GameObject go, string recordingId)
   {
-	await SaveObjectAnchorToCloudAsyncTaskAndStopSession(go);
+	await SaveObjectAnchorToCloudAsyncTask(go, recordingId);
   }
 
   // Copy pasted this method from DemoScriptBase to allow specifying gameobject to get cloudnativeanchor from that will be saved.
-  public async Task SaveObjectAnchorToCloudAsyncTaskAndStopSession(GameObject go)
+  public async Task SaveObjectAnchorToCloudAsyncTask(GameObject go, string recordingId)
   {
 	// Get the cloud-native anchor behavior
 	CloudNativeAnchor cna = go.GetComponent<CloudNativeAnchor>();
@@ -197,6 +181,7 @@ public class AnchorManager : DemoScriptBase
 	  {
 		// Await override, which may perform additional tasks
 		// such as storing the key in the AnchorExchanger
+		anchorStore.Save(currentCloudAnchor.Identifier, recordingId);
 		await OnSaveCloudAnchorSuccessfulAsync();
 	  }
 	  else
@@ -217,17 +202,14 @@ public class AnchorManager : DemoScriptBase
         return randomInt;
     }
 
-  protected override async Task OnSaveCloudAnchorSuccessfulAsync()
-  {
-	await base.OnSaveCloudAnchorSuccessfulAsync();
+	protected override async Task OnSaveCloudAnchorSuccessfulAsync()
+	{
+		await base.OnSaveCloudAnchorSuccessfulAsync();
 
-	// For now store Id locally (needs to be retrieved from ASA for cross device persitence)
-	currentAnchorId = currentCloudAnchor.Identifier;
-	int num = GetRandomNumberBetween1and100000();
-	anchorStore.Save("" + num, currentAnchorId);
-
-	CloudManager.StopSession();
-  }
+		// For now store Id locally (needs to be retrieved from ASA for cross device persitence)
+		debugText.text += currentCloudAnchor.Identifier + "\n";
+		// CloudManager.StopSession();
+	}
 
   protected override void OnSaveCloudAnchorFailed(Exception exception)
   {

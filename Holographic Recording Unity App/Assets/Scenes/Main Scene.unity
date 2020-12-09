@@ -802,73 +802,6 @@ Transform:
   m_Father: {fileID: 2084097824}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &198482365
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 198482368}
-  - component: {fileID: 198482367}
-  - component: {fileID: 198482366}
-  m_Layer: 0
-  m_Name: AnchorManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &198482366
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198482365}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ef4e40d29b7a564f86f3d2f0abca194, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  authenticationMode: 0
-  spatialAnchorsAccountId: a1d4d03f-30c0-444c-8ec5-071c1124554c
-  spatialAnchorsAccountKey: YW1MoFISa63p3VjFaeKo9/JIxAOLjKfLxuqmyBITMrA=
-  spatialAnchorsAccountDomain: northeurope.mixedreality.azure.com
-  clientId: 
-  tenantId: 
-  logLevel: 5
---- !u!114 &198482367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198482365}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5aa380e60b15354981ff8998493278e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  debugText: {fileID: 692762560}
-  anchoredObjectPrefab: {fileID: 2103202255502156003, guid: 3131fa71c06690246923ac7cbca10662,
-    type: 3}
-  cloudManager: {fileID: 198482366}
---- !u!4 &198482368
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198482365}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 9
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &234500010
 GameObject:
   m_ObjectHideFlags: 0
@@ -2641,8 +2574,8 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 198482367}
-        m_MethodName: OnInitSessionClicked
+      - m_Target: {fileID: 9060075853412315773}
+        m_MethodName: OnClickInitSession
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3668,7 +3601,7 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 198482367}
+      - m_Target: {fileID: 0}
         m_MethodName: OnResetSessionClicked
         m_Mode: 1
         m_Arguments:
@@ -3981,7 +3914,7 @@ Transform:
   - {fileID: 757438232}
   - {fileID: 78518966}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &740212239
 GameObject:
@@ -4834,7 +4767,7 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 198482367}
+      - m_Target: {fileID: 0}
         m_MethodName: OnSaveAnchorClicked
         m_Mode: 1
         m_Arguments:
@@ -5351,7 +5284,7 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 198482367}
+      - m_Target: {fileID: 0}
         m_MethodName: DeleteAllAnchors
         m_Mode: 1
         m_Arguments:
@@ -5664,7 +5597,7 @@ Transform:
   - {fileID: 814570587}
   - {fileID: 1914311237}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &951382706
 GameObject:
@@ -6873,8 +6806,8 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 198482367}
-        m_MethodName: FindAnchors
+      - m_Target: {fileID: 9060075853412315773}
+        m_MethodName: OnClickFindAllAnchors
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7186,7 +7119,7 @@ Transform:
   - {fileID: 2095190596}
   - {fileID: 2084097824}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1140253305
 GameObject:
@@ -14571,6 +14504,7 @@ GameObject:
   - component: {fileID: 9060075853412315775}
   - component: {fileID: 9060075853412315774}
   - component: {fileID: 9060075853412315769}
+  - component: {fileID: 9060075853412315776}
   m_Layer: 0
   m_Name: Hand Menu
   m_TagString: Untagged
@@ -14604,16 +14538,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1df07deca5d2694da0b8066e4cb61ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugText: {fileID: 692762560}
+  anchoredObjectPrefab: {fileID: 0}
+  cloudManager: {fileID: 9060075853412315776}
   recordingRepresentationPrefab: {fileID: 2103202255502156003, guid: 3131fa71c06690246923ac7cbca10662,
     type: 3}
   audioRecorderInstance: {fileID: 1246088763}
   timerInstance: {fileID: 8850533197130742940}
-  anchorManagerInstance: {fileID: 198482365}
   parentOfAnchoredObjects: {fileID: 0}
   captureFrequencyInFrames: 1
   preRecordingMenu: {fileID: 369766260}
   whileRecordingMenu: {fileID: 7942679821729158764}
-  debugText: {fileID: 692762560}
 --- !u!114 &9060075853412315774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14647,3 +14582,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drawBoundsGizmo: 1
   drawLocalBoundsGizmo: 0
+--- !u!114 &9060075853412315776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9060075853412315771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ef4e40d29b7a564f86f3d2f0abca194, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  authenticationMode: 0
+  spatialAnchorsAccountId: a1d4d03f-30c0-444c-8ec5-071c1124554c
+  spatialAnchorsAccountKey: YW1MoFISa63p3VjFaeKo9/JIxAOLjKfLxuqmyBITMrA=
+  spatialAnchorsAccountDomain: northeurope.mixedreality.azure.com
+  clientId: 
+  tenantId: 
+  logLevel: 5
