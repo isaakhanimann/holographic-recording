@@ -105,7 +105,7 @@ public class PointCloudRenderer : MonoBehaviour
         {
             byte[] bHex = File.ReadAllBytes(str);
             float[] points = new float[bHex.Length / 4];
-            Buffer.BlockCopy(bHex, 0, points, 0, points.Length);
+            Buffer.BlockCopy(bHex, 0, points, 0, bHex.Length);
 
             int size = points.Length / 3;
             Vector3[] pcl = new Vector3[size];
