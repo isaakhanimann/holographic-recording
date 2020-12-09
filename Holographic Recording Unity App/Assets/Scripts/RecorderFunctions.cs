@@ -90,11 +90,12 @@ public class RecorderFunctions : AnchorManager
             debugText.text += "SetNativeSpatialAnchorPtr\n";
 
             // instantiate representation and pass the recording to it
-            InstantiateRecordingRepresentation(anchoredObject, atPalm: false);
+            Vector3 newRepLocation = new Vector3(loadedRecording.positionXRep, loadedRecording.positionYRep, loadedRecording.positionZRep);
+            InstantiateRecordingRepresentation(anchoredObject, atLocation: newRepLocation, atPalm: false);
             debugText.text += "Instantiated Recording rep\n";
 
             HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
-            playerComponent.PutHoloRecordingIntoPlayer(loadedRecording, anchoredObject);
+            playerComponent.PutHoloRecordingIntoPlayer(loadedRecording, anchoredObject, openKeyboard: false);
             debugText.text += "Put holorecording into player\n";
 
             // Mark already instantiated Anchor Ids so that nothing is instantiated more than once.
@@ -203,19 +204,18 @@ public class RecorderFunctions : AnchorManager
         whileRecordingMenu.SetActive(false);
         preRecordingMenu.SetActive(true);
 
+        // Instantiate anchored object - will be the parent object of hands recording and representation
+        GameObject anchoredObject = InstantiateAnchoredObject();
+        // instantiate representation and pass the recording to it
+        InstantiateRecordingRepresentation(anchoredObject, atLocation: Vector3.zero, atPalm: true);
 
         // get final length of recording in seconds
         int recordingLength = timerInstance.GetComponent<TimerBehaviour>().GetCurrentRecordingTime();
 
         // stop recording and get the recording object
-        HoloRecording newRecording = StopRecording(recordingLength);
+        HoloRecording newRecording = StopRecording(recordingLength, recordingRepresentationInstance.transform.position);
 
         audioRecorder.StopAndSaveRecording("AnimationClip" + numberOfRecording.ToString());
-
-        // Instantiate anchored object - will be the parent object of hands recording and representation
-        GameObject anchoredObject = InstantiateAnchoredObject();
-        // instantiate representation and pass the recording to it
-        InstantiateRecordingRepresentation(anchoredObject, atPalm: true);
 
         debugText.text += "playing recording \n";
         HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
@@ -238,7 +238,7 @@ public class RecorderFunctions : AnchorManager
         return anchoredObject;
     }
 
-    private void InstantiateRecordingRepresentation(GameObject anchoredObject, bool atPalm = true)
+    private void InstantiateRecordingRepresentation(GameObject anchoredObject, Vector3 atLocation, bool atPalm = true)
     {
         // get palm position
         Vector3 positionToInstantiate = new Vector3(0, 0, 0);
@@ -253,7 +253,10 @@ public class RecorderFunctions : AnchorManager
             {
                 positionToInstantiate = Camera.main.transform.position + 0.5f * Vector3.forward;
             }
-            }
+        } else
+        {
+            positionToInstantiate = atLocation;
+        }
         // instantiate representation at palm
         recordingRepresentationInstance = Instantiate(original: recordingRepresentationPrefab, position: positionToInstantiate, rotation: rotationToInstantiate, parent: anchoredObject.transform);
     }
@@ -276,23 +279,23 @@ public class RecorderFunctions : AnchorManager
         ResetRecorder();
     }
 
-    private HoloRecording StopRecording(int recordingLength)
+    private HoloRecording StopRecording(int recordingLength, Vector3 posRep)
     {
         isRecording = false;
         Microphone.End(null);
-        HoloRecording newRecording = SaveRecording(recordingLength);
+        HoloRecording newRecording = SaveRecording(recordingLength, posRep);
         ResetRecorder();
         return newRecording;
     }
 
-    private HoloRecording SaveRecording(int recordingLength)
+    private HoloRecording SaveRecording(int recordingLength, Vector3 posRep)
     {
         Debug.Log($"SaveRecording called");
         string animationClipName = "AnimationClip" + numberOfRecording;
         string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
         // saving is uncommented to unclutter the hololens
         //SaveKeyframesAsynchronously(pathToAnimationClip);
-        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot, recordingLength, "");
+        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot, recordingLength, "", posRep.x, posRep.y, posRep.z);
         return newRecording;
     }
 

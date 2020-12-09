@@ -55,15 +55,24 @@ public class HoloPlayerBehaviour : MonoBehaviour
     }
 
     // called by the recorder when he is done recording
-    public void PutHoloRecordingIntoPlayer(HoloRecording recording, GameObject anchoredObject)
+    public void PutHoloRecordingIntoPlayer(HoloRecording recording, GameObject anchoredObject, bool openKeyboard = true)
     {
         // update UI
         StartCoroutine(AddScreenshotToRepresentation(recording.pathToScreenshot)); // set the screenshot of the representation, done asynchronously because it loads from disk
-        OpenSystemKeyboard(); // open keyboard to give the representation a title.
-        instructionObject.SetActive(true); // the instructionobject tells the user that he has to type the title of the recording
+        if (openKeyboard)
+        {
+            OpenSystemKeyboard(); // open keyboard to give the representation a title.
+            recording.titleOfClip = titleOfRepresentation.text;
+            instructionObject.SetActive(true); // the instructionobject tells the user that he has to type the title of the recording
+            buttons.SetActive(false);
+        }
+        else
+        {
+            buttons.SetActive(true);
+            instructionObject.SetActive(false);
+            titleOfRepresentation.text = recording.titleOfClip;
+        }
         timerText.text = recording.lengthOfClip.ToString() + "s";
-        recording.titleOfClip = titleOfRepresentation.text;
-        buttons.SetActive(false);
         InstantiateHandAndSetInactive(leftHand, ref instantiatedLeftHand, ref anchoredObject); // the hands should only become visible when the animation is running
         InstantiateHandAndSetInactive(rightHand, ref instantiatedRightHand, ref anchoredObject);
     
