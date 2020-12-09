@@ -598,7 +598,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	  else
 	  {
 		// Use factory method to move
-		debugText.text += "all ready spawned will move\n";
+		debugText.text += "already spawned, will move\n";
 
 		MoveAnchoredObject(spawnedObject, worldPos, worldRot, currentCloudAnchor);
 	  }

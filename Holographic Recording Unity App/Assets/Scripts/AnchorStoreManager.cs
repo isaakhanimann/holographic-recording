@@ -9,7 +9,7 @@ using System.IO;
 
 public class AnchorStoreManager
 {
-    string filename = "anchorKey";
+    string filename = "anchorKeys";
     string savePath;
     //private List<string> anchorkeys = new List<string>();
 

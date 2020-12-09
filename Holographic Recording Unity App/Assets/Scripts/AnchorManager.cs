@@ -147,8 +147,6 @@ public class AnchorManager : DemoScriptBase
 
   protected override void OnCloudAnchorLocated(AnchorLocatedEventArgs args)
   {
-	debugText.text += "here\n";
-
 	//debugText.text += "AnchorManager.OnCloudAnchorLocated() called\n";
 
 	//debugText.text += "args.Status: " + args.Status + "\n";
@@ -156,21 +154,14 @@ public class AnchorManager : DemoScriptBase
 
 	currentCloudAnchor = args.Anchor;
 
-	//debugText.text += "Spawning prefab again \n";
+	Pose anchorPose = Pose.identity;
 
-	QueueOnUpdate(() =>
-	{
-	  UnityDispatcher.InvokeOnAppThread(() =>
-	  {
-		Pose anchorPose = currentCloudAnchor.GetPose();
-		Instantiate(original: anchoredObjectPrefab, position: anchorPose.position, rotation: anchorPose.rotation);
+	SpawnOrMoveCurrentAnchoredObject(anchorPose.position, anchorPose.rotation);
 
-		Task.Run(async () =>
-		{
-		  await Task.Delay(1000);
-		});
-	  });
-	});
+	WorldAnchor wa = spawnedObject.AddComponent<WorldAnchor>();
+
+	wa.SetNativeSpatialAnchorPtr(currentCloudAnchor.LocalAnchor);
+	debugText.text += "SetNativeSpatialAnchorPtr() called \n";
   }
 
   public void AddCloudNativeAnchorToObject(ref GameObject go)
