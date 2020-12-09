@@ -22,3 +22,5 @@ xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
 # FAQs
 - Point clouds not getting saved/rendered
 -- If no point clouds are getting saved, 1. check configuration steps from above, 2. Restart hololens
+- Point clouds not coming in screenshots or video capture
+-- Ensure while building in Unity, player settings has a field Stereo Rendering, which should be set to multi pass
