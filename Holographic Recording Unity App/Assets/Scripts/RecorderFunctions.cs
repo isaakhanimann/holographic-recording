@@ -79,7 +79,7 @@ public class RecorderFunctions : AnchorManager
 
             // instantiate representation and pass the recording to it
             Vector3 newRepLocation = new Vector3(loadedRecording.positionXRep, loadedRecording.positionYRep, loadedRecording.positionZRep);
-            InstantiateRecordingRepresentation(anchoredObject, atLocation: newRepLocation, atPalm: false);
+            InstantiateRecordingRepresentation(ref anchoredObject, atLocation: newRepLocation, atPalm: false);
 
             HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
             playerComponent.PutHoloRecordingIntoPlayer(recordingId, loadedRecording, anchoredObject, anchorStore, openKeyboard: false);
@@ -169,7 +169,7 @@ public class RecorderFunctions : AnchorManager
         // Instantiate anchored object - will be the parent object of hands recording and representation
         GameObject anchoredObject = InstantiateAnchoredObject();
         // instantiate representation and pass the recording to it
-        InstantiateRecordingRepresentation(anchoredObject, atLocation: Vector3.zero, atPalm: true);
+        InstantiateRecordingRepresentation(ref anchoredObject, atLocation: Vector3.zero, atPalm: true);
 
         // get final length of recording in seconds
         int recordingLength = timerInstance.GetComponent<TimerBehaviour>().GetCurrentRecordingTime();
@@ -193,7 +193,7 @@ public class RecorderFunctions : AnchorManager
         return anchoredObject;
     }
 
-    private void InstantiateRecordingRepresentation(GameObject anchoredObject, Vector3 atLocation, bool atPalm = true)
+    private void InstantiateRecordingRepresentation(ref GameObject anchoredObject, Vector3 atLocation, bool atPalm = true)
     {
         // get palm position
         Vector3 positionToInstantiate = new Vector3(0, 0, 0);
@@ -209,7 +209,8 @@ public class RecorderFunctions : AnchorManager
             {
                 positionToInstantiate = Camera.main.transform.position + 0.5f * Vector3.forward;
             }
-        } else
+        } 
+        else
         {
             positionToInstantiate = atLocation;
         }
