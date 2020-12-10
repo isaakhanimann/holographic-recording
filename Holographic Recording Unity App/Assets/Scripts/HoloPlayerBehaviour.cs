@@ -45,9 +45,10 @@ public class HoloPlayerBehaviour : MonoBehaviour
             keyboardDonePressed = false;
             // Store recording after title has been entered.
             // Serialize holorecording and save to file in a Task
+            string filePath = Application.persistentDataPath + "/" + "holorecording_" + recordingId + ".bin";
             Task task = Task.Run(
             () => {
-                StoreHoloRecording(recordingId, holoRecording);
+                StoreHoloRecording(filePath, recordingId, holoRecording);
             });
         }
         if (keyboard != null)
@@ -105,8 +106,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     }
 
     // Serialize and save HoloRecording into persistent path
-    public void StoreHoloRecording(string recordingId, HoloRecording recording) {
-        string filePath = Application.persistentDataPath + "/" + "holorecording_" + recordingId + ".bin";
+    public void StoreHoloRecording(string filePath, string recordingId, HoloRecording recording) {
         FileStream fs = File.Open(filePath, FileMode.OpenOrCreate);
         BinaryFormatter bf = new BinaryFormatter();
         try
