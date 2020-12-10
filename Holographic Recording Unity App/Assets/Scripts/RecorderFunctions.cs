@@ -46,7 +46,7 @@ public class RecorderFunctions : AnchorManager
         base.Start();
         audioRecorder = audioRecorderInstance.GetComponent<AudioRecorder>();
 
-        InitAnchorSession();
+        await InitAnchorSession();
         FindAnchors();
     }
 

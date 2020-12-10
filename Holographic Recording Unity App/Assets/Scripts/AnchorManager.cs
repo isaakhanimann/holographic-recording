@@ -46,7 +46,7 @@ public class AnchorManager : DemoScriptBase
         base.Update();
     }
 
-    public async void InitAnchorSession() {
+    public async Task InitAnchorSession() {
         // Create CloudSpatialAnchorSession
         if (CloudManager.Session == null)
         {
