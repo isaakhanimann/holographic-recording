@@ -10,14 +10,16 @@ public struct HoloRecording
     public AllKeyFrames allKeyFrames;
     public string pathToScreenshot;
     public AudioClip audioClip;
+    public float lengthOfAnimation;
 
-    public HoloRecording(string pathToAnimationClip, string animationClipName, AllKeyFrames allKeyFrames, string pathToScreenshot, AudioClip audioClip)
+    public HoloRecording(string pathToAnimationClip, string animationClipName, AllKeyFrames allKeyFrames, string pathToScreenshot, AudioClip audioClip, float lengthOfAnimation)
     {
         this.pathToAnimationClip = pathToAnimationClip;
         this.animationClipName = animationClipName;
         this.allKeyFrames = allKeyFrames;
         this.pathToScreenshot = pathToScreenshot;
         this.audioClip = audioClip;
+        this.lengthOfAnimation = lengthOfAnimation;
     }
 
     public override string ToString() => $"HoloRecording: animation clip is called {animationClipName}";
