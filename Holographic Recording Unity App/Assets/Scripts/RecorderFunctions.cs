@@ -41,10 +41,24 @@ public class RecorderFunctions : AnchorManager
     private int numberOfRecording;
     private string pathToScreenshot;
 
-    public override void Start()
+    public override async void Start()
     {
         base.Start();
         audioRecorder = audioRecorderInstance.GetComponent<AudioRecorder>();
+
+        // Create CloudSpatialAnchorSession
+        if (CloudManager.Session == null)
+        {
+            await CloudManager.CreateSessionAsync();
+        }
+
+        // Start CloudSpatialAnchorSession
+        if (!CloudManager.IsSessionStarted)
+        {
+            await CloudManager.StartSessionAsync();
+        }
+
+        FindAnchors();
     }
 
     public override void Update()

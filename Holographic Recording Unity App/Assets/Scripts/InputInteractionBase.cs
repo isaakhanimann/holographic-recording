@@ -33,7 +33,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
     /// Start is called on the frame when a script is enabled just before any
     /// of the Update methods are called the first time.
     /// </summary>
-    public virtual void Start()
+    public virtual async void Start()
     {
 #if UNITY_ANDROID || UNITY_IOS
              arRaycastManager = FindObjectOfType<ARRaycastManager>();

@@ -29,7 +29,7 @@ public class AnchorManager : DemoScriptBase
         throw new NotImplementedException();
     }
 
-    public virtual void Start()
+    public virtual async void Start()
     {
         anchorStoreInstance = new GameObject();
         anchorStoreInstance.AddComponent<AnchorStore>();
@@ -90,7 +90,7 @@ public class AnchorManager : DemoScriptBase
 
     public async void InitAnchorSession()
     {
-        base.Start();
+        // base.Start();
 
         currentCloudAnchor = null;
 

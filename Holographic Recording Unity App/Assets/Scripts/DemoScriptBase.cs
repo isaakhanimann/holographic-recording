@@ -80,7 +80,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	/// Start is called on the frame when a script is enabled just before any
 	/// of the Update methods are called the first time.
 	/// </summary>
-	public override void Start()
+	public override async void Start()
 	{
 			debugText.text += "Start in demoscript base being called";
 	  if (CloudManager == null)
