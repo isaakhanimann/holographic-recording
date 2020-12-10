@@ -44,8 +44,11 @@ public class HoloPlayerBehaviour : MonoBehaviour
         if (keyboardDonePressed) {
             keyboardDonePressed = false;
             // Store recording after title has been entered.
-            // Serialize holorecording and save to file
-            StoreHoloRecording(recordingId, holoRecording);
+            // Serialize holorecording and save to file in a Task
+            Task task = Task.Run(
+            () => {
+                StoreHoloRecording(recordingId, holoRecording);
+            });
         }
         if (keyboard != null)
         {

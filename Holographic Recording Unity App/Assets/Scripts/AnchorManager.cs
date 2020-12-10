@@ -153,8 +153,6 @@ public class AnchorManager : DemoScriptBase
 
             if (success && !isErrorActive)
             {
-                // Await override, which may perform additional tasks
-                // such as storing the key in the AnchorExchanger
                 anchorStore.Save(cloudAnchor.Identifier, recordingId);
                 debugText.text += "saved to anchorStore\n";
 
