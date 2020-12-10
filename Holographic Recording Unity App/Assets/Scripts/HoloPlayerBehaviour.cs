@@ -9,6 +9,7 @@ using Microsoft.MixedReality.Toolkit.Utilities;
 using UnityEngine.Networking;
 using System.Threading.Tasks;
 using UnityEngine.UI;
+using System.Runtime.Serialization;
 
 // Gives the Recording Representation the ability to play back the hand animation
 public class HoloPlayerBehaviour : MonoBehaviour
@@ -23,28 +24,39 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public RawImage screenshotRawImage;
     public AudioSource audioSource;
     public TextMeshPro timerText;
-
-    // private AnchorManager anchorManager;
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
-    private float lengthOfAnimation;
     private TouchScreenKeyboard keyboard;
+
+    private float lengthOfAnimation;
     private string keyboardText;
     private bool stopWasPressed;
-    private string filename;
+    private bool keyboardDonePressed = false;
+    
+    private AnchorStore anchorStore;
+    private HoloRecording holoRecording;
+    private string recordingId;
 
     private void Update()
     {
         // once keyboard is assigned we can read the text that the user types
+        if (keyboardDonePressed) {
+            // Store recording after title has been entered.
+            // Serialize holorecording and save to file
+            StoreHoloRecording(recordingId, holoRecording);
+            keyboardDonePressed = false;
+        }
         if (keyboard != null)
         {
             keyboardText = keyboard.text;
             titleOfRepresentation.text = keyboardText;
+            holoRecording.titleOfClip = titleOfRepresentation.text;
 
             if (keyboard.status == TouchScreenKeyboard.Status.Done)
             {
                 buttons.SetActive(true);
                 instructionObject.SetActive(false);
+                keyboardDonePressed = true;
             }
         }
     }
@@ -55,19 +67,22 @@ public class HoloPlayerBehaviour : MonoBehaviour
     }
 
     // called by the recorder when he is done recording
-    public void PutHoloRecordingIntoPlayer(HoloRecording recording, GameObject anchoredObject, bool openKeyboard = true)
+    public void PutHoloRecordingIntoPlayer(string id, HoloRecording recording, GameObject anchoredObject, AnchorStore store, bool openKeyboard = true)
     {
+        recordingId = id;
+        holoRecording = recording;
+        anchorStore = store;
         // update UI
         StartCoroutine(AddScreenshotToRepresentation(recording.pathToScreenshot)); // set the screenshot of the representation, done asynchronously because it loads from disk
         if (openKeyboard)
         {
             OpenSystemKeyboard(); // open keyboard to give the representation a title.
-            recording.titleOfClip = titleOfRepresentation.text;
             instructionObject.SetActive(true); // the instructionobject tells the user that he has to type the title of the recording
             buttons.SetActive(false);
         }
         else
         {
+            // If recording is loaded from anchors, open keyboard not needed
             buttons.SetActive(true);
             instructionObject.SetActive(false);
             titleOfRepresentation.text = recording.titleOfClip;
@@ -77,11 +92,30 @@ public class HoloPlayerBehaviour : MonoBehaviour
         InstantiateHandAndSetInactive(rightHand, ref instantiatedRightHand, ref anchoredObject);
     
         // add animationclip to hand prefabs and audio clip of recording to the audiosource of the representation
-        filename = recording.animationClipName;
         (AnimationClip leftHandClip, AnimationClip rightHandClip) = GetAnimationClipsFromAllKeyFrames(recording.allKeyFrames);
         Debug.Log("AnimationClips were loaded");
         instantiatedLeftHand.GetComponent<Animation>().AddClip(leftHandClip, "leftHand");
         instantiatedRightHand.GetComponent<Animation>().AddClip(rightHandClip, "rightHand");
+    }
+
+    // Serialize and save HoloRecording into persistent path
+    public void StoreHoloRecording(string recordingId, HoloRecording recording) {
+        string filePath = Application.persistentDataPath + "/" + "holorecording_" + recordingId + ".bin";
+        FileStream fs = File.Open(filePath, FileMode.OpenOrCreate);
+        BinaryFormatter bf = new BinaryFormatter();
+        try
+        {
+	        bf.Serialize(fs, recording);
+	        fs.Close();
+        }
+        catch (SerializationException e)
+        {
+            throw;
+        }
+        finally
+        {
+            fs.Close();
+        }
     }
 
     IEnumerator AddScreenshotToRepresentation(string pathToScreenshot)
@@ -103,7 +137,6 @@ public class HoloPlayerBehaviour : MonoBehaviour
         }  
     }
 
-
     private void InstantiateHandAndSetInactive(GameObject hand, ref GameObject instantiatedHand, ref GameObject anchoredObject)
     {
         Quaternion rotationToInstantiate = Quaternion.identity;
@@ -115,7 +148,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public void DeleteRecording()
     {
         // Delete anchor mapped to recording
-        // anchorManager.DeleteAnchorByRecording(filename);
+        anchorStore.DeleteByRecordingId(recordingId);
         Destroy(gameObject, 1.5f); // adding a delay so the botton has time to bounce back after click
     }
 
@@ -138,8 +171,6 @@ public class HoloPlayerBehaviour : MonoBehaviour
         }
     }
 
-
-
     public void Play()
     {
         Debug.Log("Play");
@@ -148,7 +179,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         StartCoroutine(SetSecondRepresentationActiveAfterNSeconds()); // show playback buttons with a delay
 
         // play audio
-        string audioFilename = "AUDIOFILE_" + filename + ".wav";
+        string audioFilename = "AUDIOFILE_" + recordingId + ".wav";
         StartCoroutine(PlayAudioClip(Path.Combine(Application.persistentDataPath, audioFilename)));
 
         // play animation that was added to the hand prefabs
@@ -293,30 +324,6 @@ public class HoloPlayerBehaviour : MonoBehaviour
             keyframes.Add(new Keyframe(serializableKeyframe.time, serializableKeyframe.value));
         }
         return keyframes;
-    }
-
-    private async Task<AudioClip> LoadClip(string path)
-    {
-        AudioClip clip = null;
-        using (UnityWebRequest uwr = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.WAV))
-        {
-            await uwr.SendWebRequest();
-            // wrap tasks in try/catch, otherwise it'll fail silently
-            try
-            {
-                while (!uwr.isDone) await Task.Delay(5);
-                if (uwr.isNetworkError || uwr.isHttpError) Debug.Log($"{uwr.error}");
-                else
-                {
-                    clip = DownloadHandlerAudioClip.GetContent(uwr);
-                }
-            }
-            catch (Exception err)
-            {
-                Debug.Log($"{err.Message}, {err.StackTrace}");
-            }
-        }
-        return clip;
     }
 
     public void Stop()

@@ -28,7 +28,6 @@ public class RecorderFunctions : AnchorManager
     public GameObject recordingRepresentationPrefab;
     public GameObject audioRecorderInstance;
     public GameObject timerInstance;
-    // public GameObject parentOfAnchoredObjects;
 
     public int captureFrequencyInFrames = 1;
     public GameObject preRecordingMenu;
@@ -46,8 +45,6 @@ public class RecorderFunctions : AnchorManager
     {
         base.Start();
         audioRecorder = audioRecorderInstance.GetComponent<AudioRecorder>();
-        // Set one gameobject as parent of all anchored objects
-        // parentOfAnchoredObjects = new GameObject();
     }
 
     public override void Update()
@@ -81,7 +78,8 @@ public class RecorderFunctions : AnchorManager
             debugText.text += args.Identifier + "\n";
             debugText.text += "current anchor not yet instantitated\n";
             // load recording
-            HoloRecording loadedRecording = LoadHoloRecording(anchorStore.GetRecordingId(args.Identifier));
+            string recordingId = anchorStore.GetRecordingId(args.Identifier);
+            HoloRecording loadedRecording = LoadHoloRecording(recordingId);
 
             // Instantiate anchored object - will be the parent object of hands recording and representation
             GameObject anchoredObject = new GameObject();
@@ -95,7 +93,7 @@ public class RecorderFunctions : AnchorManager
             debugText.text += "Instantiated Recording rep\n";
 
             HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
-            playerComponent.PutHoloRecordingIntoPlayer(loadedRecording, anchoredObject, openKeyboard: false);
+            playerComponent.PutHoloRecordingIntoPlayer(recordingId, loadedRecording, anchoredObject, anchorStore, openKeyboard: false);
             debugText.text += "Put holorecording into player\n";
 
             // Mark already instantiated Anchor Ids so that nothing is instantiated more than once.
@@ -126,29 +124,6 @@ public class RecorderFunctions : AnchorManager
 
         }
         return holoRecording;
-    }
-
-    public void StoreHoloRecording(string recordingId, HoloRecording holoRecording) {
-        debugText.text += "Store holorecording \n";
-        string filePath = Application.persistentDataPath + "/" + "holorecording_" + recordingId + ".bin";
-        FileStream fs = File.Open(filePath, FileMode.OpenOrCreate);
-        BinaryFormatter bf = new BinaryFormatter();
-        try
-        {
-	        bf.Serialize(fs, holoRecording);
-	        fs.Close();
-        }
-        catch (SerializationException e)
-        {
-            debugText.text += "Failed to serialize. Reason: " + e.Message;
-            throw;
-        }
-        finally
-        {
-            fs.Close();
-            debugText.text += "close filestream successfully \n";
-
-        }
     }
 
     public void StartRecording()
@@ -215,14 +190,12 @@ public class RecorderFunctions : AnchorManager
         // stop recording and get the recording object
         HoloRecording newRecording = StopRecording(recordingLength, recordingRepresentationInstance.transform.position);
 
-        audioRecorder.StopAndSaveRecording("AnimationClip" + numberOfRecording.ToString());
+        audioRecorder.StopAndSaveRecording(numberOfRecording.ToString());
 
         debugText.text += "playing recording \n";
         HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
-        playerComponent.PutHoloRecordingIntoPlayer(newRecording, anchoredObject);
+        playerComponent.PutHoloRecordingIntoPlayer(numberOfRecording.ToString(), newRecording, anchoredObject, anchorStore);
 
-        // Serialize holorecording and save to file
-        StoreHoloRecording(numberOfRecording.ToString(), newRecording);
         // Save anchor to cloud
         SaveObjectAnchorToCloud(anchoredObject, numberOfRecording.ToString());
     }
@@ -231,10 +204,7 @@ public class RecorderFunctions : AnchorManager
     {
         debugText.text += "instantiate anchored object \n";
         GameObject anchoredObject = new GameObject();
-        // anchoredObject.transform.position = new Vector3();
-        // anchoredObject.transform.rotation = Quaternion.identity;
         AddCloudNativeAnchorToObject(ref anchoredObject);
-        // anchoredObject.transform.SetParent(parentOfAnchoredObjects.transform);
         return anchoredObject;
     }
 
@@ -244,7 +214,8 @@ public class RecorderFunctions : AnchorManager
         Vector3 positionToInstantiate = new Vector3(0, 0, 0);
         Quaternion rotationToInstantiate = Quaternion.identity;
 
-        if (atPalm) {
+        if (atPalm)
+        {
             if (HandJointUtils.TryGetJointPose(TrackedHandJoint.Palm, Handedness.Left, out MixedRealityPose pose))
             {
                 positionToInstantiate = pose.Position;
@@ -257,7 +228,7 @@ public class RecorderFunctions : AnchorManager
         {
             positionToInstantiate = atLocation;
         }
-        // instantiate representation at palm
+        // instantiate representation at palm or specified location
         recordingRepresentationInstance = Instantiate(original: recordingRepresentationPrefab, position: positionToInstantiate, rotation: rotationToInstantiate, parent: anchoredObject.transform);
     }
 
