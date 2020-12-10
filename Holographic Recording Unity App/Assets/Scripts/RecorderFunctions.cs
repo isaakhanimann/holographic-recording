@@ -63,14 +63,11 @@ public class RecorderFunctions : AnchorManager
 
     public override void OnCloudAnchorLocated(AnchorLocatedEventArgs args)
     {
-        debugText.text += "on cloud anchor located";
         CloudSpatialAnchor cloudAnchor = args.Anchor;
 
         // callback is sometimes called multiple times for the same anchor, so we ensure only one object is instantiated per anchor ID
         if (!instantiatedAnchorIds.Contains(args.Identifier))
         {
-            debugText.text += args.Identifier + "\n";
-            debugText.text += "current anchor not yet instantitated\n";
             // load recording
             string recordingId = anchorStore.GetRecordingId(args.Identifier);
             HoloRecording loadedRecording = LoadHoloRecording(recordingId);
@@ -79,16 +76,13 @@ public class RecorderFunctions : AnchorManager
             GameObject anchoredObject = new GameObject();
             WorldAnchor wa = anchoredObject.AddComponent<WorldAnchor>();
             wa.SetNativeSpatialAnchorPtr(cloudAnchor.LocalAnchor);
-            debugText.text += "SetNativeSpatialAnchorPtr\n";
 
             // instantiate representation and pass the recording to it
             Vector3 newRepLocation = new Vector3(loadedRecording.positionXRep, loadedRecording.positionYRep, loadedRecording.positionZRep);
             InstantiateRecordingRepresentation(anchoredObject, atLocation: newRepLocation, atPalm: false);
-            debugText.text += "Instantiated Recording rep\n";
 
             HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
             playerComponent.PutHoloRecordingIntoPlayer(recordingId, loadedRecording, anchoredObject, anchorStore, openKeyboard: false);
-            debugText.text += "Put holorecording into player\n";
 
             // Mark already instantiated Anchor Ids so that nothing is instantiated more than once.
             instantiatedAnchorIds.Add(args.Identifier);
@@ -96,7 +90,6 @@ public class RecorderFunctions : AnchorManager
     }
 
     public HoloRecording LoadHoloRecording(string recordingId) {
-        debugText.text += "Load holorecording \n";
 
         string filePath = Application.persistentDataPath + "/" + "holorecording_" + recordingId + ".bin";
         FileStream fs = File.Open(filePath, FileMode.Open);
@@ -108,13 +101,13 @@ public class RecorderFunctions : AnchorManager
         }
         catch (SerializationException e)
         {
-            debugText.text  +=" Failed to deserialize. Reason: " + e.Message;
+            Debug.Log(" Failed to deserialize. Reason: " + e.Message);
             throw;
         }
         finally
         {
             fs.Close();
-            debugText.text += "close filestream successfully \n";
+            Debug.Log("close filestream successfully \n");
 
         }
         return holoRecording;
@@ -182,11 +175,10 @@ public class RecorderFunctions : AnchorManager
         int recordingLength = timerInstance.GetComponent<TimerBehaviour>().GetCurrentRecordingTime();
 
         // stop recording and get the recording object
-        HoloRecording newRecording = StopRecording(recordingLength, recordingRepresentationInstance.transform.position);
+        HoloRecording newRecording = StopRecording(recordingLength, recordingRepresentationInstance.transform.localPosition);
 
         audioRecorder.StopAndSaveRecording(numberOfRecording.ToString());
 
-        debugText.text += "playing recording \n";
         HoloPlayerBehaviour playerComponent = recordingRepresentationInstance.GetComponent<HoloPlayerBehaviour>();
         playerComponent.PutHoloRecordingIntoPlayer(numberOfRecording.ToString(), newRecording, anchoredObject, anchorStore);
 
@@ -196,7 +188,6 @@ public class RecorderFunctions : AnchorManager
 
     private GameObject InstantiateAnchoredObject()
     {
-        debugText.text += "instantiate anchored object \n";
         GameObject anchoredObject = new GameObject();
         AddCloudNativeAnchorToObject(ref anchoredObject);
         return anchoredObject;
@@ -260,7 +251,7 @@ public class RecorderFunctions : AnchorManager
         string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
         // saving is uncommented to unclutter the hololens
         //SaveKeyframesAsynchronously(pathToAnimationClip);
-        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot, recordingLength, "", posRep.x, posRep.y, posRep.z);
+        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot, recordingLength, "", posRep);
         return newRecording;
     }
 

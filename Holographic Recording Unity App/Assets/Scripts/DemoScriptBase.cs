@@ -29,7 +29,6 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	#endregion // Member Variables
 
 	#region Unity Inspector Variables
-	public TextMeshPro debugText;
 
 	[SerializeField]
 	[Tooltip("The prefab used to represent an anchored object.")]
@@ -82,17 +81,16 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	/// </summary>
 	public override async void Start()
 	{
-			debugText.text += "Start in demoscript base being called";
 	  if (CloudManager == null)
 	  {
 		Debug.Break();
-		debugText.text += $"{nameof(CloudManager)} reference has not been set. Make sure it has been added to the scene and wired up to {this.name}.\n";
+		Debug.Log($"{nameof(CloudManager)} reference has not been set. Make sure it has been added to the scene and wired up to {this.name}.\n");
 		return;
 	  }
 
 	  if (!SanityCheckAccessConfiguration())
 	  {
-		debugText.text += $"{nameof(SpatialAnchorManager.SpatialAnchorsAccountId)}, {nameof(SpatialAnchorManager.SpatialAnchorsAccountKey)} and {nameof(SpatialAnchorManager.SpatialAnchorsAccountDomain)} must be set on {nameof(SpatialAnchorManager)}\n";
+		Debug.Log($"{nameof(SpatialAnchorManager.SpatialAnchorsAccountId)}, {nameof(SpatialAnchorManager.SpatialAnchorsAccountKey)} and {nameof(SpatialAnchorManager.SpatialAnchorsAccountDomain)} must be set on {nameof(SpatialAnchorManager)}\n");
 	  }
 
 	  dispatchQueue = new ConcurrentQueue<Action>();
@@ -120,7 +118,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 		}
 		else
 		{
-		  debugText.text += "dispatchQueue.TryDequeue() failed \n";
+		  Debug.Log("dispatchQueue.TryDequeue() failed \n");
 		}
 	  }
 	}
@@ -152,7 +150,6 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	  catch (Exception ex)
 	  {
 		Debug.LogError($"{nameof(DemoScriptBase)} - Error in {nameof(AdvanceDemo)}: {ex.Message} {ex.StackTrace}");
-		debugText.text += $"Demo failed, check debugger output for more information\n";
 	  }
 	}
 
@@ -167,7 +164,6 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	  catch (Exception ex)
 	  {
 		Debug.LogError($"{nameof(DemoScriptBase)} - Error in {nameof(EnumerateAllNearbyAnchors)}: === {ex.GetType().Name} === {ex.ToString()} === {ex.Source} === {ex.Message} {ex.StackTrace}");
-		debugText.text += $"Enumeration failed, check debugger output for more information\n";
 	  }
 	}
 
@@ -386,7 +382,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	  Debug.LogException(exception);
 	  Debug.Log("Failed to save anchor " + exception.ToString());
 
-	  UnityDispatcher.InvokeOnAppThread(() => this.debugText.text += string.Format("Error: {0}\n", exception.ToString()));
+	//   UnityDispatcher.InvokeOnAppThread(() => this.debugText.text += string.Format("Error: {0}\n", exception.ToString()));
 	}
 
 	/// <summary>
@@ -447,49 +443,30 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	/// </summary>
 	protected virtual async Task SaveCurrentObjectAnchorToCloudAsync()
 	{
-	  debugText.text += "SaveCurrentObjectAnchorToCloudAsync() called\n";
-
 	  // Get the cloud-native anchor behavior
 	  CloudNativeAnchor cna = spawnedObject.GetComponent<CloudNativeAnchor>();
-
-	  debugText.text += "Get CloudNativeAnchor component from spawned object\n";
-
 
 	  // If the cloud portion of the anchor hasn't been created yet, create it
 	  if (cna.CloudAnchor == null)
 	  {
-		debugText.text += "Cloud anchor is null\n";
-
 		cna.NativeToCloud();
 	  }
-	  else
-	  {
-		debugText.text += "Cloud anchor is not null\n";
-	  }
-
-	  debugText.text += "Completed check of whether anchor is null or not \n";
-
-
+	 
 	  // Get the cloud portion of the anchor
 	  CloudSpatialAnchor cloudAnchor = cna.CloudAnchor;
-	  debugText.text += "Get cloud anchor\n";
 
 	  // In this sample app we delete the cloud anchor explicitly, but here we show how to set an anchor to expire automatically
 	  //cloudAnchor.Expiration = DateTimeOffset.Now.AddDays(7);
 
 	  while (!CloudManager.IsReadyForCreate)
 	  {
-		debugText.text += "CloudManager is not ready for create\n";
 
 		await Task.Delay(330);
 		float createProgress = CloudManager.SessionStatus.RecommendedForCreateProgress;
-		debugText.text += $"Move your device to capture more environment data: {createProgress:0%}\n";
 
 	  }
 
 	  bool success = false;
-
-	  debugText.text += "Saving...\n";
 
 	  try
 	  {
@@ -584,13 +561,11 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 
 		// Update color
 		spawnedObjectMat = spawnedObject.GetComponent<MeshRenderer>().material;
-		debugText.text += "object name is" + spawnedObject.name + " \n";
 
 	  }
 	  else
 	  {
 		// Use factory method to move
-		debugText.text += "already spawned, will move\n";
 
 		MoveAnchoredObject(spawnedObject, worldPos, worldRot, currentCloudAnchor);
 	  }
@@ -598,12 +573,9 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 
 	private void CloudManager_AnchorLocated(object sender, AnchorLocatedEventArgs args)
 	{
-			debugText.text += "anchor located caling OnCloudAnchoLocated \n";
 	  if (args.Status == LocateAnchorStatus.Located)
 	  {
-				debugText.text += "status is located\n";
-
-				OnCloudAnchorLocated(args);
+		OnCloudAnchorLocated(args);
 	  }
 	}
 
@@ -621,7 +593,7 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 	{
 	  isErrorActive = true;
 	  Debug.Log(args.ErrorMessage);
-	  UnityDispatcher.InvokeOnAppThread(() => this.debugText.text += string.Format("Error: {0}\n", args.ErrorMessage));
+	//   UnityDispatcher.InvokeOnAppThread(() => this.debugText.text += string.Format("Error: {0}\n", args.ErrorMessage));
 	}
 
 	private void CloudManager_LogDebug(object sender, OnLogDebugEventArgs args)

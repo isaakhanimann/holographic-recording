@@ -70,12 +70,6 @@ public class AnchorManager : DemoScriptBase
 
         if (anchorKeysToFind.Count > 0)
         {
-            debugText.text += "has anchor keys to find \n";
-            for (int i = 0; i < anchorKeysToFind.Count; i++)
-            {
-                debugText.text += anchorKeysToFind[i] + "\n";
-
-            }
             // Set the IDs to locate in the AnchorLocateCriteria object
             SetAnchorIdsToLocate(anchorKeysToFind);
 
@@ -119,14 +113,10 @@ public class AnchorManager : DemoScriptBase
         // Get the cloud-native anchor behavior
         CloudNativeAnchor cna = go.GetComponent<CloudNativeAnchor>();
 
-        debugText.text += "get CloudNativeAnchoSuccessful\n";
-
         // If the cloud portion of the anchor hasn't been created yet, create it
         if (cna.CloudAnchor == null)
         {
             cna.NativeToCloud();
-            debugText.text += "Native To cloud\n";
-
         }
 
         // Get the cloud portion of the anchor
@@ -136,7 +126,7 @@ public class AnchorManager : DemoScriptBase
         {
             await Task.Delay(330);
             float createProgress = CloudManager.SessionStatus.RecommendedForCreateProgress;
-            debugText.text += $"Move your device to capture more environment data: {createProgress:0%}\n";
+            Debug.Log($"Move your device to capture more environment data: {createProgress:0%}\n");
         }
 
         bool success = false;
@@ -145,8 +135,6 @@ public class AnchorManager : DemoScriptBase
         {
             // Actually save
             await CloudManager.CreateAnchorAsync(cloudAnchor);
-            debugText.text += "Called createAnchorAsync\n";
-            debugText.text += cloudAnchor.Identifier + "\n";
 
             // Success?
             success = cloudAnchor != null;
@@ -154,7 +142,6 @@ public class AnchorManager : DemoScriptBase
             if (success && !isErrorActive)
             {
                 anchorStore.Save(cloudAnchor.Identifier, recordingId);
-                debugText.text += "saved to anchorStore\n";
 
                 await OnSaveCloudAnchorSuccessfulAsync();
             }
@@ -179,8 +166,6 @@ public class AnchorManager : DemoScriptBase
     protected override async Task OnSaveCloudAnchorSuccessfulAsync()
     {
         await base.OnSaveCloudAnchorSuccessfulAsync();
-
-        debugText.text += "Anchor successfully saved\n";
     }
 
     protected override void OnSaveCloudAnchorFailed(Exception exception)
