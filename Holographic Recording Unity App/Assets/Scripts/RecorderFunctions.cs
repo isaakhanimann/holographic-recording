@@ -175,7 +175,7 @@ public class RecorderFunctions : AnchorManager
         int recordingLength = timerInstance.GetComponent<TimerBehaviour>().GetCurrentRecordingTime();
 
         // stop recording and get the recording object
-        HoloRecording newRecording = StopRecording(recordingLength, recordingRepresentationInstance.transform.position);
+        HoloRecording newRecording = StopRecording(recordingLength, recordingRepresentationInstance.transform.localPosition);
 
         audioRecorder.StopAndSaveRecording(numberOfRecording.ToString());
 
@@ -210,12 +210,9 @@ public class RecorderFunctions : AnchorManager
                 positionToInstantiate = Camera.main.transform.position + 0.5f * Vector3.forward;
             }
         } 
-        else
-        {
-            positionToInstantiate = atLocation;
-        }
         // instantiate representation at palm or specified location
         recordingRepresentationInstance = Instantiate(original: recordingRepresentationPrefab, position: positionToInstantiate, rotation: rotationToInstantiate, parent: anchoredObject.transform);
+        recordingRepresentationInstance.transform.localPosition = atLocation;
     }
 
 
