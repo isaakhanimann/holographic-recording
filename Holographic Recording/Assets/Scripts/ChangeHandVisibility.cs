@@ -31,14 +31,14 @@ public class ChangeHandVisibility : MonoBehaviour
 
     public void TurnOnHandMesh()
     {
-        isHandMeshVisible = true;
-        UpdateHandVisibility();
+        //isHandMeshVisible = true;
+        //UpdateHandVisibility();
     }
 
     public void TurnOffHandMesh()
     {
-        isHandMeshVisible = false;
-        UpdateHandVisibility();
+        //isHandMeshVisible = false;
+        //UpdateHandVisibility();
     }
 
 }
