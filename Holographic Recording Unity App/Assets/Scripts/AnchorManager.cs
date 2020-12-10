@@ -61,7 +61,7 @@ public class AnchorManager : DemoScriptBase
     }
 
     // Trying to retrieve anchors from stored file, but somehow after CreateWatcher() is called, app crashes or doesnt trigger anchor_located
-    public void FindAnchorsTask()
+    public void FindAnchors()
     {
         ResetAnchorIdsToLocate();
 
