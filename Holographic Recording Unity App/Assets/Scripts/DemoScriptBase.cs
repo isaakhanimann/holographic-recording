@@ -95,13 +95,6 @@ namespace Microsoft.Azure.SpatialAnchors.Unity.Examples
 		debugText.text += $"{nameof(SpatialAnchorManager.SpatialAnchorsAccountId)}, {nameof(SpatialAnchorManager.SpatialAnchorsAccountKey)} and {nameof(SpatialAnchorManager.SpatialAnchorsAccountDomain)} must be set on {nameof(SpatialAnchorManager)}\n";
 	  }
 
-
-	 // if (AnchoredObjectPrefab == null)
-	//  {
-	//	debugText.text += "CreationTarget must be set on the demo script.\n";
-	//	return;
-	//  }
-
 	  dispatchQueue = new ConcurrentQueue<Action>();
 
 	  CloudManager.SessionUpdated += CloudManager_SessionUpdated;

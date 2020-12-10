@@ -46,21 +46,18 @@ public class AnchorManager : DemoScriptBase
         base.Update();
     }
 
-    // Step 1
-    public void OnInitSessionClicked()
-    {
-        InitAnchorSession();
-    }
+    public async void InitAnchorSession() {
+        // Create CloudSpatialAnchorSession
+        if (CloudManager.Session == null)
+        {
+            await CloudManager.CreateSessionAsync();
+        }
 
-    // Step 4 Find Anchors
-    public void FindAnchors()
-    {
-        FindAnchorsTask();
-    }
-
-    public void DeleteAllAnchors()
-    {
-        anchorStore.DeleteAll();
+        // Start CloudSpatialAnchorSession
+        if (!CloudManager.IsSessionStarted)
+        {
+            await CloudManager.StartSessionAsync();
+        }
     }
 
     // Trying to retrieve anchors from stored file, but somehow after CreateWatcher() is called, app crashes or doesnt trigger anchor_located
@@ -84,24 +81,6 @@ public class AnchorManager : DemoScriptBase
 
             // Create the watcher for those anchor GUIDs
             CreateWatcher();
-        }
-
-    }
-
-    public async void InitAnchorSession()
-    {
-        // base.Start();
-
-        currentCloudAnchor = null;
-
-        if (CloudManager.Session == null)
-        {
-            await CloudManager.CreateSessionAsync();
-        }
-
-        if (!CloudManager.IsSessionStarted)
-        {
-            await CloudManager.StartSessionAsync();
         }
     }
 
@@ -169,9 +148,6 @@ public class AnchorManager : DemoScriptBase
             debugText.text += "Called createAnchorAsync\n";
             debugText.text += cloudAnchor.Identifier + "\n";
 
-            // Store
-            //currentCloudAnchor = cloudAnchor;
-
             // Success?
             success = cloudAnchor != null;
 
@@ -206,9 +182,7 @@ public class AnchorManager : DemoScriptBase
     {
         await base.OnSaveCloudAnchorSuccessfulAsync();
 
-        // For now store Id locally (needs to be retrieved from ASA for cross device persitence)
         debugText.text += "Anchor successfully saved\n";
-        // CloudManager.StopSession();
     }
 
     protected override void OnSaveCloudAnchorFailed(Exception exception)

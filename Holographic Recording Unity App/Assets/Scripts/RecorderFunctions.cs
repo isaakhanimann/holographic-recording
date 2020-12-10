@@ -46,18 +46,7 @@ public class RecorderFunctions : AnchorManager
         base.Start();
         audioRecorder = audioRecorderInstance.GetComponent<AudioRecorder>();
 
-        // Create CloudSpatialAnchorSession
-        if (CloudManager.Session == null)
-        {
-            await CloudManager.CreateSessionAsync();
-        }
-
-        // Start CloudSpatialAnchorSession
-        if (!CloudManager.IsSessionStarted)
-        {
-            await CloudManager.StartSessionAsync();
-        }
-
+        InitAnchorSession();
         FindAnchors();
     }
 
@@ -70,15 +59,6 @@ public class RecorderFunctions : AnchorManager
         }
 
         base.Update();
-    }
-
-    public void OnClickInitSession() {
-        debugText.text += "Init Anchor Session \n";
-        InitAnchorSession();
-    }
-
-    public void OnClickFindAllAnchors() {
-        FindAnchors();
     }
 
     public override void OnCloudAnchorLocated(AnchorLocatedEventArgs args)
