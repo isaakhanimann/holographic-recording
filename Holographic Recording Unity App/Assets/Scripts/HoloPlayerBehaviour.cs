@@ -31,6 +31,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     private string keyboardText;
     private bool stopWasPressed;
     private string filename;
+    private HoloRecording holoRecording;
 
     private void Update()
     {
@@ -56,6 +57,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
     // called by the recorder when he is done recording
     public void PutHoloRecordingIntoPlayer(HoloRecording recording, int recordingLength)
     {
+        holoRecording = recording;
         // update UI
         StartCoroutine(AddScreenshotToRepresentation(recording.pathToScreenshot)); // set the screenshot of the representation, done asynchronously because it loads from disk
         OpenSystemKeyboard(); // open keyboard to give the representation a title.
@@ -91,6 +93,34 @@ public class HoloPlayerBehaviour : MonoBehaviour
             }
         }  
     }
+
+    public IEnumerator SetHandInactiveAndActive(List<(float,bool)> tuples, bool isLeft)
+    {
+        if (isLeft)
+        {
+            instantiatedLeftHand.SetActive(tuples[0].Item2);
+            yield return new WaitForSeconds(tuples[1].Item1);
+
+            for (int i = 1; i < tuples.Count - 1; i++)
+            {
+                instantiatedLeftHand.SetActive(tuples[i].Item2);
+                yield return new WaitForSeconds(tuples[i + 1].Item1);
+            }
+            instantiatedLeftHand.SetActive(tuples[tuples.Count - 1].Item2);
+        } else
+        {
+            instantiatedRightHand.SetActive(tuples[0].Item2);
+            yield return new WaitForSeconds(tuples[1].Item1);
+
+            for (int i = 1; i < tuples.Count - 1; i++)
+            {
+                instantiatedRightHand.SetActive(tuples[i].Item2);
+                yield return new WaitForSeconds(tuples[i + 1].Item1);
+            }
+            instantiatedRightHand.SetActive(tuples[tuples.Count - 1].Item2);
+        }
+    }
+
 
 
     private void InstantiateHandAndSetInactive(GameObject hand, ref GameObject instantiatedHand)
@@ -143,6 +173,10 @@ public class HoloPlayerBehaviour : MonoBehaviour
         instantiatedRightHand.SetActive(true);
         instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
         instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
+
+        // set hands inactive and active based on whether they were tracked
+        StartCoroutine(SetHandInactiveAndActive(holoRecording.timesAndBoolsLeftHand, isLeft: true));
+        StartCoroutine(SetHandInactiveAndActive(holoRecording.timesAndBoolsRightHand, isLeft: false));
 
         // reset hands to invisible and the recording representation to the start state when playback is done
         StartCoroutine(ResetRecording());

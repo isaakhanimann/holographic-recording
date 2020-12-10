@@ -60,6 +60,8 @@ public class RecorderFunctions : MonoBehaviour
         allKeyFrames.leftJointLists = new KeyFrameListsForAllHandJoints(Handedness.Left);
         allKeyFrames.rightJointLists = new KeyFrameListsForAllHandJoints(Handedness.Right);
         isRecording = true;
+        timeOfLastBoolLeft = Time.time;
+        timeOfLastBoolRight = Time.time;
 
         // make a screenshot for the recording representation
         StartCoroutine(MakeScreenshotAfterNSeconds());
@@ -163,7 +165,7 @@ public class RecorderFunctions : MonoBehaviour
         string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
         // saving is uncommented to unclutter the hololens
         //SaveKeyframesAsynchronously(pathToAnimationClip);
-        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot);
+        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot, timesAndBoolsLeftHand, timesAndBoolsRightHand);
         return newRecording;
     }
 
@@ -239,6 +241,14 @@ public class RecorderFunctions : MonoBehaviour
     // to keep track of the time for each keyframe
     private float timeSinceStartOfRecording = 0.0f;
 
+    private float timeOfLastBoolLeft;
+    private List<(float, bool)> timesAndBoolsLeftHand = new List<(float, bool)>();
+    private bool lastBoolLeft;
+
+    private float timeOfLastBoolRight;
+    private List<(float, bool)> timesAndBoolsRightHand = new List<(float, bool)>();
+    private bool lastBoolRight;
+
     void LateUpdate()
     {
         // only capture keyframes if we are recording
@@ -259,24 +269,52 @@ public class RecorderFunctions : MonoBehaviour
     private GameObject leftHand;
     private GameObject rightHand;
 
+    private void UpdateBools(ref bool lastBool, ref float timeOfLastBool, ref List<(float,bool)> timesAndBools, bool isHandNull)
+    {
+        if (isHandNull)
+        {
+            if (lastBool == true)
+            {
+                float timeSinceLastBool = Time.time - timeOfLastBool;
+                timeOfLastBool = Time.time;
+                timesAndBools.Add((timeSinceLastBool, false));
+                lastBool = false;
+            }
+        }
+        else
+        {
+            if (lastBool == false)
+            {
+                float timeSinceLastBool = Time.time - timeOfLastBool;
+                timeOfLastBool = Time.time;
+                timesAndBools.Add((timeSinceLastBool, true));
+                lastBool = true;
+            }
+        }
+    }
+
     private void CaptureKeyFrames()
     {
         // only if the hand is visible we can record keyframes, else we have to find it.
         if (leftHand != null)
         {
+            UpdateBools(lastBool: ref lastBoolLeft, timeOfLastBool: ref timeOfLastBoolLeft, timesAndBools: ref timesAndBoolsLeftHand,  isHandNull: false);
             AddAllJointPoses(Handedness.Left);
         }
         else
         {
+            UpdateBools(lastBool: ref lastBoolLeft, timeOfLastBool: ref timeOfLastBoolLeft, timesAndBools: ref timesAndBoolsLeftHand, isHandNull: true);
             leftHand = GameObject.Find("Left_OurRiggedHandLeft(Clone)");
         }
 
         if (rightHand != null)
         {
+            UpdateBools(lastBool: ref lastBoolRight, timeOfLastBool: ref timeOfLastBoolRight, timesAndBools: ref timesAndBoolsRightHand, isHandNull: false);
             AddAllJointPoses(Handedness.Right);
         }
         else
         {
+            UpdateBools(lastBool: ref lastBoolRight, timeOfLastBool: ref timeOfLastBoolRight, timesAndBools: ref timesAndBoolsRightHand, isHandNull: true);
             rightHand = GameObject.Find("Right_OurRiggedHandRight(Clone)");
         }
     }
