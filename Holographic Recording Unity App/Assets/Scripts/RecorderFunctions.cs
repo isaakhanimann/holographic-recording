@@ -212,7 +212,9 @@ public class RecorderFunctions : AnchorManager
         } 
         // instantiate representation at palm or specified location
         recordingRepresentationInstance = Instantiate(original: recordingRepresentationPrefab, position: positionToInstantiate, rotation: rotationToInstantiate, parent: anchoredObject.transform);
-        recordingRepresentationInstance.transform.localPosition = atLocation;
+        if (!atPalm) {
+            recordingRepresentationInstance.transform.localPosition = atLocation;
+        }
     }
 
 
