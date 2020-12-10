@@ -23,6 +23,8 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public RawImage screenshotRawImage;
     public AudioSource audioSource;
     public TextMeshPro timerText;
+    public Material invisibleMaterial;
+    public Material normalHandMaterial;
 
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
@@ -94,30 +96,56 @@ public class HoloPlayerBehaviour : MonoBehaviour
         }  
     }
 
-    public IEnumerator SetHandInactiveAndActive(List<(float,bool)> tuples, bool isLeft)
+    private void SetHandVisibiliy(bool isLeft,bool setVisible)
     {
         if (isLeft)
         {
-            instantiatedLeftHand.SetActive(tuples[0].Item2);
+            if (setVisible)
+            {
+                instantiatedLeftHand.GetComponentInChildren<SkinnedMeshRenderer>().material = normalHandMaterial;
+            }
+            else
+            {
+                instantiatedLeftHand.GetComponentInChildren<SkinnedMeshRenderer>().material = invisibleMaterial;
+            }
+        }
+        else
+        {
+            if (setVisible)
+            {
+                instantiatedRightHand.GetComponentInChildren<SkinnedMeshRenderer>().material = normalHandMaterial;
+            }
+            else
+            {
+                instantiatedRightHand.GetComponentInChildren<SkinnedMeshRenderer>().material = invisibleMaterial;
+            }
+        }
+    }
+
+    private IEnumerator SetHandInactiveAndActive(List<(float,bool)> tuples, bool isLeft)
+    {
+        if (isLeft)
+        {
+            SetHandVisibiliy(isLeft, tuples[0].Item2);
             yield return new WaitForSeconds(tuples[1].Item1);
 
             for (int i = 1; i < tuples.Count - 1; i++)
             {
-                instantiatedLeftHand.SetActive(tuples[i].Item2);
+                SetHandVisibiliy(isLeft, tuples[i].Item2);
                 yield return new WaitForSeconds(tuples[i + 1].Item1);
             }
-            instantiatedLeftHand.SetActive(tuples[tuples.Count - 1].Item2);
+            SetHandVisibiliy(isLeft, tuples[tuples.Count - 1].Item2);
         } else
         {
-            instantiatedRightHand.SetActive(tuples[0].Item2);
+            SetHandVisibiliy(!isLeft, tuples[0].Item2);
             yield return new WaitForSeconds(tuples[1].Item1);
 
             for (int i = 1; i < tuples.Count - 1; i++)
             {
-                instantiatedRightHand.SetActive(tuples[i].Item2);
+                SetHandVisibiliy(!isLeft, tuples[i].Item2);
                 yield return new WaitForSeconds(tuples[i + 1].Item1);
             }
-            instantiatedRightHand.SetActive(tuples[tuples.Count - 1].Item2);
+            SetHandVisibiliy(!isLeft, tuples[tuples.Count - 1].Item2);
         }
     }
 
