@@ -175,7 +175,7 @@ public class RecorderFunctions : AnchorManager
         int recordingLength = timerInstance.GetComponent<TimerBehaviour>().GetCurrentRecordingTime();
 
         // stop recording and get the recording object
-        HoloRecording newRecording = StopRecording(recordingLength, recordingRepresentationInstance.transform.localPosition);
+        HoloRecording newRecording = StopRecording(recordingLength, recordingRepresentationInstance.transform.position);
 
         audioRecorder.StopAndSaveRecording(numberOfRecording.ToString());
 
