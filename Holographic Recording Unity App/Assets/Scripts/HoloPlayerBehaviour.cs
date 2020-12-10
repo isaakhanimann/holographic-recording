@@ -36,27 +36,28 @@ public class HoloPlayerBehaviour : MonoBehaviour
     private AnchorStore anchorStore;
     private HoloRecording holoRecording;
     private string recordingId;
+    private GameObject anchor;
 
     private void Update()
     {
         // once keyboard is assigned we can read the text that the user types
         if (keyboardDonePressed) {
+            keyboardDonePressed = false;
             // Store recording after title has been entered.
             // Serialize holorecording and save to file
             StoreHoloRecording(recordingId, holoRecording);
-            keyboardDonePressed = false;
         }
         if (keyboard != null)
         {
-            keyboardText = keyboard.text;
-            titleOfRepresentation.text = keyboardText;
-            holoRecording.titleOfClip = titleOfRepresentation.text;
+            titleOfRepresentation.text = keyboard.text;
+            holoRecording.titleOfClip = keyboard.text;
 
             if (keyboard.status == TouchScreenKeyboard.Status.Done)
             {
                 buttons.SetActive(true);
                 instructionObject.SetActive(false);
                 keyboardDonePressed = true;
+                keyboard = null;
             }
         }
     }
@@ -72,6 +73,8 @@ public class HoloPlayerBehaviour : MonoBehaviour
         recordingId = id;
         holoRecording = recording;
         anchorStore = store;
+        anchor = anchoredObject;
+    
         // update UI
         StartCoroutine(AddScreenshotToRepresentation(recording.pathToScreenshot)); // set the screenshot of the representation, done asynchronously because it loads from disk
         if (openKeyboard)
@@ -150,6 +153,7 @@ public class HoloPlayerBehaviour : MonoBehaviour
         // Delete anchor mapped to recording
         anchorStore.DeleteByRecordingId(recordingId);
         Destroy(gameObject, 1.5f); // adding a delay so the botton has time to bounce back after click
+        Destroy(anchor, 1.5f);
     }
 
     IEnumerator PlayAudioClip(string path)

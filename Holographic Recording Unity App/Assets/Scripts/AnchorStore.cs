@@ -123,21 +123,22 @@ public class AnchorStore : MonoBehaviour
 		{
 		  if (item.Value == recordingId) {
     		anchorToRecordingMap.Remove(item.Key);
+            try
+            {
+                bf.Serialize(fs, anchorToRecordingMap);
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
+            finally
+            {
+                fs.Close();
+            }
+            return;
 		  }
 		}
-    	try
-        {
-	        bf.Serialize(fs, anchorToRecordingMap);
-        }
-        catch (SerializationException e)
-        {
-            Console.WriteLine("Failed to serialize. Reason: " + e.Message);
-            throw;
-        }
-        finally
-        {
-            fs.Close();
-        }
     }
 
     public void DeleteAll() {
