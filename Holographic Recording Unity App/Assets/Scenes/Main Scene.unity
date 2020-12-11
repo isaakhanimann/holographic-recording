@@ -6212,7 +6212,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isHandMeshVisible: 0
-  isHandJointVisible: 0
+  normalHandMaterial: {fileID: 2100000, guid: 4c63e230f530e6c4e8be8b25846c0989, type: 2}
+  invisibleMaterial: {fileID: 2100000, guid: 6bd84afee2d9385429b74c22865ca4fb, type: 2}
 --- !u!114 &9060075853412315773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6285,4 +6286,4 @@ MonoBehaviour:
   spatialAnchorsAccountDomain: northeurope.mixedreality.azure.com
   clientId: 
   tenantId: 
-  logLevel: 5
+  logLevel: 1

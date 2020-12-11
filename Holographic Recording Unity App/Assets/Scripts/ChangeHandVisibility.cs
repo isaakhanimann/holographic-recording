@@ -4,42 +4,63 @@ using Microsoft.MixedReality.Toolkit;
 using TMPro;
 
 // this class is supposed to disable the hand visualization by default and only enable it when we are recording
-// it doesn't work yet
 public class ChangeHandVisibility : MonoBehaviour
 {
 
     public bool isHandMeshVisible = false;
-    public bool isHandJointVisible = false;
+    public Material normalHandMaterial;
+    public Material invisibleMaterial;
 
+    private int FRAME_FREQUENCY = 10;
 
-    private void Start()
+    private void Update()
     {
-        UpdateHandVisibility();
-    }
-
-
-    private void UpdateHandVisibility()
-    {
-        MixedRealityHandTrackingProfile handTrackingProfile = CoreServices.InputSystem?.InputSystemProfile?.HandTrackingProfile;
-        if (handTrackingProfile != null)
+        if (Time.frameCount % FRAME_FREQUENCY == 0)
         {
-            handTrackingProfile.EnableHandMeshVisualization = isHandMeshVisible;
-            handTrackingProfile.EnableHandJointVisualization = isHandJointVisible;
+            SetHandsVisibiliy();
         }
     }
+
+
+    private void SetHandsVisibiliy()
+    {
+        GameObject leftHand = GameObject.Find("Left_OurRiggedHandLeft(Clone)");
+        if (leftHand != null)
+        {
+            if (isHandMeshVisible)
+            {
+                leftHand.GetComponentInChildren<SkinnedMeshRenderer>().material = normalHandMaterial;
+            }
+            else
+            {
+                leftHand.GetComponentInChildren<SkinnedMeshRenderer>().material = invisibleMaterial;
+            }
+        }
+        GameObject rightHand = GameObject.Find("Right_OurRiggedHandRight(Clone)");
+        if (rightHand != null)
+        {
+            if (isHandMeshVisible)
+            {
+                rightHand.GetComponentInChildren<SkinnedMeshRenderer>().material = normalHandMaterial;
+            }
+            else
+            {
+                rightHand.GetComponentInChildren<SkinnedMeshRenderer>().material = invisibleMaterial;
+            }
+        }
+    }
+
 
     // called when Start Recording is pressed
     public void TurnOnHandMesh()
     {
         isHandMeshVisible = true;
-        UpdateHandVisibility();
     }
 
     // called when Stop or Cancel Recording is pressed
     public void TurnOffHandMesh()
     {
         isHandMeshVisible = false;
-        UpdateHandVisibility();
     }
 
 }
