@@ -16,8 +16,10 @@ public struct HoloRecording
     public float positionXRep;
     public float positionYRep;
     public float positionZRep;
+    public List<(float, bool)> timesAndBoolsLeftHand;
+    public List<(float, bool)> timesAndBoolsRightHand;
 
-    public HoloRecording(string pathToAnimationClip, string animationClipName, AllKeyFrames allKeyFrames, string pathToScreenshot, int length, string title, Vector3 pos)
+    public HoloRecording(string pathToAnimationClip, string animationClipName, AllKeyFrames allKeyFrames, string pathToScreenshot, int length, string title, Vector3 pos, List<(float, bool)> timesAndBoolsLeftHand, List<(float, bool)> timesAndBoolsRightHand)
     {
         this.pathToAnimationClip = pathToAnimationClip;
         this.animationClipName = animationClipName;
@@ -28,7 +30,9 @@ public struct HoloRecording
         this.positionXRep = pos.x;
         this.positionYRep = pos.y;
         this.positionZRep = pos.z;
-}
+        this.timesAndBoolsLeftHand = timesAndBoolsLeftHand;
+        this.timesAndBoolsRightHand = timesAndBoolsRightHand;
+    }
 
     public override string ToString() => $"HoloRecording: animation clip is called {animationClipName}";
 

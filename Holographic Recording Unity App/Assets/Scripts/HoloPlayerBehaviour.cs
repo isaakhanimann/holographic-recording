@@ -24,6 +24,9 @@ public class HoloPlayerBehaviour : MonoBehaviour
     public RawImage screenshotRawImage;
     public AudioSource audioSource;
     public TextMeshPro timerText;
+    public Material invisibleMaterial;
+    public Material normalHandMaterial;
+
     private GameObject instantiatedLeftHand;
     private GameObject instantiatedRightHand;
     private TouchScreenKeyboard keyboard;
@@ -195,8 +198,66 @@ public class HoloPlayerBehaviour : MonoBehaviour
         instantiatedLeftHand.GetComponent<Animation>().Play("leftHand");
         instantiatedRightHand.GetComponent<Animation>().Play("rightHand");
 
+        // set hands inactive and active based on whether they were tracked
+        StartCoroutine(SetHandInactiveAndActive(holoRecording.timesAndBoolsLeftHand, isLeft: true));
+        StartCoroutine(SetHandInactiveAndActive(holoRecording.timesAndBoolsRightHand, isLeft: false));
+
         // reset hands to invisible and the recording representation to the start state when playback is done
         StartCoroutine(ResetRecording());
+    }
+
+    private IEnumerator SetHandInactiveAndActive(List<(float, bool)> tuples, bool isLeft)
+    {
+        if (isLeft)
+        {
+            SetHandVisibiliy(isLeft, tuples[0].Item2);
+            yield return new WaitForSeconds(tuples[1].Item1);
+
+            for (int i = 1; i < tuples.Count - 1; i++)
+            {
+                SetHandVisibiliy(isLeft, tuples[i].Item2);
+                yield return new WaitForSeconds(tuples[i + 1].Item1);
+            }
+            SetHandVisibiliy(isLeft, tuples[tuples.Count - 1].Item2);
+        }
+        else
+        {
+            SetHandVisibiliy(!isLeft, tuples[0].Item2);
+            yield return new WaitForSeconds(tuples[1].Item1);
+
+            for (int i = 1; i < tuples.Count - 1; i++)
+            {
+                SetHandVisibiliy(!isLeft, tuples[i].Item2);
+                yield return new WaitForSeconds(tuples[i + 1].Item1);
+            }
+            SetHandVisibiliy(!isLeft, tuples[tuples.Count - 1].Item2);
+        }
+    }
+
+    private void SetHandVisibiliy(bool isLeft, bool setVisible)
+    {
+        if (isLeft)
+        {
+            if (setVisible)
+            {
+                instantiatedLeftHand.GetComponentInChildren<SkinnedMeshRenderer>().material = normalHandMaterial;
+            }
+            else
+            {
+                instantiatedLeftHand.GetComponentInChildren<SkinnedMeshRenderer>().material = invisibleMaterial;
+            }
+        }
+        else
+        {
+            if (setVisible)
+            {
+                instantiatedRightHand.GetComponentInChildren<SkinnedMeshRenderer>().material = normalHandMaterial;
+            }
+            else
+            {
+                instantiatedRightHand.GetComponentInChildren<SkinnedMeshRenderer>().material = invisibleMaterial;
+            }
+        }
     }
 
     IEnumerator SetSecondRepresentationActiveAfterNSeconds()

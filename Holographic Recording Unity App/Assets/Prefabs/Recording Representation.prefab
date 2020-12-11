@@ -1815,6 +1815,8 @@ MonoBehaviour:
   screenshotRawImage: {fileID: 3756674252009165017}
   audioSource: {fileID: -3858803001370912394}
   timerText: {fileID: 265877933232989089}
+  invisibleMaterial: {fileID: 2100000, guid: 6bd84afee2d9385429b74c22865ca4fb, type: 2}
+  normalHandMaterial: {fileID: 2100000, guid: c7a6893b2ca62f24ca49df450662deac, type: 2}
 --- !u!82 &-3858803001370912394
 AudioSource:
   m_ObjectHideFlags: 0

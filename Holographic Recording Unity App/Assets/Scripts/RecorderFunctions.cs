@@ -251,7 +251,7 @@ public class RecorderFunctions : AnchorManager
         string pathToAnimationClip = Application.persistentDataPath + $"/{animationClipName}.animationClip";
         // saving is uncommented to unclutter the hololens
         //SaveKeyframesAsynchronously(pathToAnimationClip);
-        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot, recordingLength, "", posRep);
+        HoloRecording newRecording = new HoloRecording(pathToAnimationClip, animationClipName, allKeyFrames, pathToScreenshot, recordingLength, "", posRep, timesAndBoolsLeftHand, timesAndBoolsRightHand);
         return newRecording;
     }
 
@@ -352,20 +352,56 @@ public class RecorderFunctions : AnchorManager
         // only if the hand is visible we can record keyframes, else we have to find it.
         if (leftHand != null)
         {
+            UpdateBools(lastBool: ref lastBoolLeft, timeOfLastBool: ref timeOfLastBoolLeft, timesAndBools: ref timesAndBoolsLeftHand, isHandNull: false);
             AddAllJointPoses(Handedness.Left);
         }
         else
         {
+            UpdateBools(lastBool: ref lastBoolLeft, timeOfLastBool: ref timeOfLastBoolLeft, timesAndBools: ref timesAndBoolsLeftHand, isHandNull: true);
             leftHand = GameObject.Find("Left_OurRiggedHandLeft(Clone)");
         }
 
         if (rightHand != null)
         {
+            UpdateBools(lastBool: ref lastBoolRight, timeOfLastBool: ref timeOfLastBoolRight, timesAndBools: ref timesAndBoolsRightHand, isHandNull: false);
             AddAllJointPoses(Handedness.Right);
         }
         else
         {
+            UpdateBools(lastBool: ref lastBoolRight, timeOfLastBool: ref timeOfLastBoolRight, timesAndBools: ref timesAndBoolsRightHand, isHandNull: true);
             rightHand = GameObject.Find("Right_OurRiggedHandRight(Clone)");
+        }
+    }
+
+    private float timeOfLastBoolLeft;
+    private List<(float, bool)> timesAndBoolsLeftHand = new List<(float, bool)>();
+    private bool lastBoolLeft;
+
+    private float timeOfLastBoolRight;
+    private List<(float, bool)> timesAndBoolsRightHand = new List<(float, bool)>();
+    private bool lastBoolRight;
+
+    private void UpdateBools(ref bool lastBool, ref float timeOfLastBool, ref List<(float, bool)> timesAndBools, bool isHandNull)
+    {
+        if (isHandNull)
+        {
+            if (lastBool == true)
+            {
+                float timeSinceLastBool = Time.time - timeOfLastBool;
+                timeOfLastBool = Time.time;
+                timesAndBools.Add((timeSinceLastBool, false));
+                lastBool = false;
+            }
+        }
+        else
+        {
+            if (lastBool == false)
+            {
+                float timeSinceLastBool = Time.time - timeOfLastBool;
+                timeOfLastBool = Time.time;
+                timesAndBools.Add((timeSinceLastBool, true));
+                lastBool = true;
+            }
         }
     }
 
