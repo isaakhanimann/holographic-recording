@@ -46,8 +46,8 @@ public class RecorderFunctions : AnchorManager
         base.Start();
         audioRecorder = audioRecorderInstance.GetComponent<AudioRecorder>();
 
-        await InitAnchorSession();
-        FindAnchors();
+        //await InitAnchorSession();
+        //FindAnchors();
     }
 
     public override void Update()
@@ -183,7 +183,7 @@ public class RecorderFunctions : AnchorManager
         playerComponent.PutHoloRecordingIntoPlayer(numberOfRecording.ToString(), newRecording, anchoredObject, anchorStore);
 
         // Save anchor to cloud
-        SaveObjectAnchorToCloud(anchoredObject, numberOfRecording.ToString());
+        //SaveObjectAnchorToCloud(anchoredObject, numberOfRecording.ToString());
     }
 
     private GameObject InstantiateAnchoredObject()
