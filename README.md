@@ -30,7 +30,7 @@ The goal of the first approach was to create a replayable hand animation on a pr
 * Audio recording and playback
 
 ## Architecture
-![architecture](./Gifs and Images/architecture.png)
+![architecture](https://github.com/isaakhanimann/holographic-recording/blob/master/Gifs%20and%20Images/architecture.png)
 The features and components of our application can be largely grouped into two groups; those for recording and those for playback. Both approaches in our implementation require extraction of necessary data, serialization, storing, deserialization, data parsing, and finally playback. Fig.1 shows a diagram of the architecture of our application. We extract point cloud data using the depth data recorded through the research mode API and in parallel extract hand joint position and rotation using the MRTK hand-tracking API. In addition, we also record the audio data to allow voice instructions. Once the data is formatted, they are serialized and stored into persistent storage. In order to playback recordings in the same location across different sessions, the spatial anchors are uploaded to Azure. During playback, all data (hand joint coordinates, audio, and point cloud) is deserialized and played according to the spatial anchors downloaded from Azure. 
 
 
@@ -49,7 +49,7 @@ A crucial requirement for playing recordings in the same location and context in
 
 ## Point Cloud Animation Overview
 
-![point-cloud](./Gifs and Images/point-cloud-animation.gif)
+![point-cloud](https://github.com/isaakhanimann/holographic-recording/blob/master/Gifs%20and%20Images/point-cloud-animation.gif)
 
 In order to get the depth information of the surroundings, we leveraged the Research Mode API for Hololens2. We specifically focused on Articulated Hand Tracking (AHaT) depth to get a field of view close to the hands. The Research Mode API is available natively, but we needed to get the data in Unity in order to take advantage of the UI and MRTK features. Hence, we used a C++ wrapper written on top of the Research Mode API. We built this library in ARM64, Release, and included the dll directly in the Unity project as a Plugin. This way we were able to get all the research mode data through Unity directly. Similar to the MRTK hand animation recording, we queried the research mode data at regular intervals and used the camera extrinsic for generating sets of points in world coordinates. These lists of points and corresponding timestamps are then written into local files by background processes.
 
