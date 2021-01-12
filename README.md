@@ -1,6 +1,6 @@
 # Holographic Recording
 
-![point-cloud](./Gifs and Images/app-demo.gif)
+![point-cloud](https://github.com/isaakhanimann/holographic-recording/blob/master/Gifs%20and%20Images/app-demo.gif)
 
 ## Introduction
 In the past decade, with the increasing availability of video media on YouTube and other content sharing platforms, people have become increasingly reliant on videos to learn how to perform physical tasks that are as simple as using appliances and as complex as fixing machinery.  However, as helpful as 2D video instructions can be, they still have limitations because 2D videos are restricted to a single perspective. This means important motion and tasks can often be occluded from the camera view. It can also be difficult for users to translate instructions performed on a 2D screen into their 3D world.
